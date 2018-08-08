@@ -12,7 +12,8 @@ import PopoverRenderer from './PopoverRenderer'
  */
 class LicensesRenderer extends Component {
   render() {
-    const { item } = this.props
+    const { item, handleChange } = this.props
+
 
     return (
       <ButtonToolbar>
@@ -35,7 +36,11 @@ LicensesRenderer.propTypes = {
    */
   item: PropTypes.shape({
     value: PropTypes.string
-  }).isRequired
+  }).isRequired,
+  /**
+   * function to send the value back to the FullDetailPage, where the state is kept
+   */
+  handleChange: PropTypes.func,
 }
 
 export default LicensesRenderer

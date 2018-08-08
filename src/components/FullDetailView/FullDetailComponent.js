@@ -374,7 +374,7 @@ class FullDetailComponent extends Component {
         </Row>
         <Row>
           <Col md={12}>
-            <FileList files={item.files} />
+            <FileList files={item.files} handleFileLicenseChange={this.props.handleFileLicenseChange ? this.props.handleFileLicenseChange : null} />
           </Col>
         </Row>
         <Row>
@@ -399,6 +399,7 @@ class FullDetailComponent extends Component {
 
 FullDetailComponent.propTypes = {
   // onClose: PropTypes.func.isRequired,
+  handleFileLicenseChange: PropTypes.func.isRequired,
   curation: PropTypes.object.isRequired,
   definition: PropTypes.object.isRequired,
   harvest: PropTypes.object.isRequired,

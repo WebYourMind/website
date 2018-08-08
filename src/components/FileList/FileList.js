@@ -75,7 +75,7 @@ export default class FileList extends Component {
         id: 'license',
         accessor: 'license',
         resizable: false,
-        Cell: row => <LicensesRenderer item={row} />,
+        Cell: row => <LicensesRenderer item={row} handleChange={this.props.handleFileLicenseChange ? this.props.handleFileLicenseChange : null}/>,
         filterMethod: (filter, rows) =>
           filter.value.filterValue
             ? rows.filter(

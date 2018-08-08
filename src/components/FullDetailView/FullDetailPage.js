@@ -85,6 +85,15 @@ export class FullDetailPage extends Component {
     onClose()
   }
 
+  /**
+   * update the state to keep track of the specific line item / file that has been changed
+   *
+   * @param {*} item
+   */
+  handleFileLicenseChange = item => {
+    console.log(item)
+  }
+
   render() {
     const { path, component, definition, curation, harvest, modalView, visible } = this.props
 
@@ -113,6 +122,7 @@ export class FullDetailPage extends Component {
           harvest={harvest}
           path={path}
           modalView={false}
+          handleFileLicenseChange={this.handleFileLicenseChange}
           renderContributeButton={
             <Button bsStyle="success" disabled={!Contribution.hasChange(component)} onClick={this.doPromptContribute}>
               Contribute
