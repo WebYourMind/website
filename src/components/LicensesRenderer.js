@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
+
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { OverlayTrigger, ButtonToolbar } from 'react-bootstrap'
@@ -35,7 +36,7 @@ LicensesRenderer.propTypes = {
    */
   item: PropTypes.shape({
     value: PropTypes.string
-  }).isRequired
+  }).isRequired,
 }
 
 export default LicensesRenderer
