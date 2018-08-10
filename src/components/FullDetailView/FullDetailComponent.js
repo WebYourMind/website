@@ -403,7 +403,6 @@ class FullDetailComponent extends Component {
 
 FullDetailComponent.propTypes = {
   // onClose: PropTypes.func.isRequired,
-  handleFileLicenseChange: PropTypes.func.isRequired,
   curation: PropTypes.object.isRequired,
   definition: PropTypes.object.isRequired,
   harvest: PropTypes.object.isRequired,
