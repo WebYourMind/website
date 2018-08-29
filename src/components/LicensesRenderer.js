@@ -22,7 +22,7 @@ class LicensesRenderer extends Component {
         value={value}
         onChange={value => onSave(value)}
         validator={true}
-        placeholder={!readOnly && 'SPDX License'}
+        placeholder={!readOnly ? 'SPDX License' : ''}
       />
     )
   }

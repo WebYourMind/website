@@ -32,6 +32,10 @@ import FullDetailComponent from './FullDetailComponent'
  * based on modalView property
  */
 export class FullDetailPage extends Component {
+  static defaultProps = {
+    readOnly: false
+  }
+
   constructor(props) {
     super(props)
     this.state = {

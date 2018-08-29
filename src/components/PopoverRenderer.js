@@ -160,7 +160,7 @@ class PopoverComponent extends Component {
 
   render() {
     const { showAddRow, values } = this.state
-    const { editorType, editorPlaceHolder, onSave, ...popoverProperties } = this.props
+    const { canAdditems, editable, editorType, editorPlaceHolder, onSave, ...popoverProperties } = this.props
 
     return (
       <Popover
