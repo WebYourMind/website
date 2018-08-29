@@ -56,7 +56,8 @@ export class FullDetailPage extends Component {
     // Callback function callable when the modal has been closed
     onClose: PropTypes.func,
     // If `modalView` is set to true, than path MUST be passed, otherwise it will be catched from the URL
-    path: PropTypes.string
+    path: PropTypes.string,
+    readOnly: PropTypes.bool
   }
 
   componentDidMount() {
@@ -177,7 +178,7 @@ export class FullDetailPage extends Component {
   }
 
   render() {
-    const { path, definition, curation, harvest, modalView, visible, previewDefinition } = this.props
+    const { path, definition, curation, harvest, modalView, visible, previewDefinition, readOnly } = this.props
     const { changes } = this.state
     return modalView ? (
       <Modal
@@ -196,7 +197,7 @@ export class FullDetailPage extends Component {
             definition={definition}
             harvest={harvest}
             path={path}
-            readOnly={false}
+            readOnly={readOnly}
             modalView={modalView}
             onChange={this.onChange}
             handleClose={this.handleClose}
@@ -213,7 +214,7 @@ export class FullDetailPage extends Component {
           definition={definition}
           harvest={harvest}
           path={path}
-          readOnly={false}
+          readOnly={readOnly}
           modalView={false}
           onChange={this.onChange}
           changes={changes}

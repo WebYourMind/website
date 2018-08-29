@@ -82,7 +82,7 @@ class PopoverComponent extends Component {
             {
               <InlineEditor
                 extraClass={item.isDifferent ? 'popoverRenderer__items__value--isEdited' : ''}
-                readOnly={false}
+                readOnly={!editable}
                 type={editorType}
                 initialValue={item.value || ''}
                 value={item.value || ''}

@@ -422,6 +422,7 @@ export default class AbstractPageDefinitions extends Component {
           onSave={this.onChangeComponent}
           path={currentDefinition}
           component={currentComponent}
+          readOnly={this.readOnly()}
         />
       </Grid>
     )

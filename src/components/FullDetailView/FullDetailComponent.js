@@ -242,7 +242,7 @@ class FullDetailComponent extends Component {
   }
 
   render() {
-    const { curation, definition, harvest, onChange, previewDefinition } = this.props
+    const { curation, definition, harvest, onChange, previewDefinition, readOnly } = this.props
 
     if (!definition || !definition.item || !curation || !harvest) return null
 
@@ -271,6 +271,7 @@ class FullDetailComponent extends Component {
               onChange={onChange}
               component={definition}
               previewDefinition={previewDefinition}
+              readOnly={readOnly}
             />
           </Col>
         </Row>
