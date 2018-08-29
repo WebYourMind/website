@@ -275,7 +275,12 @@ class FullDetailComponent extends Component {
               <Row>
                 <Col md={6}>
                   {this.renderLabel('Facets')}
-                  <FacetsEditor definition={item} onChange={onChange} previewDefinition={previewDefinition} />
+                  <FacetsEditor
+                    definition={item}
+                    onChange={onChange}
+                    previewDefinition={previewDefinition}
+                    readOnly={readOnly}
+                  />
                 </Col>
                 <Col md={6}>{this.renderContributions()}</Col>
               </Row>
