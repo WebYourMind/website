@@ -66,15 +66,12 @@ export class FullDetailPage extends Component {
 
   componentDidMount() {
     const { path, uiNavigation, component } = this.props
-    if (path && component) this.handleNewSpec(component)
+    if (component.changes) {
+      this.setState({ changes: component.changes }, () => this.handleNewSpec(component))
+    } else {
+      this.handleNewSpec(component)
+    }
     uiNavigation({ to: ROUTE_DEFINITIONS })
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { path, component } = nextProps
-    if (!path || path === this.props.path) return
-    if (component.changes) return this.setState({ changes: component.changes }, () => this.handleNewSpec(component))
-    this.handleNewSpec(component)
   }
 
   // Get the data for the current definition
@@ -236,15 +233,26 @@ export class FullDetailPage extends Component {
 }
 
 function mapStateToProps(state, props) {
+  const { currentDefinition } = props
+
   const path = Definition.getPathFromUrl(props)
   const component = props.component || Definition.getDefinitionEntity(path)
-  const previewDefinition = Definition.getDefinitionPreview(state)
+
+  let previewDefinition, definition
+  if (currentDefinition.otherDefinition) {
+    previewDefinition = Contribution.getChangesFromPreview(currentDefinition.otherDefinition, currentDefinition)
+    definition = { item: currentDefinition.otherDefinition }
+  } else {
+    previewDefinition = Definition.getDefinitionPreview(state)
+    definition = state.ui.inspect.definition && cloneDeep(state.ui.inspect.definition)
+  }
+
   return {
     path,
     component,
     filterValue: state.ui.inspect.filter && cloneDeep(state.ui.inspect.filter),
     token: state.session.token,
-    definition: state.ui.inspect.definition && cloneDeep(state.ui.inspect.definition),
+    definition,
     curation: state.ui.inspect.curation && cloneDeep(state.ui.inspect.curation),
     harvest: state.ui.inspect.harvested && cloneDeep(state.ui.inspect.harvested),
     previewDefinition
