@@ -239,7 +239,8 @@ function mapStateToProps(state, props) {
   const component = props.component || Definition.getDefinitionEntity(path)
 
   let previewDefinition, definition
-  if (currentDefinition.otherDefinition) {
+
+  if (currentDefinition && currentDefinition.otherDefinition) {
     previewDefinition = Contribution.getChangesFromPreview(currentDefinition.otherDefinition, currentDefinition)
     definition = { item: currentDefinition.otherDefinition }
   } else {
