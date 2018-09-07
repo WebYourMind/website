@@ -9,6 +9,7 @@ import { ComponentList, Section, ContributePrompt } from './'
 import { uiBrowseUpdateFilterList } from '../actions/ui'
 import EntitySpec from '../utils/entitySpec'
 import { set, get, find, filter, sortBy } from 'lodash'
+import compact from 'lodash/compact'
 import FullDetailPage from './FullDetailView/FullDetailPage'
 import Definition from '../utils/definition'
 
@@ -160,6 +161,7 @@ export default class AbstractPageDefinitions extends Component {
         set(result, change, component.changes[change])
         return result
       }, {})
+      if (patchChanges.files) patchChanges.files = compact(patchChanges.files)
       if (patch) {
         patch.revisions[revisionNumber] = patchChanges
       } else {
