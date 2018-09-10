@@ -59,7 +59,7 @@ class CopyrightsRenderer extends Component {
   onSave = () => this.props.onSave(this.state.values.map(item => item.value))
 
   render() {
-    const { readOnly, container, classIfDifferent, placement } = this.props
+    const { readOnly, container, placement } = this.props
     const { hasChanges, values, showAddRow } = this.state
 
     if (!values.length && readOnly) return null
@@ -89,10 +89,7 @@ class CopyrightsRenderer extends Component {
           />
         }
       >
-        <div className="copyrightContainer">
-          {!readOnly && <i className="fas fa-pencil-alt editable-marker" />}
-          <span className={classIfDifferent}>{values && values[0] ? values[0].value : null}</span>
-        </div>
+        <div>{values[0] ? values[0].value : null}</div>
       </OverlayTrigger>
     )
   }
