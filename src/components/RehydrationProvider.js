@@ -34,10 +34,7 @@ const transformRemoveFetchErr = createTransform(state => omit(state, ['isFetchin
 })
 
 export default class RehydrationDelayedProvider extends Component {
-  constructor(props) {
-    super(props)
-    this.state = { rehydrated: false }
-  }
+  state = { rehydrated: false }
 
   componentWillMount() {
     persistStore(store, { whitelist: ['session'], transforms: [transformRemoveFetchErr] }, () => {
