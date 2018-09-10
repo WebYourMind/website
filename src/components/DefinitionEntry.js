@@ -244,30 +244,12 @@ export default class DefinitionEntry extends React.Component {
     return value ? value.split(',').map(v => v.trim()) : null
   }
 
-  printArray(value) {
-    return value ? value.join(', ') : null
-  }
-
-  printDate(value) {
-    return value ? moment(value).format('YYYY-MM-DD') : null
-  }
-
-  parseDate(value) {
-    return moment(value)
-  }
-
   printCoordinates(value) {
     return value ? value.url : null
   }
 
-  renderLabel(text, editable = false) {
-    return (
-      <p>
-        <b>
-          {text} <i className={false ? 'fas fa-pencil-alt' : ''} />
-        </b>
-      </p>
-    )
+  renderLabel(text) {
+    return <b>{text}</b>
   }
 
   renderPanel(rawDefinition) {
@@ -342,8 +324,8 @@ export default class DefinitionEntry extends React.Component {
                   extraClass={this.classIfDifferent('described.releaseDate')}
                   readOnly={readOnly}
                   type="date"
-                  initialValue={this.printDate(this.getOriginalValue('described.releaseDate'))}
-                  value={this.printDate(this.getValue('described.releaseDate'))}
+                  initialValue={Contribution.printDate(this.getOriginalValue('described.releaseDate'))}
+                  value={Contribution.printDate(this.getValue('described.releaseDate'))}
                   onChange={this.fieldChange('described.releaseDate')}
                   validator={value => true}
                   placeholder={'YYYY-MM-DD'}
