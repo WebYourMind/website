@@ -86,7 +86,7 @@ class CopyrightsRenderer extends Component {
             />
           }
         >
-          <div>{values && values[0] ? values[0].value : null}</div>
+          <div>{values[0] ? values[0].value : null}</div>
         </OverlayTrigger>
       </div>
     )
