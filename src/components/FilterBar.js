@@ -19,7 +19,6 @@ export default class FilterBar extends Component {
   constructor(props) {
     super(props)
     this.onChange = this.onChange.bind(this)
-    this.filter = this.filter.bind(this)
   }
 
   onChange(values) {
