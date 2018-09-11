@@ -4,7 +4,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import isNumber from 'lodash/isNumber'
-import isEqual from 'lodash/isEqual'
 import { OverlayTrigger } from 'react-bootstrap'
 
 import PopoverRenderer from './PopoverRenderer'
@@ -99,10 +98,7 @@ CopyrightsRenderer.propTypes = {
   /**
    * item to show
    */
-  item: PropTypes.shape({
-    value: PropTypes.array
-  }).isRequired,
-
+  item: PropTypes.array,
   onSave: PropTypes.func,
   readOnly: PropTypes.bool,
   container: PropTypes.instanceOf(Element),

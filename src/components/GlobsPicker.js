@@ -10,7 +10,6 @@ import Icon from 'antd/lib/icon'
 export default class GlobPicker extends Component {
   static propTypes = {
     globs: PropTypes.oneOfType([PropTypes.string, PropTypes.array]).isRequired,
-    onBlur: PropTypes.func,
     onChange: PropTypes.func,
     readOnly: PropTypes.bool
   }

@@ -192,7 +192,7 @@ export class FullDetailPage extends Component {
         width={'85%'}
         className="fullDetaiView__modal"
       >
-        {visible ? (
+        {visible && (
           <FullDetailComponent
             curation={curation}
             definition={definition}
@@ -206,7 +206,7 @@ export class FullDetailPage extends Component {
             previewDefinition={previewDefinition}
             changes={changes}
           />
-        ) : null}
+        )}
       </Modal>
     ) : (
       <Grid>
