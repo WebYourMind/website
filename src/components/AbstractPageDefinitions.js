@@ -265,8 +265,7 @@ export default class AbstractPageDefinitions extends Component {
     this.props.dispatch(this.updateList({ transform: this.createTransform(this.state.activeSort, activeFilters) }))
   }
 
-  transform(list, sort, filters) {
-    let newList = list
+  transform(newList, sort, filters) {
     if (sort) {
       const sortFunction = this.getSort(sort)
       newList = this.sortList(newList, sortFunction)
