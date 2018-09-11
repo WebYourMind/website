@@ -65,7 +65,7 @@ export class FullDetailPage extends Component {
   }
 
   componentDidMount() {
-    const { path, uiNavigation, component } = this.props
+    const { uiNavigation, component } = this.props
     if (component.changes) {
       this.setState({ changes: component.changes }, () => this.handleNewSpec(component))
     } else {
@@ -192,7 +192,7 @@ export class FullDetailPage extends Component {
         width={'85%'}
         className="fullDetaiView__modal"
       >
-        {visible ? (
+        {visible && (
           <FullDetailComponent
             curation={curation}
             definition={definition}
@@ -206,7 +206,7 @@ export class FullDetailPage extends Component {
             previewDefinition={previewDefinition}
             changes={changes}
           />
-        ) : null}
+        )}
       </Modal>
     ) : (
       <Grid>
