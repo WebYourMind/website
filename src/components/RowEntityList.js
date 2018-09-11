@@ -28,6 +28,7 @@ export default class RowEntityList extends React.Component {
     super(props)
     this.state = { expanded: [] }
     this.length = this.length.bind(this)
+    this.isRowLoaded = this.isRowLoaded.bind(this)
   }
 
   render() {
