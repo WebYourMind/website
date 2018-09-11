@@ -75,6 +75,7 @@ export default class AbstractPageDefinitions extends Component {
     this.transform = this.transform.bind(this)
     this.onRemoveAll = this.onRemoveAll.bind(this)
     this.collapseAll = this.collapseAll.bind(this)
+    this.contributeModal = React.createRef()
   }
 
   getDefinition(component) {
@@ -400,7 +401,7 @@ export default class AbstractPageDefinitions extends Component {
 
     return (
       <Grid className="main-container">
-        <ContributePrompt ref="contributeModal" actionHandler={this.doContribute} />
+        <ContributePrompt ref={ref => (this.contributeModal = ref)} actionHandler={this.doContribute} />
         {this.renderSearchBar()}
         <Section name={this.tableTitle()} actionButton={this.renderButtons()}>
           {this.dropZone(

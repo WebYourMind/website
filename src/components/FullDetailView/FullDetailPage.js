@@ -48,6 +48,7 @@ export class FullDetailPage extends Component {
     this.handleClose = this.handleClose.bind(this)
     this.onChange = this.onChange.bind(this)
     this.close = this.close.bind(this)
+    this.contributeModal = React.createRef()
   }
 
   static propTypes = {
@@ -226,7 +227,7 @@ export class FullDetailPage extends Component {
             </Button>
           }
         />
-        <ContributePrompt ref="contributeModal" actionHandler={this.doContribute} />
+        <ContributePrompt ref={ref => (this.contributeModal = ref)} actionHandler={this.doContribute} />
       </Grid>
     )
   }
