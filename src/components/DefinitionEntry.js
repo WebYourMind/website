@@ -27,27 +27,6 @@ export default class DefinitionEntry extends React.Component {
 
   static defaultProps = {}
 
-  inspectComponent(component, event) {
-    event.stopPropagation()
-    const action = this.props.onInspect
-    action && action(component)
-  }
-
-  curateComponent(component, event) {
-    event.stopPropagation()
-    const action = this.props.onCurate
-    action && action(component)
-  }
-
-  renderButtonWithTip(button, tip) {
-    const toolTip = <Tooltip id="tooltip">{tip}</Tooltip>
-    return (
-      <OverlayTrigger placement="top" overlay={toolTip}>
-        {button}
-      </OverlayTrigger>
-    )
-  }
-
   isSourceComponent(component) {
     return ['github', 'sourcearchive'].includes(component.provider)
   }
@@ -79,6 +58,7 @@ export default class DefinitionEntry extends React.Component {
       ? then_
       : else_
   }
+
   classIfDifferent(field) {
     return this.ifDifferent(field, this.props.classOnDifference, '')
   }
@@ -195,21 +175,6 @@ export default class DefinitionEntry extends React.Component {
     }
   }
 
-  getSourceUrl(definition) {
-    const location = get(definition, 'described.sourceLocation')
-    if (!location) return ''
-    switch (location.provider) {
-      case 'github':
-        return (
-          <a href={`${location.url}/commit/${location.revision}`} target="_blank">
-            {location.revision}
-          </a>
-        )
-      default:
-        return ''
-    }
-  }
-
   getPercentage(count, total) {
     return Math.round(((count || 0) / total) * 100)
   }
@@ -244,10 +209,6 @@ export default class DefinitionEntry extends React.Component {
         attribution: { parties, unknown: attributionUnknown }
       }
     }
-  }
-
-  parseArray(value) {
-    return value ? value.split(',').map(v => v.trim()) : null
   }
 
   printCoordinates(value) {
