@@ -22,7 +22,14 @@ export function getDefinitionsAction(token, entities) {
   return dispatch => {
     const actions = asyncActions(DEFINITION_BODIES)
     dispatch(actions.start())
-    return getDefinitions(token, entities).then(
+    const chunk = 100
+    let temparray
+    let Promises = []
+    for (let i = 0, j = entities.length; i < j; i += chunk) {
+      temparray = entities.slice(i, i + chunk)
+      Promises.push(getDefinitions(token, temparray))
+    }
+    return Promise.all(Promises).then(
       result => dispatch(actions.success({ add: result })),
       error => dispatch(actions.error(error))
     )
