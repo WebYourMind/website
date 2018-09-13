@@ -249,10 +249,15 @@ class PageDefinitions extends AbstractPageDefinitions {
     if (listSpec.sortBy) this.setState({ activeSort: listSpec.sortBy })
     if (listSpec.sortBy || listSpec.filter) this.setState({ sequence: this.state.sequence + 1 })
 
-    const toAdd = listSpec.coordinates.map(component => EntitySpec.validateAndCreate(component)).filter(e => e)
+    const toAdd = listSpec.coordinates.map(component => EntitySpec.validateAndCreate(component))
     dispatch(uiBrowseUpdateList({ addAll: toAdd }))
+    const chunk = 100
+    let temparray
     const missingDefinitions = toAdd.map(spec => spec.toPath()).filter(path => !definitions.entries[path])
-    await dispatch(getDefinitionsAction(token, missingDefinitions))
+    for (let i = 0, j = missingDefinitions.length; i < j; i += chunk) {
+      temparray = missingDefinitions.slice(i, i + chunk)
+      await dispatch(getDefinitionsAction(token, temparray))
+    }
     dispatch(
       uiBrowseUpdateList({
         transform: this.createTransform.call(
