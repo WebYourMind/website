@@ -25,7 +25,7 @@ export function getDefinitionsAction(token, entities) {
     dispatch(actions.start())
     const Promises = chunk(entities, 100).map(chunk => getDefinitions(token, chunk))
     return Promise.all(Promises).then(
-      result => dispatch(actions.success({ add: result })),
+      result => result.map(def => dispatch(actions.success({ add: def }))),
       error => dispatch(actions.error(error))
     )
   }
