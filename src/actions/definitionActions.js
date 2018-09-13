@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import chunk from 'lodash/chunk'
 import { asyncActions } from './'
 import { getDefinitions, getDefinition, previewDefinition, getDefinitionSuggestions } from '../api/clearlyDefined'
 
@@ -22,13 +23,7 @@ export function getDefinitionsAction(token, entities) {
   return dispatch => {
     const actions = asyncActions(DEFINITION_BODIES)
     dispatch(actions.start())
-    const chunk = 100
-    let temparray
-    let Promises = []
-    for (let i = 0, j = entities.length; i < j; i += chunk) {
-      temparray = entities.slice(i, i + chunk)
-      Promises.push(getDefinitions(token, temparray))
-    }
+    const Promises = chunk(entities, 100).map(chunk => getDefinitions(token, chunk))
     return Promise.all(Promises).then(
       result => dispatch(actions.success({ add: result })),
       error => dispatch(actions.error(error))
