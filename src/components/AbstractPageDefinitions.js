@@ -146,10 +146,14 @@ export default class AbstractPageDefinitions extends Component {
     return entry.changes && Object.getOwnPropertyNames(entry.changes).length
   }
 
-  doContribute(description) {
+  /**
+   * Dispatch the action to save a contribution
+   * @param  {} constributionInfo object that describes the contribution
+   */
+  doContribute(constributionInfo) {
     const { dispatch, token, components } = this.props
     const patches = this.buildContributeSpec(components.list)
-    const spec = { description: description, patches }
+    const spec = { constributionInfo, patches }
     dispatch(curateAction(token, spec))
   }
 

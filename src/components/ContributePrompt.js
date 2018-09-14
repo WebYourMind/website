@@ -9,7 +9,8 @@ import { FieldGroup } from './'
 export default class ContributePrompt extends Component {
   constructor(props) {
     super(props)
-    this.state = { show: false }
+    this.state = { show: false, summary: '', details: '', supportingInfo: '', type: 'select' }
+    this.canSubmit = this.canSubmit.bind(this)
     this.handleChange = this.handleChange.bind(this)
     this.okHandler = this.okHandler.bind(this)
     this.close = this.close.bind(this)
@@ -22,7 +23,7 @@ export default class ContributePrompt extends Component {
   static defaultProps = {}
 
   open() {
-    this.setState({ show: true, description: '' })
+    this.setState({ show: true, summary: '', details: '', supportingInfo: '', type: 'select' })
   }
 
   close() {
@@ -31,8 +32,8 @@ export default class ContributePrompt extends Component {
 
   okHandler(e) {
     this.close()
-    const { description } = this.state
-    this.props.actionHandler(description)
+    const { show, ...constributionInfo } = this.state
+    this.props.actionHandler(constributionInfo)
   }
 
   handleChange(event) {
@@ -42,8 +43,14 @@ export default class ContributePrompt extends Component {
     this.setState({ ...this.state, [name]: value })
   }
 
+  canSubmit() {
+    const { details, supportingInfo, summary, type } = this.state
+
+    return summary.length > 10 && type !== 'select' && details.length > 10 && supportingInfo.length > 10
+  }
+
   render() {
-    const { description, show } = this.state
+    const { details, supportingInfo, summary, show, type, resolution } = this.state
     return (
       <Modal show={show} onHide={this.close}>
         <Form>
@@ -52,20 +59,74 @@ export default class ContributePrompt extends Component {
           </Modal.Header>
           <Modal.Body>
             <FieldGroup
-              name="description"
+              name="summary"
               type="text"
-              label="Description"
-              value={description || ''}
+              label="Summary"
+              value={summary || ''}
               onChange={this.handleChange}
-              placeholder="Short description of changes. Like a commit message..."
+              placeholder="Short summary of changes. Like a commit message..."
               maxLength={100}
               componentClass="textarea"
-              rows="10"
+              rows="2"
+              required
+            />
+            <FieldGroup
+              name="type"
+              label="Type"
+              value={type || 'select'}
+              onChange={this.handleChange}
+              placeholder="select"
+              componentClass="select"
+              required
+            >
+              <option value="select" disabled>
+                select
+              </option>
+              <option value="missing">Missing</option>
+              <option value="incorrect">Incorrect</option>
+              <option value="incomplete">Incomplete</option>
+              <option value="ambiguous">Ambiguous</option>
+              <option value="other">Other</option>
+            </FieldGroup>
+            <FieldGroup
+              name="details"
+              type="text"
+              label="Details"
+              value={details || ''}
+              onChange={this.handleChange}
+              placeholder="Describe here the problem(s) being addressed"
+              maxLength={300}
+              componentClass="textarea"
+              rows="3"
+              required
+            />
+            <FieldGroup
+              name="supportingInfo"
+              type="text"
+              label="Supporting Info"
+              value={supportingInfo || ''}
+              onChange={this.handleChange}
+              placeholder="References to docs where the new data was found, pointer to public conversations with the affected project team"
+              maxLength={300}
+              componentClass="textarea"
+              rows="3"
+              required
+            />
+            <FieldGroup
+              name="resolution"
+              type="text"
+              label="Resolution"
+              value={resolution || ''}
+              onChange={this.handleChange}
+              placeholder="What does this PR do to address the issue"
+              maxLength={300}
+              componentClass="textarea"
+              rows="3"
             />
           </Modal.Body>
           <Modal.Footer>
             <Button onClick={this.close}>Cancel</Button>
-            <Button bsStyle="success" type="button" onClick={this.okHandler}>
+            <Button bsStyle="success" disabled={!this.canSubmit()} type="button" onClick={this.okHandler}>
               OK
             </Button>
           </Modal.Footer>

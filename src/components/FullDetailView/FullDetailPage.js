@@ -86,13 +86,13 @@ export class FullDetailPage extends Component {
 
   /**
    * Dispatch the action to save a contribution
-   * @param  {} description string that describes the contribution
+   * @param  {} constributionInfo object that describes the contribution
    */
-  doContribute(description) {
+  doContribute(constributionInfo) {
     const { token, component, curateAction } = this.props
     const { changes } = this.state
     const patches = Contribution.buildContributeSpec([], component, changes)
-    const spec = { description: description, patches }
+    const spec = { constributionInfo, patches }
     curateAction(token, spec)
   }
 
