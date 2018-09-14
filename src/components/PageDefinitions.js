@@ -10,6 +10,7 @@ import base64js from 'base64-js'
 import { saveAs } from 'file-saver'
 import notification from 'antd/lib/notification'
 import AntdButton from 'antd/lib/button'
+import chunk from 'lodash/chunk'
 import { FilterBar } from './'
 import { uiNavigation, uiBrowseUpdateList, uiNotificationNew } from '../actions/ui'
 import { getDefinitionsAction } from '../actions/definitionActions'
@@ -93,14 +94,23 @@ class PageDefinitions extends AbstractPageDefinitions {
     this.onRemoveAll()
     const definitions = this.buildSaveSpec(components.list)
 
-    definitions.forEach(definition => {
-      const path = definition.toPath()
+    const definitionsToGet = []
+    definitions.map(definition => {
+      definitionsToGet.push(definition.toPath())
       delete definition.changes
-      dispatch(getDefinitionsAction(token, [path]))
     })
 
+    const chunks = chunk(definitionsToGet, 100)
+    let todo = chunks.length
+    for (let i = 0; i < chunks.length; i++) {
+      dispatch(getDefinitionsAction(token, chunks[i])).then(() => {
+        if (--todo === 0) {
+          dispatch(uiNotificationNew({ type: 'info', message: 'All components have been refreshed', timeout: 3000 }))
+        }
+      })
+    }
+
     dispatch(uiBrowseUpdateList({ addAll: definitions }))
-    dispatch(uiNotificationNew({ type: 'info', message: 'All components have been refreshed', timeout: 3000 }))
   }
 
   renderButtons() {
@@ -243,7 +253,7 @@ class PageDefinitions extends AbstractPageDefinitions {
     return false
   }
 
-  async loadFromListSpec(listSpec) {
+  loadFromListSpec(listSpec) {
     const { dispatch, token, definitions } = this.props
     if (listSpec.filter) this.setState({ activeFilters: listSpec.filter })
     if (listSpec.sortBy) this.setState({ activeSort: listSpec.sortBy })
@@ -252,7 +262,16 @@ class PageDefinitions extends AbstractPageDefinitions {
     const toAdd = listSpec.coordinates.map(component => EntitySpec.validateAndCreate(component))
     dispatch(uiBrowseUpdateList({ addAll: toAdd }))
     const missingDefinitions = toAdd.map(spec => spec.toPath()).filter(path => !definitions.entries[path])
-    await dispatch(getDefinitionsAction(token, missingDefinitions))
+    const chunks = chunk(missingDefinitions, 100)
+    let todo = chunks.length
+    for (let i = 0; i < chunks.length; i++) {
+      dispatch(getDefinitionsAction(token, chunks[i])).then(() => {
+        if (--todo === 0) {
+          dispatch(uiNotificationNew({ type: 'info', message: 'All components have been loaded', timeout: 3000 }))
+        }
+      })
+    }
+
     dispatch(
       uiBrowseUpdateList({
         transform: this.createTransform.call(
