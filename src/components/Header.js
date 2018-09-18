@@ -10,7 +10,7 @@ import { ROUTE_ROOT } from '../utils/routingConstants'
 import { Nav, Navbar, NavItem } from 'react-bootstrap'
 import { LinkContainer, IndexLinkContainer } from 'react-router-bootstrap'
 import { filter, intersection } from 'lodash'
-import { url } from '../api/clearlyDefined'
+import { doLogin } from '../utils/auth'
 
 class Header extends Component {
   constructor(props) {
@@ -27,14 +27,9 @@ class Header extends Component {
 
   doLogin(e) {
     e.preventDefault()
-    window.open(url('auth/github'))
-    const tokenListener = e => {
-      if (e.data.type === 'github-token') {
-        this.props.dispatch(login(e.data.token, e.data.permissions, e.data.username))
-        window.removeEventListener('message', tokenListener)
-      }
-    }
-    window.addEventListener('message', tokenListener)
+    doLogin((token, permissions, username) => {
+      this.props.dispatch(login(token, permissions, username))
+    })
   }
 
   gotoDocs() {

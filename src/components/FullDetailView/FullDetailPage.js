@@ -20,10 +20,12 @@ import {
   uiCurateGetDefinitionPreview,
   uiCurateResetDefinitionPreview
 } from '../../actions/ui'
-import { ROUTE_DEFINITIONS } from '../../utils/routingConstants'
 import { curateAction } from '../../actions/curationActions'
+import { login } from '../../actions/sessionActions'
+import { ROUTE_DEFINITIONS } from '../../utils/routingConstants'
 import Contribution from '../../utils/contribution'
 import Definition from '../../utils/definition'
+import { doLogin } from '../../utils/auth'
 import ContributePrompt from '../ContributePrompt'
 import FullDetailComponent from './FullDetailComponent'
 
@@ -43,6 +45,7 @@ export class FullDetailPage extends Component {
     }
     this.handleNewSpec = this.handleNewSpec.bind(this)
     this.doContribute = this.doContribute.bind(this)
+    this.doLogin = this.doLogin.bind(this)
     this.doPromptContribute = this.doPromptContribute.bind(this)
     this.handleSave = this.handleSave.bind(this)
     this.handleClose = this.handleClose.bind(this)
@@ -178,8 +181,15 @@ export class FullDetailPage extends Component {
     )
   }
 
+  doLogin(e) {
+    e.preventDefault()
+    doLogin((token, permissions, username) => {
+      this.props.login(token, permissions, username)
+    })
+  }
+
   render() {
-    const { path, definition, curation, harvest, modalView, visible, previewDefinition, readOnly } = this.props
+    const { path, definition, curation, harvest, modalView, visible, previewDefinition, readOnly, session } = this.props
     const { changes } = this.state
     return modalView ? (
       <Modal
@@ -226,7 +236,12 @@ export class FullDetailPage extends Component {
             </Button>
           }
         />
-        <ContributePrompt ref="contributeModal" actionHandler={this.doContribute} />
+        <ContributePrompt
+          ref="contributeModal"
+          session={session}
+          onLogin={this.doLogin}
+          actionHandler={this.doContribute}
+        />
       </Grid>
     )
   }
@@ -253,6 +268,7 @@ function mapStateToProps(state, props) {
     component,
     filterValue: state.ui.inspect.filter && cloneDeep(state.ui.inspect.filter),
     token: state.session.token,
+    session: state.session,
     definition,
     curation: state.ui.inspect.curation && cloneDeep(state.ui.inspect.curation),
     harvest: state.ui.inspect.harvested && cloneDeep(state.ui.inspect.harvested),
@@ -263,6 +279,7 @@ function mapStateToProps(state, props) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
+      login,
       uiInspectGetDefinition,
       uiInspectGetCuration,
       uiInspectGetHarvested,

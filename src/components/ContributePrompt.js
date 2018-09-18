@@ -18,7 +18,12 @@ export default class ContributePrompt extends Component {
   }
 
   static propTypes = {
-    actionHandler: PropTypes.func.isRequired
+    actionHandler: PropTypes.func.isRequired,
+    onLogin: PropTypes.func.isRequired,
+    session: PropTypes.shape({
+      isAnonymous: PropTypes.bool,
+      username: PropTypes.string
+    }).isRequired
   }
 
   static defaultProps = {}
@@ -52,6 +57,8 @@ export default class ContributePrompt extends Component {
 
   render() {
     const { details, summary, show, type, resolution } = this.state
+    const { session, onLogin } = this.props
+
     return (
       <Modal show={show} onHide={this.close}>
         <Form>
@@ -60,6 +67,19 @@ export default class ContributePrompt extends Component {
           </Modal.Header>
           <Modal.Body>
             <div>
+              <FormGroup className="inlineBlock">
+                <ControlLabel>Contributor</ControlLabel>
+                <div>
+                  <FormControl.Static style={{ display: 'inline-block' }}>
+                    {session.isAnonymous ? 'anonymous' : `@${session.username}`}
+                  </FormControl.Static>{' '}
+                  {session.isAnonymous && (
+                    <Button bsStyle="success" onClick={onLogin}>
+                      Login
+                    </Button>
+                  )}
+                </div>
+              </FormGroup>
               <FieldGroup
                 className="inlineBlock pull-right"
                 name="type"

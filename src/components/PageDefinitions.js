@@ -272,7 +272,8 @@ function mapStateToProps(state, ownProps) {
     path: ownProps.location.pathname.slice(ownProps.match.url.length + 1),
     filterOptions: state.ui.browse.filterList,
     components: state.ui.browse.componentList,
-    definitions: state.definition.bodies
+    definitions: state.definition.bodies,
+    session: state.session
   }
 }
 export default connect(mapStateToProps)(PageDefinitions)
