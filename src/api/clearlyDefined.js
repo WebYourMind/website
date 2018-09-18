@@ -47,6 +47,11 @@ export function harvest(token, spec) {
   return post(url(HARVEST), token, spec)
 }
 
+export function getCurationList(token, entity) {
+  console.log(entity)
+  return get(url(`${CURATIONS}/${entity.toPath()}`), token)
+}
+
 export function getCuration(token, entity) {
   return get(url(`${CURATIONS}/${entity.toPath()}`), token)
 }
