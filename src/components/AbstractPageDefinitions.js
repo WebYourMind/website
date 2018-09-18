@@ -75,8 +75,6 @@ export default class AbstractPageDefinitions extends Component {
     this.transform = this.transform.bind(this)
     this.onRemoveAll = this.onRemoveAll.bind(this)
     this.collapseAll = this.collapseAll.bind(this)
-    this.revertAll = this.revertAll.bind(this)
-    this.revertDefinition = this.revertDefinition.bind(this)
   }
 
   getDefinition(component) {
@@ -373,10 +371,6 @@ export default class AbstractPageDefinitions extends Component {
     this.incrementSequence()
   }
 
-  revertAll() {}
-
-  revertDefinition(id) {}
-
   updateList() {
     throw Error('This method has to be implemented in a sub class')
   }
@@ -404,7 +398,6 @@ export default class AbstractPageDefinitions extends Component {
   render() {
     const { components, definitions, token } = this.props
     const { sequence, showFullDetail, path, currentComponent, currentDefinition } = this.state
-
     return (
       <Grid className="main-container">
         <ContributePrompt ref="contributeModal" actionHandler={this.doContribute} />

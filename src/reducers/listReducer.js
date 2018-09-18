@@ -38,6 +38,8 @@ const update = (list, item, newValue, comparator = null) => {
   return result
 }
 
+const updateAll = list => {}
+
 const transform = (list, transforms) => {
   let newList = list
   for (let transform in transforms) {
@@ -136,6 +138,15 @@ export default (name = '', transformer = null, comparator = null) => {
         sequence: ++state.sequence,
         list: newList,
         transformedList: transformer ? transformer(newList) : newList
+      }
+    }
+
+    if (result.updateAll) {
+      return {
+        ...state,
+        sequence: ++state.sequence,
+        list: result.updateAll,
+        transformedList: transformer ? transformer(result.updateAll) : result.updateAll
       }
     }
 

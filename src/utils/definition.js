@@ -1,6 +1,7 @@
 import Contribution from './contribution'
 import EntitySpec from './entitySpec'
 import { get } from 'lodash'
+import { uiBrowseUpdateList } from '../actions/ui'
 
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
@@ -37,5 +38,12 @@ export default class Definition {
    * @param  {string} definition specific definition, if null the function will check all the definitions
    * @param  {{}} data object containing the specific values to revert, if null all the changes will be removed
    */
-  static revert(components, definition, data) {}
+  static revert(components, definition, data, dispatch) {
+    if (!components) return
+    const componentsWithoutChanges = components.map(component => {
+      const { changes, ...withoutChanges } = component
+      return withoutChanges
+    })
+    dispatch(uiBrowseUpdateList({ updateAll: componentsWithoutChanges }))
+  }
 }

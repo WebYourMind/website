@@ -17,6 +17,7 @@ import { ROUTE_DEFINITIONS, ROUTE_SHARE } from '../utils/routingConstants'
 import EntitySpec from '../utils/entitySpec'
 
 import AbstractPageDefinitions from './AbstractPageDefinitions'
+import Definition from '../utils/definition'
 
 class PageDefinitions extends AbstractPageDefinitions {
   constructor(props) {
@@ -24,6 +25,7 @@ class PageDefinitions extends AbstractPageDefinitions {
     this.onDrop = this.onDrop.bind(this)
     this.doSave = this.doSave.bind(this)
     this.doSaveAsUrl = this.doSaveAsUrl.bind(this)
+    this.revertAll = this.revertAll.bind(this)
   }
 
   componentDidMount() {
@@ -103,10 +105,49 @@ class PageDefinitions extends AbstractPageDefinitions {
     dispatch(uiNotificationNew({ type: 'info', message: 'All components have been refreshed', timeout: 3000 }))
   }
 
+  revertAll() {
+    this.revert(null, 'Are you sure to revert all the unsaved changes from all the active definitions?')
+  }
+
+  revertDefinition(definition) {
+    this.revert(definition, 'Are you sure to revert all the unsaved changes from the selected definition?')
+  }
+
+  revert(definition, description, values) {
+    const { components, dispatch } = this.props
+    const key = `open${Date.now()}`
+    const NotificationButtons = (
+      <Fragment>
+        <AntdButton
+          type="primary"
+          size="small"
+          onClick={() => {
+            Definition.revert(components.list, definition, values, dispatch)
+            this.incrementSequence()
+            notification.close(key)
+          }}
+        >
+          Revert
+        </AntdButton>{' '}
+        <AntdButton type="secondary" size="small" onClick={() => notification.close(key)}>
+          Dismiss
+        </AntdButton>
+      </Fragment>
+    )
+    notification.open({
+      message: 'Unsaved Changes',
+      description,
+      btn: NotificationButtons,
+      key,
+      onClose: notification.close(key),
+      duration: 0
+    })
+  }
+
   renderButtons() {
     return (
       <div className="pull-right">
-        <Button bsStyle="default" disabled={!this.hasComponents()} onClick={this.doRevertAll}>
+        <Button bsStyle="default" disabled={!this.hasChanges()} onClick={this.revertAll}>
           Revert All
         </Button>
         <Button bsStyle="default" disabled={!this.hasComponents()} onClick={this.doRefreshAll}>
