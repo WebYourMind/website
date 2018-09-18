@@ -79,11 +79,11 @@ export class FullDetailPage extends Component {
 
   // Get the data for the current definition
   handleNewSpec(component) {
-    const { token, uiInspectGetDefinition, uiInspectGetCuration, uiInspectGetHarvested } = this.props
+    const { session, uiInspectGetDefinition, uiInspectGetCuration, uiInspectGetHarvested } = this.props
     if (!component) return
-    uiInspectGetDefinition(token, component)
-    uiInspectGetCuration(token, component)
-    uiInspectGetHarvested(token, component)
+    uiInspectGetDefinition(session.token, component)
+    uiInspectGetCuration(session.token, component)
+    uiInspectGetHarvested(session.token, component)
     this.previewDefinition(component)
   }
 
@@ -92,16 +92,16 @@ export class FullDetailPage extends Component {
    * @param  {} constributionInfo object that describes the contribution
    */
   doContribute(constributionInfo) {
-    const { token, component, curateAction } = this.props
+    const { session, component, curateAction } = this.props
     const { changes } = this.state
     const patches = Contribution.buildContributeSpec([], component, changes)
     const spec = { constributionInfo, patches }
-    curateAction(token, spec)
+    curateAction(session.token, spec)
   }
 
   // Action that calls the remote API that return a preview of the definition
   previewDefinition(nextComponent) {
-    const { token, component, uiCurateGetDefinitionPreview } = this.props
+    const { session, component, uiCurateGetDefinitionPreview } = this.props
     const { changes } = this.state
     if (
       (!component || isEmpty(component.changes)) &&
@@ -111,7 +111,7 @@ export class FullDetailPage extends Component {
       return false
     const previewComponent = nextComponent ? nextComponent : component
     const patches = Contribution.buildPatch([], previewComponent, changes)
-    uiCurateGetDefinitionPreview(token, previewComponent, patches)
+    uiCurateGetDefinitionPreview(session.token, previewComponent, patches)
   }
 
   // Shows the Modal to save a Contribution
@@ -267,7 +267,6 @@ function mapStateToProps(state, props) {
     path,
     component,
     filterValue: state.ui.inspect.filter && cloneDeep(state.ui.inspect.filter),
-    token: state.session.token,
     session: state.session,
     definition,
     curation: state.ui.inspect.curation && cloneDeep(state.ui.inspect.curation),
