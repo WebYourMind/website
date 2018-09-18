@@ -10,7 +10,7 @@ import { FieldGroup } from './'
 export default class ContributePrompt extends Component {
   constructor(props) {
     super(props)
-    this.state = { show: false, summary: '', details: '', type: 'select' }
+    this.state = { show: false, summary: '', details: '', resolution: '', type: 'select' }
     this.canSubmit = this.canSubmit.bind(this)
     this.handleChange = this.handleChange.bind(this)
     this.okHandler = this.okHandler.bind(this)
@@ -29,7 +29,13 @@ export default class ContributePrompt extends Component {
   static defaultProps = {}
 
   open() {
-    this.setState({ show: true, summary: '', details: '', type: 'select' })
+    this.setState({
+      show: true,
+      summary: '',
+      details: '',
+      resolution: '',
+      type: 'select'
+    })
   }
 
   close() {
@@ -50,9 +56,9 @@ export default class ContributePrompt extends Component {
   }
 
   canSubmit() {
-    const { details, summary, type } = this.state
+    const { details, resolution, summary, type } = this.state
 
-    return summary.length > 10 && type !== 'select' && details.length > 10
+    return type !== 'select' && summary.length > 0 && details.length > 0 && resolution.length > 0
   }
 
   render() {
