@@ -106,6 +106,9 @@ class PageDefinitions extends AbstractPageDefinitions {
   renderButtons() {
     return (
       <div className="pull-right">
+        <Button bsStyle="default" disabled={!this.hasComponents()} onClick={this.doRevertAll}>
+          Revert All
+        </Button>
         <Button bsStyle="default" disabled={!this.hasComponents()} onClick={this.doRefreshAll}>
           Refresh
         </Button>
