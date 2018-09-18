@@ -30,4 +30,12 @@ export default class Definition {
     const effective = Math.ceil((get(definition, 'described.score', 0) + get(definition, 'licensed.score', 0)) / 2)
     return { tool, effective }
   }
+
+  /**
+   * Revert a list of definitions or a specific one, removing all the changes or only specific values
+   * @param  {[]} components list of definitions
+   * @param  {string} definition specific definition, if null the function will check all the definitions
+   * @param  {{}} data object containing the specific values to revert, if null all the changes will be removed
+   */
+  static revert(components, definition, data) {}
 }
