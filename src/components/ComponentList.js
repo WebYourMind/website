@@ -56,6 +56,12 @@ export default class ComponentList extends React.Component {
     onRemove && onRemove(component)
   }
 
+  revertComponent(component, event) {
+    event.stopPropagation()
+    const { onRevert } = this.props
+    onRevert && onRevert(component)
+  }
+
   inspectComponent(component, definition, event) {
     event.stopPropagation()
     const action = this.props.onInspect
@@ -127,6 +133,12 @@ export default class ComponentList extends React.Component {
               <i className="fas fa-search" />
             </Button>,
             'Dig into this definition'
+          )}
+          {this.renderButtonWithTip(
+            <Button className="list-fa-button" onClick={this.revertComponent.bind(this, component)}>
+              <i className="fas fa-undo" />
+            </Button>,
+            'Revert Changes of this Definition'
           )}
         </ButtonGroup>
         {!readOnly && <i className="fas fa-times list-remove" onClick={this.removeComponent.bind(this, component)} />}

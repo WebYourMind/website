@@ -26,6 +26,7 @@ class PageDefinitions extends AbstractPageDefinitions {
     this.doSave = this.doSave.bind(this)
     this.doSaveAsUrl = this.doSaveAsUrl.bind(this)
     this.revertAll = this.revertAll.bind(this)
+    this.revertDefinition = this.revertDefinition.bind(this)
   }
 
   componentDidMount() {

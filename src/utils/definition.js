@@ -1,6 +1,7 @@
 import Contribution from './contribution'
 import EntitySpec from './entitySpec'
-import { get } from 'lodash'
+import get from 'lodash/get'
+import isEqual from 'lodash/isEqual'
 import { uiBrowseUpdateList } from '../actions/ui'
 
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
@@ -35,14 +36,16 @@ export default class Definition {
   /**
    * Revert a list of definitions or a specific one, removing all the changes or only specific values
    * @param  {[]} components list of definitions
-   * @param  {string} definition specific definition, if null the function will check all the definitions
+   * @param  {{}} definition specific definition, if null the function will check all the definitions
    * @param  {{}} data object containing the specific values to revert, if null all the changes will be removed
    */
   static revert(components, definition, data, dispatch) {
     if (!components) return
     const componentsWithoutChanges = components.map(component => {
       const { changes, ...withoutChanges } = component
-      return withoutChanges
+      if (!definition) return withoutChanges
+      else if (isEqual(definition, EntitySpec.fromCoordinates(component))) return withoutChanges
+      else return component
     })
     dispatch(uiBrowseUpdateList({ updateAll: componentsWithoutChanges }))
   }

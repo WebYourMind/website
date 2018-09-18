@@ -411,6 +411,7 @@ export default class AbstractPageDefinitions extends Component {
                 listLength={get(components, 'headers.pagination.totalCount') || components.list.length}
                 listHeight={1000}
                 onRemove={this.onRemoveComponent}
+                onRevert={this.revertDefinition}
                 onChange={this.onChangeComponent}
                 onAddComponent={this.onAddComponent}
                 onInspect={this.onInspect}
