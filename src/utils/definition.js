@@ -39,14 +39,13 @@ export default class Definition {
    * @param  {{}} definition specific definition, if null the function will check all the definitions
    * @param  {{}} data object containing the specific values to revert, if null all the changes will be removed
    */
-  static revert(components, definition, data, dispatch) {
+  static revert(components, definition, data) {
     if (!components) return
-    const componentsWithoutChanges = components.map(component => {
+    return components.map(component => {
       const { changes, ...withoutChanges } = component
       if (!definition) return withoutChanges
       else if (isEqual(definition, EntitySpec.fromCoordinates(component))) return withoutChanges
       else return component
     })
-    dispatch(uiBrowseUpdateList({ updateAll: componentsWithoutChanges }))
   }
 }

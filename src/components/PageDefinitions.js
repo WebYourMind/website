@@ -11,13 +11,12 @@ import { saveAs } from 'file-saver'
 import notification from 'antd/lib/notification'
 import AntdButton from 'antd/lib/button'
 import { FilterBar } from './'
-import { uiNavigation, uiBrowseUpdateList, uiNotificationNew } from '../actions/ui'
+import { uiNavigation, uiBrowseUpdateList, uiNotificationNew, uiRevertDefinition } from '../actions/ui'
 import { getDefinitionsAction } from '../actions/definitionActions'
 import { ROUTE_DEFINITIONS, ROUTE_SHARE } from '../utils/routingConstants'
 import EntitySpec from '../utils/entitySpec'
 
 import AbstractPageDefinitions from './AbstractPageDefinitions'
-import Definition from '../utils/definition'
 
 class PageDefinitions extends AbstractPageDefinitions {
   constructor(props) {
@@ -115,7 +114,7 @@ class PageDefinitions extends AbstractPageDefinitions {
   }
 
   revert(definition, description, values) {
-    const { components, dispatch } = this.props
+    const { dispatch } = this.props
     const key = `open${Date.now()}`
     const NotificationButtons = (
       <Fragment>
@@ -123,7 +122,7 @@ class PageDefinitions extends AbstractPageDefinitions {
           type="primary"
           size="small"
           onClick={() => {
-            Definition.revert(components.list, definition, values, dispatch)
+            dispatch(uiRevertDefinition(definition, values))
             this.incrementSequence()
             notification.close(key)
           }}
@@ -136,7 +135,7 @@ class PageDefinitions extends AbstractPageDefinitions {
       </Fragment>
     )
     notification.open({
-      message: 'Unsaved Changes',
+      message: 'Confirm Revert?',
       description,
       btn: NotificationButtons,
       key,
