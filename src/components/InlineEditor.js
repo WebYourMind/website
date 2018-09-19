@@ -68,7 +68,8 @@ export default class InlineEditor extends React.Component {
   }
 
   render() {
-    const { onClick, readOnly } = this.props
+    const { onClick, readOnly, initialValue, value, onRevert } = this.props
+    const changed = initialValue !== value
     return (
       <span className="list-singleLine">
         {!readOnly && (
@@ -76,6 +77,9 @@ export default class InlineEditor extends React.Component {
             className="fas fa-pencil-alt editable-marker"
             onClick={() => this.setState({ editing: true }, () => onClick && onClick())}
           />
+        )}
+        {!readOnly && (
+          <i className={`fas fa-undo editable-marker ${!changed && 'fa-disabled'}`} onClick={onRevert && onRevert()} />
         )}
         {this.renderValue()}
       </span>
