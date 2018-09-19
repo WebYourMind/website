@@ -421,6 +421,7 @@ export default class AbstractPageDefinitions extends Component {
                 githubToken={token}
                 noRowsRenderer={this.noRowsRenderer}
                 sequence={sequence}
+                hasChange={this.hasChange}
               />
             </div>
           )}

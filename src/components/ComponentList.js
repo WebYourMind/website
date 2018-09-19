@@ -114,7 +114,7 @@ export default class ComponentList extends React.Component {
 
   renderButtons(definition, currentComponent) {
     const component = EntitySpec.fromCoordinates(currentComponent)
-    const { readOnly } = this.props
+    const { readOnly, hasChange } = this.props
     const isSourceComponent = this.isSourceComponent(component)
     const scores = Definition.computeScores(definition)
     return (
@@ -134,12 +134,17 @@ export default class ComponentList extends React.Component {
             </Button>,
             'Dig into this definition'
           )}
-          {this.renderButtonWithTip(
-            <Button className="list-fa-button" onClick={this.revertComponent.bind(this, component)}>
-              <i className="fas fa-undo" />
-            </Button>,
-            'Revert Changes of this Definition'
-          )}
+          {!readOnly &&
+            this.renderButtonWithTip(
+              <Button
+                className="list-fa-button"
+                onClick={this.revertComponent.bind(this, component)}
+                disabled={!hasChange(component)}
+              >
+                <i className="fas fa-undo" />
+              </Button>,
+              'Revert Changes of this Definition'
+            )}
         </ButtonGroup>
         {!readOnly && <i className="fas fa-times list-remove" onClick={this.removeComponent.bind(this, component)} />}
       </div>
