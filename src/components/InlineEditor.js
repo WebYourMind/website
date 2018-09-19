@@ -85,7 +85,7 @@ export default class InlineEditor extends React.Component {
           revertable && (
             <i
               className={`fas fa-undo editable-marker ${!changed && 'fa-disabled'}`}
-              onClick={() => onRevert && onRevert()}
+              onClick={() => onRevert && changed && onRevert()}
             />
           )}
         {this.renderValue()}

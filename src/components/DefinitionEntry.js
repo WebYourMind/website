@@ -291,7 +291,7 @@ export default class DefinitionEntry extends React.Component {
     const unlicensedPercent = totalFiles ? this.getPercentage(unlicensed, totalFiles) : '-'
     const unattributedPercent = totalFiles ? this.getPercentage(unattributed, totalFiles) : '-'
     const toolList = get(described, 'tools', []).map(tool => (tool.startsWith('curation') ? tool.slice(0, 16) : tool))
-    const { readOnly } = this.props
+    const { readOnly, onRevert } = this.props
     return (
       <Row>
         <Col md={5}>
@@ -309,6 +309,7 @@ export default class DefinitionEntry extends React.Component {
                   onChange={this.fieldChange('licensed.declared')}
                   validator={value => true}
                   placeholder={'SPDX license'}
+                  onRevert={() => onRevert('licensed.declared')}
                 />
               )}
             </Col>
@@ -327,6 +328,7 @@ export default class DefinitionEntry extends React.Component {
                   onChange={this.fieldChange('described.sourceLocation', isEqual, Contribution.parseCoordinates)}
                   validator={value => true}
                   placeholder={'Source location'}
+                  onRevert={() => onRevert('described.sourceLocation')}
                 />,
                 'right',
                 this.printCoordinates
@@ -347,6 +349,7 @@ export default class DefinitionEntry extends React.Component {
                   onChange={this.fieldChange('described.releaseDate')}
                   validator={value => true}
                   placeholder={'YYYY-MM-DD'}
+                  onRevert={() => onRevert('described.releaseDate')}
                 />
               )}
             </Col>

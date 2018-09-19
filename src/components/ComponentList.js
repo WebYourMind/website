@@ -56,10 +56,9 @@ export default class ComponentList extends React.Component {
     onRemove && onRemove(component)
   }
 
-  revertComponent(component, event) {
-    event.stopPropagation()
+  revertComponent(component, param) {
     const { onRevert } = this.props
-    onRevert && onRevert(component)
+    onRevert && onRevert(component, param)
   }
 
   inspectComponent(component, definition, event) {
@@ -138,7 +137,7 @@ export default class ComponentList extends React.Component {
             this.renderButtonWithTip(
               <Button
                 className="list-fa-button"
-                onClick={this.revertComponent.bind(this, component)}
+                onClick={() => this.revertComponent(component)}
                 disabled={!hasChange(component)}
               >
                 <i className="fas fa-undo" />
@@ -158,7 +157,7 @@ export default class ComponentList extends React.Component {
   }
 
   renderRow({ index, key, style }, toggleExpanded = null, showExpanded = false) {
-    const { list, readOnly } = this.props
+    const { list, readOnly, onRevert } = this.props
     const component = list[index]
     let definition = this.getDefinition(component)
     definition = definition || { coordinates: component }
@@ -173,6 +172,7 @@ export default class ComponentList extends React.Component {
           otherDefinition={definition.otherDefinition}
           classOnDifference="bg-info"
           renderButtons={() => this.renderButtons(definition, component)}
+          onRevert={param => this.revertComponent(component, param)}
         />
       </div>
     )

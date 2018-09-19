@@ -109,12 +109,17 @@ class PageDefinitions extends AbstractPageDefinitions {
     this.revert(null, 'Are you sure to revert all the unsaved changes from all the active definitions?')
   }
 
-  revertDefinition(definition) {
-    this.revert(definition, 'Are you sure to revert all the unsaved changes from the selected definition?')
+  revertDefinition(definition, value) {
+    this.revert(definition, 'Are you sure to revert all the unsaved changes from the selected definition?', value)
   }
 
-  revert(definition, description, values) {
+  revert(definition, description, value) {
     const { dispatch } = this.props
+    if (value) {
+      dispatch(uiRevertDefinition(definition, value))
+      this.incrementSequence()
+      return
+    }
     const key = `open${Date.now()}`
     const NotificationButtons = (
       <Fragment>
@@ -122,7 +127,7 @@ class PageDefinitions extends AbstractPageDefinitions {
           type="primary"
           size="small"
           onClick={() => {
-            dispatch(uiRevertDefinition(definition, values))
+            dispatch(uiRevertDefinition(definition))
             this.incrementSequence()
             notification.close(key)
           }}
