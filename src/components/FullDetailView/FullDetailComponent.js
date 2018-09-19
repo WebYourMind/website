@@ -22,6 +22,7 @@ class FullDetailComponent extends Component {
   static propTypes = {
     handleClose: PropTypes.func,
     handleSave: PropTypes.func,
+    handleRevert: PropTypes.func,
     curation: PropTypes.object.isRequired,
     definition: PropTypes.object.isRequired,
     harvest: PropTypes.object.isRequired,
@@ -57,6 +58,7 @@ class FullDetailComponent extends Component {
                   Contribution.getValue(definition, previewDefinition, 'described.sourceLocation')
                 )}
                 onChange={value => onChange(`described.sourceLocation`, value, null, Contribution.parseCoordinates)}
+                onRevert={() => this.props.handleRevert('described.sourceLocation')}
                 validator
                 placeholder={'Source location'}
               />
@@ -76,6 +78,7 @@ class FullDetailComponent extends Component {
                   Contribution.getValue(definition, previewDefinition, 'described.releaseDate')
                 )}
                 onChange={value => onChange(`described.releaseDate`, value)}
+                onRevert={() => this.props.handleRevert('described.releaseDate')}
                 validator
                 placeholder={'YYYY-MM-DD'}
               />
@@ -194,6 +197,7 @@ class FullDetailComponent extends Component {
                 onChange={value => onChange(`licensed.declared`, value)}
                 validator={true}
                 placeholder={'SPDX license'}
+                onRevert={() => this.props.handleRevert('licensed.declared')}
               />
             </Col>
           </Row>
@@ -269,7 +273,7 @@ class FullDetailComponent extends Component {
   }
 
   render() {
-    const { curation, definition, harvest, onChange, previewDefinition, readOnly } = this.props
+    const { curation, definition, harvest, onChange, previewDefinition, readOnly, handleRevert } = this.props
 
     if (!definition || !definition.item || !curation || !harvest) return null
     const item = { ...definition.item }
@@ -312,6 +316,7 @@ class FullDetailComponent extends Component {
                     component={definition}
                     previewDefinition={previewDefinition}
                     readOnly={readOnly}
+                    onRevert={handleRevert}
                   />
                 </Col>
               </Row>

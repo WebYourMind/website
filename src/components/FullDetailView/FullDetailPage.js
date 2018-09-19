@@ -40,7 +40,8 @@ export class FullDetailPage extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      changes: {}
+      changes: {},
+      sequence: 0
     }
     this.handleNewSpec = this.handleNewSpec.bind(this)
     this.doContribute = this.doContribute.bind(this)
@@ -102,14 +103,11 @@ export class FullDetailPage extends Component {
   previewDefinition(nextComponent) {
     const { token, component, uiCurateGetDefinitionPreview } = this.props
     const { changes } = this.state
-    if (
-      (!component || isEmpty(component.changes)) &&
-      (!nextComponent || isEmpty(nextComponent.changes)) &&
-      isEmpty(changes)
-    )
+    if ((!component || isEmpty(component.changes)) && (!nextComponent || isEmpty(nextComponent.changes)) && !changes)
       return false
     const previewComponent = nextComponent ? nextComponent : component
     const patches = Contribution.buildPatch([], previewComponent, changes)
+    console.log(changes, patches)
     uiCurateGetDefinitionPreview(token, previewComponent, patches)
   }
 
@@ -163,10 +161,18 @@ export class FullDetailPage extends Component {
     })
   }
 
-  handleRevert(values) {
+  handleRevert(value) {
     const { uiCurateResetDefinitionPreview, definition, component } = this.props
     const { changes } = this.state
     if (isEmpty(changes)) return
+    if (value) {
+      const {
+        [value]: {},
+        ...revertedChanges
+      } = changes
+      this.setState({ changes: revertedChanges, sequence: this.state.sequence + 1 }, () => this.previewDefinition())
+      return
+    }
     const key = `open${Date.now()}`
     const NotificationButtons = (
       <Fragment>
