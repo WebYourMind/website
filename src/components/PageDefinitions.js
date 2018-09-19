@@ -3,7 +3,7 @@
 
 import React, { Fragment } from 'react'
 import { connect } from 'react-redux'
-import { Row, Col, Button, DropdownButton, MenuItem } from 'react-bootstrap'
+import { Row, Col, Button, DropdownButton, MenuItem, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import Dropzone from 'react-dropzone'
 import pako from 'pako'
 import base64js from 'base64-js'
@@ -144,12 +144,28 @@ class PageDefinitions extends AbstractPageDefinitions {
     })
   }
 
+  tooltip(text) {
+    return <Tooltip id="tooltip">{text}</Tooltip>
+  }
+
+  renderButtonWithTip(button, tip) {
+    const toolTip = <Tooltip id="tooltip">{tip}</Tooltip>
+    return (
+      <OverlayTrigger placement="top" overlay={toolTip}>
+        {button}
+      </OverlayTrigger>
+    )
+  }
+
   renderButtons() {
     return (
       <div className="pull-right">
-        <Button bsStyle="default" disabled={!this.hasChanges()} onClick={this.revertAll}>
-          Revert All
-        </Button>
+        {this.renderButtonWithTip(
+          <Button bsStyle="danger" disabled={!this.hasChanges()} onClick={this.revertAll}>
+            Revert Changes
+          </Button>,
+          'Revert all changes of all the definitions'
+        )}
         <Button bsStyle="default" disabled={!this.hasComponents()} onClick={this.doRefreshAll}>
           Refresh
         </Button>
