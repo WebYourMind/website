@@ -88,7 +88,7 @@ class PageDefinitions extends AbstractPageDefinitions {
   }
 
   refresh = () => {
-    const { components, dispatch, session } = this.props
+    const { components, dispatch, token } = this.props
 
     this.onRemoveAll()
     const definitions = this.buildSaveSpec(components.list)
@@ -96,7 +96,7 @@ class PageDefinitions extends AbstractPageDefinitions {
     definitions.forEach(definition => {
       const path = definition.toPath()
       delete definition.changes
-      dispatch(getDefinitionsAction(session.token, [path]))
+      dispatch(getDefinitionsAction(token, [path]))
     })
 
     dispatch(uiBrowseUpdateList({ addAll: definitions }))
@@ -200,10 +200,10 @@ class PageDefinitions extends AbstractPageDefinitions {
   }
 
   onAddComponent(value, after = null) {
-    const { dispatch, session, definitions } = this.props
+    const { dispatch, token, definitions } = this.props
     const component = typeof value === 'string' ? EntitySpec.fromPath(value) : value
     const path = component.toPath()
-    !definitions.entries[path] && dispatch(getDefinitionsAction(session.token, [path]))
+    !definitions.entries[path] && dispatch(getDefinitionsAction(token, [path]))
     dispatch(uiBrowseUpdateList({ add: component }))
   }
 
@@ -244,7 +244,7 @@ class PageDefinitions extends AbstractPageDefinitions {
   }
 
   async loadFromListSpec(listSpec) {
-    const { dispatch, session, definitions } = this.props
+    const { dispatch, token, definitions } = this.props
     if (listSpec.filter) this.setState({ activeFilters: listSpec.filter })
     if (listSpec.sortBy) this.setState({ activeSort: listSpec.sortBy })
     if (listSpec.sortBy || listSpec.filter) this.setState({ sequence: this.state.sequence + 1 })
@@ -252,7 +252,7 @@ class PageDefinitions extends AbstractPageDefinitions {
     const toAdd = listSpec.coordinates.map(component => EntitySpec.validateAndCreate(component)).filter(e => e)
     dispatch(uiBrowseUpdateList({ addAll: toAdd }))
     const missingDefinitions = toAdd.map(spec => spec.toPath()).filter(path => !definitions.entries[path])
-    await dispatch(getDefinitionsAction(session.token, missingDefinitions))
+    await dispatch(getDefinitionsAction(token, missingDefinitions))
     dispatch(
       uiBrowseUpdateList({
         transform: this.createTransform.call(
@@ -267,12 +267,13 @@ class PageDefinitions extends AbstractPageDefinitions {
 
 function mapStateToProps(state, ownProps) {
   return {
-    session: state.session,
+    token: state.session.token,
     filterValue: state.ui.browse.filter,
     path: ownProps.location.pathname.slice(ownProps.match.url.length + 1),
     filterOptions: state.ui.browse.filterList,
     components: state.ui.browse.componentList,
-    definitions: state.definition.bodies
+    definitions: state.definition.bodies,
+    session: state.session
   }
 }
 export default connect(mapStateToProps)(PageDefinitions)

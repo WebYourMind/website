@@ -11,9 +11,9 @@ import AbstractPageDefinitions from './AbstractPageDefinitions'
 
 class PageContribution extends AbstractPageDefinitions {
   componentDidMount() {
-    const { dispatch, prNumber, session } = this.props
+    const { dispatch, prNumber, token } = this.props
     dispatch(uiNavigation({ to: ROUTE_CURATIONS }))
-    dispatch(uiContributionGetData(session.token, prNumber))
+    dispatch(uiContributionGetData(token, prNumber))
   }
 
   noRowsRenderer() {
@@ -54,6 +54,7 @@ class PageContribution extends AbstractPageDefinitions {
 
 function mapStateToProps(state, ownProps) {
   return {
+    token: state.session.token,
     session: state.session,
     prNumber: ownProps.location.pathname.slice(ownProps.match.url.length + 1),
     url: state.ui.contribution.url,
