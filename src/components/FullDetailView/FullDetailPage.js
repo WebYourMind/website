@@ -25,7 +25,7 @@ import { login } from '../../actions/sessionActions'
 import { ROUTE_DEFINITIONS } from '../../utils/routingConstants'
 import Contribution from '../../utils/contribution'
 import Definition from '../../utils/definition'
-import { doLogin } from '../../utils/auth'
+import Auth from '../../utils/auth'
 import ContributePrompt from '../ContributePrompt'
 import FullDetailComponent from './FullDetailComponent'
 
@@ -45,7 +45,7 @@ export class FullDetailPage extends Component {
     }
     this.handleNewSpec = this.handleNewSpec.bind(this)
     this.doContribute = this.doContribute.bind(this)
-    this.doLogin = this.doLogin.bind(this)
+    this.handleLogin = this.handleLogin.bind(this)
     this.doPromptContribute = this.doPromptContribute.bind(this)
     this.handleSave = this.handleSave.bind(this)
     this.handleClose = this.handleClose.bind(this)
@@ -181,9 +181,9 @@ export class FullDetailPage extends Component {
     )
   }
 
-  doLogin(e) {
+  handleLogin(e) {
     e.preventDefault()
-    doLogin((token, permissions, username) => {
+    Auth.doLogin((token, permissions, username) => {
       this.props.login(token, permissions, username)
     })
   }
@@ -239,7 +239,7 @@ export class FullDetailPage extends Component {
         <ContributePrompt
           ref="contributeModal"
           session={session}
-          onLogin={this.doLogin}
+          onLogin={this.handleLogin}
           actionHandler={this.doContribute}
         />
       </Grid>

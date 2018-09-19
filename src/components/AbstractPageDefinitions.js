@@ -17,7 +17,7 @@ import FullDetailPage from './FullDetailView/FullDetailPage'
 import { uiBrowseUpdateFilterList } from '../actions/ui'
 import EntitySpec from '../utils/entitySpec'
 import Definition from '../utils/definition'
-import { doLogin } from '../utils/auth'
+import Auth from '../utils/auth'
 
 const sorts = [
   { value: 'license', label: 'License' },
@@ -66,7 +66,7 @@ export default class AbstractPageDefinitions extends Component {
     this.onChangeComponent = this.onChangeComponent.bind(this)
     this.doPromptContribute = this.doPromptContribute.bind(this)
     this.doContribute = this.doContribute.bind(this)
-    this.doLogin = this.doLogin.bind(this)
+    this.handleLogin = this.handleLogin.bind(this)
     this.renderFilterBar = this.renderFilterBar.bind(this)
     this.name = this.name.bind(this)
     this.namespace = this.namespace.bind(this)
@@ -402,9 +402,9 @@ export default class AbstractPageDefinitions extends Component {
     throw Error('This method has to be implemented in a sub class')
   }
 
-  doLogin(e) {
+  handleLogin(e) {
     e.preventDefault()
-    doLogin((token, permissions, username) => {
+    Auth.doLogin((token, permissions, username) => {
       this.props.dispatch(login(token, permissions, username))
     })
   }
@@ -418,7 +418,7 @@ export default class AbstractPageDefinitions extends Component {
         <ContributePrompt
           ref="contributeModal"
           session={session}
-          onLogin={this.doLogin}
+          onLogin={this.handleLogin}
           actionHandler={this.doContribute}
         />
         {this.renderSearchBar()}

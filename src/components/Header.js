@@ -10,12 +10,12 @@ import { ROUTE_ROOT } from '../utils/routingConstants'
 import { Nav, Navbar, NavItem } from 'react-bootstrap'
 import { LinkContainer, IndexLinkContainer } from 'react-router-bootstrap'
 import { filter, intersection } from 'lodash'
-import { doLogin } from '../utils/auth'
+import Auth from '../utils/auth'
 
 class Header extends Component {
   constructor(props) {
     super(props)
-    this.doLogin = this.doLogin.bind(this)
+    this.handleLogin = this.handleLogin.bind(this)
     this.doLogout = this.doLogout.bind(this)
     this.gotoDocs = this.gotoDocs.bind(this)
   }
@@ -25,9 +25,9 @@ class Header extends Component {
     this.props.dispatch(logout())
   }
 
-  doLogin(e) {
+  handleLogin(e) {
     e.preventDefault()
-    doLogin((token, permissions, username) => {
+    Auth.doLogin((token, permissions, username) => {
       this.props.dispatch(login(token, permissions, username))
     })
   }
@@ -51,7 +51,7 @@ class Header extends Component {
     if (session.isAnonymous && !session.isFetching)
       return (
         <Nav id="nav_profile" bsStyle="pills" activeKey="0" pullRight={true}>
-          <NavItem eventKey={1} onClick={this.doLogin}>
+          <NavItem eventKey={1} onClick={this.handleLogin}>
             Login
           </NavItem>
         </Nav>
