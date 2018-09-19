@@ -151,6 +151,11 @@ class FullDetailComponent extends Component {
           </div>
         </Col>
         <Col md={4} className="text-right">
+          {!isEmpty(changes) && (
+            <Button bsStyle="danger" onClick={this.props.handleRevert}>
+              Revert All Changes
+            </Button>
+          )}{' '}
           {modalView && (
             <Button bsStyle="primary" disabled={isEmpty(changes)} onClick={this.props.handleSave}>
               OK

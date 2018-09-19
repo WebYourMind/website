@@ -18,7 +18,8 @@ import {
   uiInspectGetHarvested,
   uiNavigation,
   uiCurateGetDefinitionPreview,
-  uiCurateResetDefinitionPreview
+  uiCurateResetDefinitionPreview,
+  uiRevertDefinition
 } from '../../actions/ui'
 import { ROUTE_DEFINITIONS } from '../../utils/routingConstants'
 import { curateAction } from '../../actions/curationActions'
@@ -46,6 +47,7 @@ export class FullDetailPage extends Component {
     this.doPromptContribute = this.doPromptContribute.bind(this)
     this.handleSave = this.handleSave.bind(this)
     this.handleClose = this.handleClose.bind(this)
+    this.handleRevert = this.handleRevert.bind(this)
     this.onChange = this.onChange.bind(this)
     this.close = this.close.bind(this)
   }
@@ -161,6 +163,40 @@ export class FullDetailPage extends Component {
     })
   }
 
+  handleRevert(values) {
+    const { uiCurateResetDefinitionPreview, definition, component } = this.props
+    const { changes } = this.state
+    if (isEmpty(changes)) return
+    const key = `open${Date.now()}`
+    const NotificationButtons = (
+      <Fragment>
+        <AntdButton
+          type="primary"
+          size="small"
+          onClick={() =>
+            this.setState({ changes: {} }, () => {
+              uiCurateResetDefinitionPreview()
+              notification.close(key)
+            })
+          }
+        >
+          Confirm
+        </AntdButton>
+        <AntdButton type="secondary" size="small" onClick={() => notification.close(key)}>
+          Dismiss Notification
+        </AntdButton>
+      </Fragment>
+    )
+    notification.open({
+      message: 'Confirm Revert?',
+      description: 'Are you sure to revert all the unsaved changes from the current definition?',
+      btn: NotificationButtons,
+      key,
+      onClose: notification.close(key),
+      duration: 0
+    })
+  }
+
   close() {
     const { uiCurateResetDefinitionPreview, onClose } = this.props
     this.setState({ changes: {} }, () => {
@@ -203,6 +239,7 @@ export class FullDetailPage extends Component {
             onChange={this.onChange}
             handleClose={this.handleClose}
             handleSave={this.handleSave}
+            handleRevert={this.handleRevert}
             previewDefinition={previewDefinition}
             changes={changes}
           />
@@ -220,6 +257,7 @@ export class FullDetailPage extends Component {
           onChange={this.onChange}
           changes={changes}
           previewDefinition={previewDefinition}
+          handleRevert={this.handleRevert}
           renderContributeButton={
             <Button bsStyle="success" disabled={isEmpty(changes)} onClick={this.doPromptContribute}>
               Contribute
@@ -269,7 +307,8 @@ function mapDispatchToProps(dispatch) {
       uiNavigation,
       curateAction,
       uiCurateGetDefinitionPreview,
-      uiCurateResetDefinitionPreview
+      uiCurateResetDefinitionPreview,
+      uiRevertDefinition
     },
     dispatch
   )
