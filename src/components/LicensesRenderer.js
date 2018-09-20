@@ -22,7 +22,7 @@ class LicensesRenderer extends Component {
         value={value}
         onChange={value => onSave(value)}
         validator
-        placeholder={!readOnly ? 'SPDX License' : ''}
+        placeholder={readOnly ? '' : 'SPDX License'}
         revertable={false}
       />
     )
@@ -35,7 +35,8 @@ LicensesRenderer.propTypes = {
    */
   value: PropTypes.string.isRequired,
   isDifferent: PropTypes.bool,
-  onSave: PropTypes.func
+  onSave: PropTypes.func,
+  readOnly: PropTypes.bool
 }
 
 export default LicensesRenderer
