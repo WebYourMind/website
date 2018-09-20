@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 import { Row, Col, Button, DropdownButton, MenuItem } from 'react-bootstrap'
 import Dropzone from 'react-dropzone'
 import pako from 'pako'
+import throat from 'throat'
 import base64js from 'base64-js'
 import { saveAs } from 'file-saver'
 import notification from 'antd/lib/notification'
@@ -15,7 +16,6 @@ import { uiNavigation, uiBrowseUpdateList, uiNotificationNew } from '../actions/
 import { getDefinitionsAction } from '../actions/definitionActions'
 import { ROUTE_DEFINITIONS, ROUTE_SHARE } from '../utils/routingConstants'
 import EntitySpec from '../utils/entitySpec'
-
 import AbstractPageDefinitions from './AbstractPageDefinitions'
 
 class PageDefinitions extends AbstractPageDefinitions {
@@ -90,17 +90,17 @@ class PageDefinitions extends AbstractPageDefinitions {
   refresh = () => {
     const { components, dispatch, token } = this.props
 
-    this.onRemoveAll()
+    if (this.hasChanges()) {
+      dispatch(
+        uiBrowseUpdateList({
+          transform: list => list.map(({ changes, ...keepAttrs }) => keepAttrs)
+        })
+      )
+    }
+
     const definitions = this.buildSaveSpec(components.list)
-
-    definitions.forEach(definition => {
-      const path = definition.toPath()
-      delete definition.changes
-      dispatch(getDefinitionsAction(token, [path]))
-    })
-
-    dispatch(uiBrowseUpdateList({ addAll: definitions }))
-    dispatch(uiNotificationNew({ type: 'info', message: 'All components have been refreshed', timeout: 3000 }))
+    const definitionsToGet = definitions.map(definition => definition.toPath())
+    this.getDefinitionsAndNotify(definitionsToGet, 'All components have been refreshed')
   }
 
   renderButtons() {

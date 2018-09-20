@@ -9,7 +9,6 @@ import find from 'lodash/find'
 import get from 'lodash/get'
 import set from 'lodash/set'
 import sortBy from 'lodash/sortBy'
-import { ROUTE_CURATE } from '../utils/routingConstants'
 import { curateAction } from '../actions/curationActions'
 import { login } from '../actions/sessionActions'
 import { ComponentList, Section, ContributePrompt } from './'
@@ -59,7 +58,6 @@ export default class AbstractPageDefinitions extends Component {
     this.onAddComponent = this.onAddComponent.bind(this)
     this.onSearch = this.onSearch.bind(this)
     this.onInspect = this.onInspect.bind(this)
-    this.onCurate = this.onCurate.bind(this)
     this.onRemoveComponent = this.onRemoveComponent.bind(this)
     this.onSort = this.onSort.bind(this)
     this.onFilter = this.onFilter.bind(this)
@@ -78,6 +76,7 @@ export default class AbstractPageDefinitions extends Component {
     this.transform = this.transform.bind(this)
     this.onRemoveAll = this.onRemoveAll.bind(this)
     this.collapseAll = this.collapseAll.bind(this)
+    this.contributeModal = React.createRef()
   }
 
   getDefinition(component) {
@@ -98,11 +97,6 @@ export default class AbstractPageDefinitions extends Component {
   onSearch(value) {
     const { dispatch, token } = this.props
     dispatch(uiBrowseUpdateFilterList(token, value))
-  }
-
-  onCurate(component) {
-    const url = `${ROUTE_CURATE}/${component.toPath()}`
-    this.props.history.push(url)
   }
 
   // Opens a Modal that shows the Full Detail View
@@ -190,9 +184,9 @@ export default class AbstractPageDefinitions extends Component {
     }, [])
   }
 
-  doPromptContribute(proposal) {
+  doPromptContribute() {
     if (!this.hasChanges()) return
-    this.refs.contributeModal.open()
+    this.contributeModal.current.open()
   }
 
   name(coordinates) {
@@ -272,8 +266,7 @@ export default class AbstractPageDefinitions extends Component {
     this.props.dispatch(this.updateList({ transform: this.createTransform(this.state.activeSort, activeFilters) }))
   }
 
-  transform(list, sort, filters) {
-    let newList = list
+  transform(newList, sort, filters) {
     if (sort) {
       const sortFunction = this.getSort(sort)
       newList = this.sortList(newList, sortFunction)
@@ -416,7 +409,7 @@ export default class AbstractPageDefinitions extends Component {
     return (
       <Grid className="main-container">
         <ContributePrompt
-          ref="contributeModal"
+          ref={this.contributeModal}
           session={session}
           onLogin={this.handleLogin}
           actionHandler={this.doContribute}
@@ -434,7 +427,6 @@ export default class AbstractPageDefinitions extends Component {
                 onChange={this.onChangeComponent}
                 onAddComponent={this.onAddComponent}
                 onInspect={this.onInspect}
-                onCurate={this.onCurate}
                 renderFilterBar={this.renderFilterBar}
                 definitions={definitions}
                 githubToken={token}

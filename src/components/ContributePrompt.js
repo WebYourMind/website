@@ -26,8 +26,6 @@ export default class ContributePrompt extends Component {
     }).isRequired
   }
 
-  static defaultProps = {}
-
   open() {
     this.setState({
       show: true,
