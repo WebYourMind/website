@@ -38,8 +38,6 @@ const update = (list, item, newValue, comparator = null) => {
   return result
 }
 
-const updateAll = list => {}
-
 const transform = (list, transforms) => {
   let newList = list
   for (let transform in transforms) {

@@ -5,6 +5,7 @@ import React, { Component, Fragment } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Grid, Button } from 'react-bootstrap'
+import omitBy from 'lodash/omitBy'
 import isEmpty from 'lodash/isEmpty'
 import cloneDeep from 'lodash/cloneDeep'
 import PropTypes from 'prop-types'
@@ -165,12 +166,11 @@ export class FullDetailPage extends Component {
   handleRevert(value) {
     const { uiCurateResetDefinitionPreview, definition, component } = this.props
     const { changes } = this.state
+    console.log(changes, value)
     if (isEmpty(changes)) return
     if (value) {
-      const {
-        [value]: {},
-        ...revertedChanges
-      } = changes
+      const revertedChanges = omitBy(changes, (_, index) => index.startsWith(value))
+      console.log(revertedChanges)
       this.setState({ changes: revertedChanges, sequence: this.state.sequence + 1 }, () => this.previewDefinition())
       return
     }

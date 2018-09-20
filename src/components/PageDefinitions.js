@@ -181,7 +181,8 @@ class PageDefinitions extends AbstractPageDefinitions {
       <div className="pull-right">
         {this.renderButtonWithTip(
           <Button bsStyle="danger" disabled={!this.hasChanges()} onClick={this.revertAll}>
-            Revert Changes
+            <i className="fas fa-undo" />
+            <span>&nbsp;Revert Changes</span>
           </Button>,
           'Revert all changes of all the definitions'
         )}

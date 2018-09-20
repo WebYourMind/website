@@ -8,6 +8,7 @@ import Tabs from 'antd/lib/tabs'
 import get from 'lodash/get'
 import cloneDeep from 'lodash/cloneDeep'
 import isEmpty from 'lodash/isEmpty'
+import find from 'lodash/find'
 import { getBadgeUrl } from '../../api/clearlyDefined'
 import { Section } from '../'
 import FileList from '../FileList'
@@ -17,6 +18,7 @@ import FacetsEditor from '../FacetsEditor'
 import 'antd/dist/antd.css'
 import Contribution from '../../utils/contribution'
 import Definition from '../../utils/definition'
+import { Tooltip } from 'antd'
 
 class FullDetailComponent extends Component {
   static propTypes = {
@@ -155,11 +157,14 @@ class FullDetailComponent extends Component {
           </div>
         </Col>
         <Col md={4} className="text-right">
-          {!isEmpty(changes) && (
-            <Button bsStyle="danger" onClick={this.props.handleRevert}>
-              Revert All Changes
-            </Button>
-          )}{' '}
+          {!isEmpty(changes) &&
+            this.renderButtonWithTip(
+              <Button bsStyle="danger" onClick={() => this.props.handleRevert()}>
+                <i className="fas fa-undo" />
+                <span>&nbsp;Revert Changes</span>
+              </Button>,
+              'Revert all changes of the current definition'
+            )}{' '}
           {modalView && (
             <Button bsStyle="primary" disabled={isEmpty(changes)} onClick={this.props.handleSave}>
               OK
@@ -273,9 +278,18 @@ class FullDetailComponent extends Component {
     return <img className="list-buttons" src={getBadgeUrl(domain.toolScore, domain.score)} alt="score" />
   }
 
-  render() {
-    const { curation, definition, harvest, onChange, previewDefinition, readOnly, handleRevert } = this.props
+  renderButtonWithTip(button, tip) {
+    const toolTip = <Tooltip id="tooltip">{tip}</Tooltip>
+    return (
+      <OverlayTrigger placement="top" overlay={toolTip}>
+        {button}
+      </OverlayTrigger>
+    )
+  }
 
+  render() {
+    const { curation, definition, harvest, onChange, previewDefinition, readOnly, handleRevert, changes } = this.props
+    const entry = !isEmpty(changes) && find(changes, (_, key) => key && key.startsWith('files'))
     if (!definition || !definition.item || !curation || !harvest) return null
     const item = { ...definition.item }
     const image = Contribution.getImage(item)
@@ -308,7 +322,21 @@ class FullDetailComponent extends Component {
             <Section name={<span>Licensed {this.renderScore(item.licensed)}</span>}>
               {this.renderLicensed(item)}
             </Section>
-            <Section name="Files">
+            <Section
+              name={
+                <section>
+                  <span>Files</span>
+                  &nbsp;
+                  {this.renderButtonWithTip(
+                    <Button bsStyle="danger" onClick={() => handleRevert('files')} disabled={entry === undefined}>
+                      <i className="fas fa-undo" />
+                      <span>&nbsp;Revert Changes</span>
+                    </Button>,
+                    'Revert all changes of all the definitions'
+                  )}
+                </section>
+              }
+            >
               <Row>
                 <Col md={11}>
                   <FileList
@@ -317,7 +345,6 @@ class FullDetailComponent extends Component {
                     component={definition}
                     previewDefinition={previewDefinition}
                     readOnly={readOnly}
-                    onRevert={handleRevert}
                   />
                 </Col>
               </Row>
