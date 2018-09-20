@@ -313,6 +313,7 @@ class FullDetailComponent extends Component {
                       onChange={onChange}
                       previewDefinition={previewDefinition}
                       readOnly={readOnly}
+                      onRevert={handleRevert}
                     />
                   </Col>
                   <Col md={6}>{this.renderContributions()}</Col>

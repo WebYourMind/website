@@ -110,7 +110,7 @@ export class FullDetailPage extends Component {
       (!nextComponent || isEmpty(nextComponent.changes)) &&
       isEmpty(changes)
     )
-      return false
+      return uiCurateResetDefinitionPreview()
     const previewComponent = nextComponent ? nextComponent : component
     const patches = Contribution.buildPatch([], previewComponent, changes)
     !isEmpty(patches)
