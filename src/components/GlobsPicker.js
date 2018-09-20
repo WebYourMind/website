@@ -20,7 +20,6 @@ export default class GlobsPicker extends Component {
       inputVisible: false,
       inputValue: ''
     }
-    this.saveInputRef = React.createRef()
   }
 
   handleClose = removedglob => {
@@ -48,6 +47,8 @@ export default class GlobsPicker extends Component {
     })
     onChange(newGlobs)
   }
+
+  saveInputRef = input => (this.input = input)
 
   render() {
     const { globs, className, readOnly } = this.props
