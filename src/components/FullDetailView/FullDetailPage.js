@@ -103,14 +103,19 @@ export class FullDetailPage extends Component {
 
   // Action that calls the remote API that return a preview of the definition
   previewDefinition(nextComponent) {
-    const { token, component, uiCurateGetDefinitionPreview } = this.props
+    const { token, component, uiCurateGetDefinitionPreview, uiCurateResetDefinitionPreview } = this.props
     const { changes } = this.state
-    if ((!component || isEmpty(component.changes)) && (!nextComponent || isEmpty(nextComponent.changes)) && !changes)
+    if (
+      (!component || isEmpty(component.changes)) &&
+      (!nextComponent || isEmpty(nextComponent.changes)) &&
+      isEmpty(changes)
+    )
       return false
     const previewComponent = nextComponent ? nextComponent : component
     const patches = Contribution.buildPatch([], previewComponent, changes)
-    console.log(changes, patches)
-    uiCurateGetDefinitionPreview(token, previewComponent, patches)
+    !isEmpty(patches)
+      ? uiCurateGetDefinitionPreview(token, previewComponent, patches)
+      : uiCurateResetDefinitionPreview()
   }
 
   // Shows the Modal to save a Contribution
@@ -166,11 +171,9 @@ export class FullDetailPage extends Component {
   handleRevert(value) {
     const { uiCurateResetDefinitionPreview, definition, component } = this.props
     const { changes } = this.state
-    console.log(changes, value)
     if (isEmpty(changes)) return
     if (value) {
       const revertedChanges = omitBy(changes, (_, index) => index.startsWith(value))
-      console.log(revertedChanges)
       this.setState({ changes: revertedChanges, sequence: this.state.sequence + 1 }, () => this.previewDefinition())
       return
     }
