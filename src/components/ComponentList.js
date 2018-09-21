@@ -123,7 +123,11 @@ export default class ComponentList extends React.Component {
             'Dig into this definition'
           )}
         </ButtonGroup>
-        {!readOnly && <i className="fas fa-times list-remove" onClick={this.removeComponent.bind(this, component)} />}
+        {!readOnly && (
+          <Button bsStyle="link" onClick={this.removeComponent.bind(this, component)}>
+            <i className="fas fa-times list-remove" />
+          </Button>
+        )}
       </div>
     )
   }
