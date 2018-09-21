@@ -32,7 +32,7 @@ export default class Definition {
   }
 
   /**
-   *
+   * Determine if a component doesn't have any data. In order to show in the UI in the list of Components
    *
    * @param {*} definition
    * @returns {boolean}
