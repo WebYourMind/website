@@ -30,4 +30,14 @@ export default class Definition {
     const effective = Math.ceil((get(definition, 'described.score', 0) + get(definition, 'licensed.score', 0)) / 2)
     return { tool, effective }
   }
+
+  /**
+   *
+   *
+   * @param {*} definition
+   * @returns {boolean}
+   */
+  static isDefinitionEmpty(definition) {
+    return definition.described && definition.described.sourceLocation === undefined
+  }
 }

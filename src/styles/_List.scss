@@ -13,14 +13,25 @@
   align-items: center;
   padding: 5px 15px 5px 10px;
   cursor: pointer;
+
+  &:hover {
+    background: $color_black_10;
+  }
+
+  &.isDisabled,
+  &.isDisabled:hover {
+    background-color: #eee;
+    color: #777;
+    cursor: not-allowed;
+  }
+
+  .btn-link {
+    padding: 0;
+  }
 }
 
 .list-highlight-text {
   color: $color_highlight;
-}
-
-.list-row:hover {
-  background: $color_black_10;
 }
 
 .list-image {
