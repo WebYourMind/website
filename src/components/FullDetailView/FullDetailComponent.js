@@ -289,7 +289,7 @@ class FullDetailComponent extends Component {
 
   render() {
     const { curation, definition, harvest, onChange, previewDefinition, readOnly, handleRevert, changes } = this.props
-    const entry = !isEmpty(changes) && find(changes, (_, key) => key && key.startsWith('files'))
+    const entry = find(changes, (_, key) => key && key.startsWith('files'))
     if (!definition || !definition.item || !curation || !harvest) return null
     const item = { ...definition.item }
     const image = Contribution.getImage(item)
