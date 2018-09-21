@@ -5,6 +5,7 @@ import React, { Component, Fragment } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Grid, Button } from 'react-bootstrap'
+import omitBy from 'lodash/omitBy'
 import isEmpty from 'lodash/isEmpty'
 import cloneDeep from 'lodash/cloneDeep'
 import PropTypes from 'prop-types'
@@ -18,7 +19,8 @@ import {
   uiInspectGetHarvested,
   uiNavigation,
   uiCurateGetDefinitionPreview,
-  uiCurateResetDefinitionPreview
+  uiCurateResetDefinitionPreview,
+  uiRevertDefinition
 } from '../../actions/ui'
 import { ROUTE_DEFINITIONS } from '../../utils/routingConstants'
 import { curateAction } from '../../actions/curationActions'
@@ -39,15 +41,18 @@ export class FullDetailPage extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      changes: {}
+      changes: {},
+      sequence: 0
     }
     this.handleNewSpec = this.handleNewSpec.bind(this)
     this.doContribute = this.doContribute.bind(this)
     this.doPromptContribute = this.doPromptContribute.bind(this)
     this.handleSave = this.handleSave.bind(this)
     this.handleClose = this.handleClose.bind(this)
+    this.handleRevert = this.handleRevert.bind(this)
     this.onChange = this.onChange.bind(this)
     this.close = this.close.bind(this)
+    this.contributeModal = React.createRef()
   }
 
   static propTypes = {
@@ -65,7 +70,7 @@ export class FullDetailPage extends Component {
   }
 
   componentDidMount() {
-    const { path, uiNavigation, component } = this.props
+    const { uiNavigation, component } = this.props
     if (component.changes) {
       this.setState({ changes: component.changes }, () => this.handleNewSpec(component))
     } else {
@@ -98,24 +103,26 @@ export class FullDetailPage extends Component {
 
   // Action that calls the remote API that return a preview of the definition
   previewDefinition(nextComponent) {
-    const { token, component, uiCurateGetDefinitionPreview } = this.props
+    const { token, component, uiCurateGetDefinitionPreview, uiCurateResetDefinitionPreview } = this.props
     const { changes } = this.state
     if (
       (!component || isEmpty(component.changes)) &&
       (!nextComponent || isEmpty(nextComponent.changes)) &&
       isEmpty(changes)
     )
-      return false
+      return uiCurateResetDefinitionPreview()
     const previewComponent = nextComponent ? nextComponent : component
     const patches = Contribution.buildPatch([], previewComponent, changes)
-    uiCurateGetDefinitionPreview(token, previewComponent, patches)
+    !isEmpty(patches)
+      ? uiCurateGetDefinitionPreview(token, previewComponent, patches)
+      : uiCurateResetDefinitionPreview()
   }
 
   // Shows the Modal to save a Contribution
   doPromptContribute() {
     const { changes } = this.state
     if (isEmpty(changes)) return
-    this.refs.contributeModal.open()
+    this.contributeModal.current.open()
   }
 
   handleSave() {
@@ -161,6 +168,45 @@ export class FullDetailPage extends Component {
     })
   }
 
+  handleRevert(value) {
+    const { uiCurateResetDefinitionPreview, definition, component } = this.props
+    const { changes } = this.state
+    if (isEmpty(changes)) return
+    if (value) {
+      const revertedChanges = omitBy(changes, (_, index) => index.startsWith(value))
+      this.setState({ changes: revertedChanges, sequence: this.state.sequence + 1 }, () => this.previewDefinition())
+      return
+    }
+    const key = `open${Date.now()}`
+    const NotificationButtons = (
+      <Fragment>
+        <AntdButton
+          type="primary"
+          size="small"
+          onClick={() =>
+            this.setState({ changes: {} }, () => {
+              uiCurateResetDefinitionPreview()
+              notification.close(key)
+            })
+          }
+        >
+          Confirm
+        </AntdButton>
+        <AntdButton type="secondary" size="small" onClick={() => notification.close(key)}>
+          Dismiss Notification
+        </AntdButton>
+      </Fragment>
+    )
+    notification.open({
+      message: 'Confirm Revert?',
+      description: 'Are you sure to revert all the unsaved changes from the current definition?',
+      btn: NotificationButtons,
+      key,
+      onClose: notification.close(key),
+      duration: 0
+    })
+  }
+
   close() {
     const { uiCurateResetDefinitionPreview, onClose } = this.props
     this.setState({ changes: {} }, () => {
@@ -192,7 +238,7 @@ export class FullDetailPage extends Component {
         width={'85%'}
         className="fullDetaiView__modal"
       >
-        {visible ? (
+        {visible && (
           <FullDetailComponent
             curation={curation}
             definition={definition}
@@ -203,10 +249,11 @@ export class FullDetailPage extends Component {
             onChange={this.onChange}
             handleClose={this.handleClose}
             handleSave={this.handleSave}
+            handleRevert={this.handleRevert}
             previewDefinition={previewDefinition}
             changes={changes}
           />
-        ) : null}
+        )}
       </Modal>
     ) : (
       <Grid>
@@ -220,13 +267,14 @@ export class FullDetailPage extends Component {
           onChange={this.onChange}
           changes={changes}
           previewDefinition={previewDefinition}
+          handleRevert={this.handleRevert}
           renderContributeButton={
             <Button bsStyle="success" disabled={isEmpty(changes)} onClick={this.doPromptContribute}>
               Contribute
             </Button>
           }
         />
-        <ContributePrompt ref="contributeModal" actionHandler={this.doContribute} />
+        <ContributePrompt ref={this.contributeModal} actionHandler={this.doContribute} />
       </Grid>
     )
   }
@@ -269,7 +317,8 @@ function mapDispatchToProps(dispatch) {
       uiNavigation,
       curateAction,
       uiCurateGetDefinitionPreview,
-      uiCurateResetDefinitionPreview
+      uiCurateResetDefinitionPreview,
+      uiRevertDefinition
     },
     dispatch
   )
