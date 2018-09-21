@@ -51,10 +51,7 @@ export default class Definition {
 
   static revertChanges(component, value) {
     if (value) {
-      const {
-        [value]: {},
-        ...withoutChanges
-      } = component.changes
+      const { [value]: omit, ...withoutChanges } = component.changes
       component.changes = withoutChanges
       return component
     } else {

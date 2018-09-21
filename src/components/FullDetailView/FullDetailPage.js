@@ -169,7 +169,7 @@ export class FullDetailPage extends Component {
   }
 
   handleRevert(value) {
-    const { uiCurateResetDefinitionPreview, definition, component } = this.props
+    const { uiCurateResetDefinitionPreview } = this.props
     const { changes } = this.state
     if (isEmpty(changes)) return
     if (value) {

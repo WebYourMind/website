@@ -150,7 +150,7 @@ export default class ComponentList extends React.Component {
   }
 
   renderRow({ index, key, style }, toggleExpanded = null, showExpanded = false) {
-    const { list, readOnly, onRevert } = this.props
+    const { list, readOnly } = this.props
     const component = list[index]
     let definition = this.getDefinition(component)
     definition = definition || { coordinates: component }
