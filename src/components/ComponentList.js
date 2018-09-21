@@ -109,11 +109,12 @@ export default class ComponentList extends React.Component {
         {scores && <img className="list-buttons" src={getBadgeUrl(scores.tool, scores.effective)} alt="score" />}
         <ButtonGroup>
           {!isSourceComponent &&
-            !readOnly && (
-              <Button className="list-hybrid-button" onClick={this.addSourceForComponent.bind(this, component)}>
-                <i className="fas fa-plus" />
-                <span>&nbsp;Add source</span>
-              </Button>
+            !readOnly &&
+            this.renderButtonWithTip(
+              <Button onClick={this.addSourceForComponent.bind(this, component)}>
+                <i className="fas fa-code" />
+              </Button>,
+              'Add the definition for source that matches this package'
             )}
           {this.renderButtonWithTip(
             <Button className="list-fa-button" onClick={this.inspectComponent.bind(this, currentComponent, definition)}>
