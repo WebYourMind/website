@@ -1,9 +1,10 @@
 // Copyright (c) Amazon.com, Inc. and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import React from 'react'
+import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
 import 'react-bootstrap-typeahead/css/Typeahead.css'
+import Tooltip from 'antd/lib/tooltip'
 import { SpdxPicker } from './'
 
 export default class InlineEditor extends React.Component {
@@ -67,17 +68,55 @@ export default class InlineEditor extends React.Component {
     return React.cloneElement(this.editors[type](value), this.editorProps[type])
   }
 
+  renderSuggested() {
+    const { value, type, placeholder } = this.props
+    return (
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <Tooltip title={this.renderers[type](value)}>
+          <div
+            title={this.renderers[type](value)}
+            className={`bg-suggested`}
+            style={{ maxWidth: '250px', overflow: 'ellipsis', marginRight: '10px' }}
+          >
+            {this.renderers[type](value) || placeholder}
+          </div>
+        </Tooltip>
+        <Tooltip title={'Keep this'}>
+          <i className="fas fa-check-circle" style={{ color: 'green' }} />
+        </Tooltip>
+        <Tooltip title={'Discard this'}>
+          <i className="fas fa-times-circle" style={{ color: 'red' }} />
+        </Tooltip>
+      </div>
+    )
+  }
+
   render() {
-    const { onClick, readOnly } = this.props
+    const { onClick, readOnly, initialValue, value, onRevert, revertable } = this.props
+    const changed = initialValue !== value
+    const suggested = true
     return (
       <span className="list-singleLine">
-        {!readOnly && (
-          <i
-            className="fas fa-pencil-alt editable-marker"
-            onClick={() => this.setState({ editing: true }, () => onClick && onClick())}
-          />
+        {suggested ? (
+          <Fragment>{this.renderSuggested()}</Fragment>
+        ) : (
+          <Fragment>
+            {!readOnly && (
+              <i
+                className="fas fa-pencil-alt editable-marker"
+                onClick={() => this.setState({ editing: true }, () => onClick && onClick())}
+              />
+            )}
+            {!readOnly &&
+              revertable && (
+                <i
+                  className={`fas fa-undo editable-marker ${!changed && 'fa-disabled'}`}
+                  onClick={() => onRevert && changed && onRevert()}
+                />
+              )}
+            {this.renderValue()}
+          </Fragment>
         )}
-        {this.renderValue()}
       </span>
     )
   }

@@ -49,6 +49,7 @@ export class FullDetailPage extends Component {
     this.doPromptContribute = this.doPromptContribute.bind(this)
     this.handleSave = this.handleSave.bind(this)
     this.handleClose = this.handleClose.bind(this)
+    this.handleRevert = this.handleRevert.bind(this)
     this.onChange = this.onChange.bind(this)
     this.close = this.close.bind(this)
     this.contributeModal = React.createRef()
@@ -76,6 +77,7 @@ export class FullDetailPage extends Component {
       this.handleNewSpec(component)
     }
     uiNavigation({ to: ROUTE_DEFINITIONS })
+    this.handleSuggestions()
   }
 
   // Get the data for the current definition
@@ -159,6 +161,66 @@ export class FullDetailPage extends Component {
       description:
         'Some information have been changed and are currently unsaved. Are you sure to continue without saving?',
       btn: NotificationButtons,
+      key,
+      onClose: notification.close(key),
+      duration: 0
+    })
+  }
+
+  handleRevert(value) {
+    const { uiCurateResetDefinitionPreview } = this.props
+    const { changes } = this.state
+    if (isEmpty(changes)) return
+    if (value) {
+      const revertedChanges = omitBy(changes, (_, index) => index.startsWith(value))
+      this.setState({ changes: revertedChanges, sequence: this.state.sequence + 1 }, () => this.previewDefinition())
+      return
+    }
+    const key = `open${Date.now()}`
+    const NotificationButtons = (
+      <Fragment>
+        <AntdButton
+          type="primary"
+          size="small"
+          onClick={() =>
+            this.setState({ changes: {} }, () => {
+              uiCurateResetDefinitionPreview()
+              notification.close(key)
+            })
+          }
+        >
+          Confirm
+        </AntdButton>
+        <AntdButton type="secondary" size="small" onClick={() => notification.close(key)}>
+          Dismiss Notification
+        </AntdButton>
+      </Fragment>
+    )
+    notification.open({
+      message: 'Confirm Revert?',
+      description: 'Are you sure to revert all the unsaved changes from the current definition?',
+      btn: NotificationButtons,
+      key,
+      onClose: notification.close(key),
+      duration: 0
+    })
+  }
+
+  handleSuggestions() {
+    const key = `open${Date.now()}`
+    const NotificationButtons = (
+      <Fragment>
+        <AntdButton type="primary" size="small" onClick={() => notification.close(key)}>
+          Confirm
+        </AntdButton>
+        <AntdButton type="secondary" size="small" onClick={() => notification.close(key)}>
+          Dismiss Notification
+        </AntdButton>
+      </Fragment>
+    )
+    notification.open({
+      description:
+        'Another version of this defition has some recently updated data. \n \n Take a look at them and decide if to keep each data or discard it.',
       key,
       onClose: notification.close(key),
       duration: 0
