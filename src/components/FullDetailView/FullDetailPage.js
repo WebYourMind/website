@@ -5,6 +5,7 @@ import React, { Component, Fragment } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Grid, Button } from 'react-bootstrap'
+import omitBy from 'lodash/omitBy'
 import isEmpty from 'lodash/isEmpty'
 import cloneDeep from 'lodash/cloneDeep'
 import PropTypes from 'prop-types'
@@ -208,16 +209,6 @@ export class FullDetailPage extends Component {
 
   handleSuggestions() {
     const key = `open${Date.now()}`
-    const NotificationButtons = (
-      <Fragment>
-        <AntdButton type="primary" size="small" onClick={() => notification.close(key)}>
-          Confirm
-        </AntdButton>
-        <AntdButton type="secondary" size="small" onClick={() => notification.close(key)}>
-          Dismiss Notification
-        </AntdButton>
-      </Fragment>
-    )
     notification.open({
       description:
         'Another version of this defition has some recently updated data. \n \n Take a look at them and decide if to keep each data or discard it.',

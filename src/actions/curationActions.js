@@ -5,7 +5,7 @@ import React from 'react'
 import flatten from 'lodash/flatten'
 
 import { asyncActions } from './'
-import { curate, getCuration } from '../api/clearlyDefined'
+import { curate, getCuration, getCurationList } from '../api/clearlyDefined'
 import { uiNotificationNew } from '../actions/ui'
 
 export const CURATION_POST = 'CURATION_POST'
@@ -14,7 +14,18 @@ export function getCurationAction(token, entity, name) {
   return dispatch => {
     const actions = asyncActions(name)
     dispatch(actions.start())
-    return getCuration(token, entity).then(
+    return getCuration(token, entity, { expandedPrs: true }).then(
+      result => dispatch(actions.success(result)),
+      error => dispatch(actions.error(error))
+    )
+  }
+}
+
+export function getCurationListAction(token, entity, name, params) {
+  return dispatch => {
+    const actions = asyncActions(name)
+    dispatch(actions.start())
+    return getCurationList(token, entity, params).then(
       result => dispatch(actions.success(result)),
       error => dispatch(actions.error(error))
     )

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { getCurationAction } from './curationActions'
+import { getCurationAction, getCurationListAction } from './curationActions'
 import {
   getDefinitionAction,
   previewDefinitionAction,
@@ -21,6 +21,8 @@ export const UI_INSPECT_UPDATE_FILTER = 'UI_INSPECT_UPDATE_FILTER'
 export const UI_INSPECT_GET_CURATION = 'UI_INSPECT_GET_CURATION'
 export const UI_INSPECT_GET_DEFINITION = 'UI_INSPECT_GET_DEFINITION'
 export const UI_INSPECT_GET_HARVESTED = 'UI_INSPECT_GET_HARVESTED'
+
+export const UI_GET_CURATIONS_LIST = 'UI_GET_CURATIONS_LIST'
 
 export const UI_CONTRIBUTION_GET_URL = 'UI_CONTRIBUTION_GET_URL'
 export const UI_CONTRIBUTION_UPDATE_LIST = 'UI_CONTRIBUTION_UPDATE_LIST'
@@ -92,6 +94,10 @@ export function uiCurateUpdateFilterList(token, prefix) {
 
 export function uiCurateGetCuration(token, entity) {
   return getCurationAction(token, entity, entity.pr ? UI_CURATE_GET_PROPOSED : UI_CURATE_GET)
+}
+
+export function uiGetCurationsList(token, entity, params) {
+  return getCurationListAction(token, entity, UI_GET_CURATIONS_LIST, params)
 }
 
 export function uiCurateGetDefinition(token, entity) {

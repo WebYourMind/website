@@ -47,8 +47,25 @@ export function harvest(token, spec) {
   return post(url(HARVEST), token, spec)
 }
 
-export function getCuration(token, entity) {
-  return get(url(`${CURATIONS}/${entity.toPath()}`), token)
+export function getCuration(token, entity, params = {}) {
+  const { expandedPrs, pendingPrs } = params
+  return get(
+    url(`${CURATIONS}/${entity.toPath()}`, {
+      expanded: expandedPrs ? 'prs' : null,
+      state: pendingPrs ? 'pending' : null
+    }),
+    token
+  )
+}
+
+export function getCurationList(token, entity, { expandedPrs, pendingPrs }) {
+  return get(
+    url(`${CURATIONS}/${entity.toPath()}`, {
+      [expandedPrs ? 'expanded' : null]: expandedPrs ? 'prs' : null,
+      [expandedPrs ? 'state' : null]: pendingPrs ? 'pending' : null
+    }),
+    token
+  )
 }
 
 export function curate(token, spec) {
