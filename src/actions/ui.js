@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { getCurationAction, getCurationListAction } from './curationActions'
+import { getCurationAction, getCurationListAction, getCurationDataAction } from './curationActions'
 import {
   getDefinitionAction,
   previewDefinitionAction,
@@ -22,6 +22,7 @@ export const UI_INSPECT_GET_CURATION = 'UI_INSPECT_GET_CURATION'
 export const UI_INSPECT_GET_DEFINITION = 'UI_INSPECT_GET_DEFINITION'
 export const UI_INSPECT_GET_HARVESTED = 'UI_INSPECT_GET_HARVESTED'
 
+export const UI_GET_CURATION_DATA = 'UI_GET_CURATION_DATA'
 export const UI_GET_CURATIONS_LIST = 'UI_GET_CURATIONS_LIST'
 
 export const UI_CONTRIBUTION_GET_URL = 'UI_CONTRIBUTION_GET_URL'
@@ -74,6 +75,15 @@ export function uiInspectGetHarvested(token, entity) {
 
 export function uiContributionGetData(token, entity) {
   return getPrDataAction(token, entity)
+}
+
+/**
+ * Get the curation in the given PR relative to the specified coordinates
+ * @param  {} token
+ * @param  {} entity
+ */
+export function uiGetCurationData(token, entity, prNumber) {
+  return getCurationDataAction(token, entity, UI_GET_CURATION_DATA, prNumber)
 }
 
 export function uiContributionUpdateList(value) {
