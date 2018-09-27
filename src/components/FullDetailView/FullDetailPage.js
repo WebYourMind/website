@@ -30,6 +30,7 @@ import Definition from '../../utils/definition'
 import Auth from '../../utils/auth'
 import ContributePrompt from '../ContributePrompt'
 import FullDetailComponent from './FullDetailComponent'
+import Curation from '../../utils/curation'
 
 /**
  * Component that renders the Full Detail View as a Page or as a Modal
@@ -251,8 +252,21 @@ export class FullDetailPage extends Component {
   }
 
   render() {
-    const { path, definition, curation, harvest, modalView, visible, previewDefinition, readOnly, session } = this.props
+    const {
+      path,
+      definition,
+      curation,
+      harvest,
+      modalView,
+      visible,
+      previewDefinition,
+      readOnly,
+      session,
+      curationSuggestions
+    } = this.props
     const { changes } = this.state
+
+    console.log(curationSuggestions)
     return modalView ? (
       <Modal
         closable={false}
@@ -314,6 +328,8 @@ function mapStateToProps(state, props) {
 
   const path = Definition.getPathFromUrl(props)
   const component = props.component || Definition.getDefinitionEntity(path)
+  const curation = state.ui.inspect.curation && cloneDeep(state.ui.inspect.curation)
+  const latestCuration = state.ui.inspect.latestCuration && cloneDeep(state.ui.inspect.latestCuration)
 
   let previewDefinition, definition
 
@@ -332,9 +348,10 @@ function mapStateToProps(state, props) {
     token: state.session.token,
     session: state.session,
     definition,
-    curation: state.ui.inspect.curation && cloneDeep(state.ui.inspect.curation),
+    curation,
     harvest: state.ui.inspect.harvested && cloneDeep(state.ui.inspect.harvested),
-    previewDefinition
+    previewDefinition,
+    curationSuggestions: Curation.getSuggestions(latestCuration.item, curation.item)
   }
 }
 
