@@ -21,6 +21,13 @@ export function getCurationAction(token, entity, name) {
   }
 }
 
+/**
+ * List all of the curations (if any) using the given coordinates as a pattern to match
+ * @param  {} token
+ * @param  {} entity
+ * @param  {} name
+ * @param  {} params
+ */
 export function getCurationListAction(token, entity, name, params) {
   return dispatch => {
     const actions = asyncActions(name)

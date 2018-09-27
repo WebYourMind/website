@@ -19,7 +19,8 @@ import {
   uiInspectGetHarvested,
   uiNavigation,
   uiCurateGetDefinitionPreview,
-  uiCurateResetDefinitionPreview
+  uiCurateResetDefinitionPreview,
+  uiGetCurationsList
 } from '../../actions/ui'
 import { curateAction } from '../../actions/curationActions'
 import { login } from '../../actions/sessionActions'
@@ -83,11 +84,18 @@ export class FullDetailPage extends Component {
 
   // Get the data for the current definition
   handleNewSpec(component) {
-    const { token, uiInspectGetDefinition, uiInspectGetCuration, uiInspectGetHarvested } = this.props
+    const {
+      token,
+      uiInspectGetDefinition,
+      uiInspectGetCuration,
+      uiInspectGetHarvested,
+      uiGetCurationsList
+    } = this.props
     if (!component) return
     uiInspectGetDefinition(token, component)
     uiInspectGetCuration(token, component)
     uiInspectGetHarvested(token, component)
+    uiGetCurationsList(token, component)
     this.previewDefinition(component)
   }
 
@@ -337,6 +345,7 @@ function mapDispatchToProps(dispatch) {
       uiInspectGetDefinition,
       uiInspectGetCuration,
       uiInspectGetHarvested,
+      uiGetCurationsList,
       uiNavigation,
       curateAction,
       uiCurateGetDefinitionPreview,

@@ -3,6 +3,7 @@
 // DON'T COMMIT THIS FILE
 import 'whatwg-fetch'
 import { toPairs } from 'lodash'
+import EntitySpec from '../utils/entitySpec'
 
 export const API_LOCAL = 'http://localhost:4000'
 export const API_DEVELOP = 'https://dev-api.clearlydefined.io'
@@ -58,11 +59,18 @@ export function getCuration(token, entity, params = {}) {
   )
 }
 
-export function getCurationList(token, entity, { expandedPrs, pendingPrs }) {
+/**
+ * List all of the curations (if any) using the given coordinates as a pattern to match
+ * @param  {} token
+ * @param  {} entity
+ * @param  {} params
+ */
+export function getCurationList(token, entity, params = {}) {
+  const { pendingPrs } = params
+  const entityWithoutRevision = EntitySpec.asRevisionless(entity)
   return get(
-    url(`${CURATIONS}/${entity.toPath()}`, {
-      [expandedPrs ? 'expanded' : null]: expandedPrs ? 'prs' : null,
-      [expandedPrs ? 'state' : null]: pendingPrs ? 'pending' : null
+    url(`${CURATIONS}/${entityWithoutRevision.toPath()}`, {
+      state: pendingPrs ? 'pending' : null
     }),
     token
   )
