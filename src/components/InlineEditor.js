@@ -61,6 +61,10 @@ export default class InlineEditor extends React.Component {
     this.onChange(suggestion)
   }
 
+  discardSuggestion = () => {
+    this.props.onApplySuggestion && this.props.onApplySuggestion()
+  }
+
   renderValue() {
     const { value, type, initialValue, placeholder, extraClass, readOnly, onClick } = this.props
     const { editing } = this.state
@@ -81,7 +85,6 @@ export default class InlineEditor extends React.Component {
 
   renderSuggested() {
     const { type, placeholder, suggested } = this.props
-    console.log(suggested)
     return (
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <Tooltip title={this.renderers[type](suggested)}>
@@ -101,7 +104,11 @@ export default class InlineEditor extends React.Component {
           />
         </Tooltip>
         <Tooltip title={'Discard Suggestion'}>
-          <i className="fas fa-times-circle" style={{ color: 'red' }} />
+          <i
+            className="fas fa-times-circle"
+            style={{ color: 'red' }}
+            onClick={() => this.discardSuggestion(suggested)}
+          />
         </Tooltip>
       </div>
     )
