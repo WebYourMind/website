@@ -76,6 +76,16 @@ export function getCurationList(token, entity, params = {}) {
   )
 }
 
+/**
+ * Get the curation in the given PR relative to the specified coordinates
+ * @param  {} token
+ * @param  {} entity
+ * @param  {} prNumber
+ */
+export function getCurationData(token, entity, prNumber) {
+  return get(url(`${CURATIONS}/${entity.toPath()}/pr/${prNumber}`), token)
+}
+
 export function curate(token, spec) {
   return patch(url(`${CURATIONS}`), token, spec)
 }
