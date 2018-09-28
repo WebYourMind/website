@@ -53,6 +53,14 @@ export default class InlineEditor extends React.Component {
     if (target.checkValidity()) return this.onChange(target.value)
   }
 
+  /**
+   * Once a suggestion is applied, then it will added as a change for the current field
+   */
+  applySuggestion = suggestion => {
+    this.props.onApplySuggestion && this.props.onApplySuggestion()
+    this.onChange(suggestion)
+  }
+
   renderValue() {
     const { value, type, initialValue, placeholder, extraClass, readOnly, onClick } = this.props
     const { editing } = this.state
@@ -72,22 +80,27 @@ export default class InlineEditor extends React.Component {
   }
 
   renderSuggested() {
-    const { value, type, placeholder } = this.props
+    const { type, placeholder, suggested } = this.props
+    console.log(suggested)
     return (
       <div style={{ display: 'flex', alignItems: 'center' }}>
-        <Tooltip title={this.renderers[type](value)}>
+        <Tooltip title={this.renderers[type](suggested)}>
           <div
-            title={this.renderers[type](value)}
+            title={this.renderers[type](suggested)}
             className={`bg-suggested`}
             style={{ maxWidth: '250px', overflow: 'ellipsis', marginRight: '10px' }}
           >
-            {this.renderers[type](value) || placeholder}
+            {this.renderers[type](suggested) || placeholder}
           </div>
         </Tooltip>
-        <Tooltip title={'Keep this'}>
-          <i className="fas fa-check-circle" style={{ color: 'green' }} />
+        <Tooltip title={'Keep Suggestion'}>
+          <i
+            className="fas fa-check-circle"
+            style={{ color: 'green' }}
+            onClick={() => this.applySuggestion(suggested)}
+          />
         </Tooltip>
-        <Tooltip title={'Discard this'}>
+        <Tooltip title={'Discard Suggestion'}>
           <i className="fas fa-times-circle" style={{ color: 'red' }} />
         </Tooltip>
       </div>

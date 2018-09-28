@@ -18,7 +18,8 @@ import {
   uiCurateGetDefinitionPreview,
   uiCurateResetDefinitionPreview,
   uiGetCurationsList,
-  uiRevertDefinition
+  uiRevertDefinition,
+  uiApplyCurationSuggestion
 } from '../../actions/ui'
 import { curateAction } from '../../actions/curationActions'
 import { login } from '../../actions/sessionActions'
@@ -26,7 +27,6 @@ import { ROUTE_DEFINITIONS } from '../../utils/routingConstants'
 import Contribution from '../../utils/contribution'
 import Definition from '../../utils/definition'
 import Auth from '../../utils/auth'
-import Curation from '../../utils/curation'
 import NotificationButtons from '../NotificationButtons'
 import { AbstractFullDetailsView } from './AbstractFullDetailsView'
 
@@ -39,6 +39,7 @@ export class FullDetailPage extends AbstractFullDetailsView {
     super(props)
     this.state = {
       changes: {},
+      appliedSuggestions: [],
       sequence: 0
     }
     this.handleNewSpec = this.handleNewSpec.bind(this)
@@ -50,6 +51,7 @@ export class FullDetailPage extends AbstractFullDetailsView {
     this.handleRevert = this.handleRevert.bind(this)
     this.onChange = this.onChange.bind(this)
     this.close = this.close.bind(this)
+    this.applyCurationSuggestion = this.applyCurationSuggestion.bind(this)
     this.contributeModal = React.createRef()
   }
 
@@ -232,6 +234,12 @@ export class FullDetailPage extends AbstractFullDetailsView {
       this.props.login(token, permissions, username)
     })
   }
+
+  applyCurationSuggestion(suggestion) {
+    const { appliedSuggestions } = this.state
+    appliedSuggestions.push(suggestion)
+    this.setState({ appliedSuggestions })
+  }
 }
 
 function mapStateToProps(state, props) {
@@ -262,7 +270,7 @@ function mapStateToProps(state, props) {
     curation,
     harvest: state.ui.inspect.harvested && cloneDeep(state.ui.inspect.harvested),
     previewDefinition,
-    curationSuggestions: Curation.getSuggestions(latestCuration.item, curation.item)
+    latestCuration
   }
 }
 
@@ -278,7 +286,8 @@ function mapDispatchToProps(dispatch) {
       curateAction,
       uiCurateGetDefinitionPreview,
       uiCurateResetDefinitionPreview,
-      uiRevertDefinition
+      uiRevertDefinition,
+      uiApplyCurationSuggestion
     },
     dispatch
   )

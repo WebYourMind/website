@@ -19,6 +19,7 @@ import 'antd/dist/antd.css'
 import Contribution from '../../utils/contribution'
 import Definition from '../../utils/definition'
 import { Tooltip } from 'antd'
+import Curation from '../../utils/curation'
 
 class FullDetailComponent extends Component {
   static propTypes = {
@@ -31,13 +32,22 @@ class FullDetailComponent extends Component {
     modalView: PropTypes.bool.isRequired,
     readOnly: PropTypes.bool.isRequired,
     renderContributeButton: PropTypes.element,
-    previewDefinition: PropTypes.object
+    previewDefinition: PropTypes.object,
+    curationSuggestions: PropTypes.object
   }
 
   renderLabel = text => <b>{text}</b>
 
   renderDescribed(rawDefinition) {
-    const { activeFacets, readOnly, onChange, previewDefinition } = this.props
+    const {
+      activeFacets,
+      readOnly,
+      onChange,
+      previewDefinition,
+      curationSuggestions,
+      handleRevert,
+      applyCurationSuggestion
+    } = this.props
     // TODO: find a way of calling this method less frequently. It's relatively expensive.
     const definition = Contribution.foldFacets(rawDefinition, activeFacets)
     const toolList = get(definition.described, 'tools', []).map(
@@ -61,9 +71,15 @@ class FullDetailComponent extends Component {
                   Contribution.getValue(definition, previewDefinition, 'described.sourceLocation')
                 )}
                 onChange={value => onChange(`described.sourceLocation`, value, null, Contribution.parseCoordinates)}
-                onRevert={() => this.props.handleRevert('described.sourceLocation')}
+                onRevert={() => handleRevert('described.sourceLocation')}
                 validator
                 placeholder={'Source location'}
+                suggested={
+                  Curation.getValue(curationSuggestions, 'described.sourceLocation')
+                    ? Contribution.printCoordinates(Curation.getValue(curationSuggestions, 'described.sourceLocation'))
+                    : null
+                }
+                onApplySuggestion={() => applyCurationSuggestion('described.sourceLocation')}
               />
             </Col>
           </Row>
@@ -81,9 +97,15 @@ class FullDetailComponent extends Component {
                   Contribution.getValue(definition, previewDefinition, 'described.releaseDate')
                 )}
                 onChange={value => onChange(`described.releaseDate`, value)}
-                onRevert={() => this.props.handleRevert('described.releaseDate')}
+                onRevert={() => handleRevert('described.releaseDate')}
                 validator
                 placeholder={'YYYY-MM-DD'}
+                suggested={
+                  Curation.getValue(curationSuggestions, 'described.releaseDate')
+                    ? Contribution.printDate(Curation.getValue(curationSuggestions, 'described.releaseDate'))
+                    : null
+                }
+                onApplySuggestion={() => applyCurationSuggestion('described.releaseDate')}
               />
             </Col>
           </Row>
@@ -178,7 +200,14 @@ class FullDetailComponent extends Component {
   }
 
   renderLicensed(rawDefinition) {
-    const { activeFacets, readOnly, onChange, previewDefinition } = this.props
+    const {
+      activeFacets,
+      readOnly,
+      onChange,
+      previewDefinition,
+      curationSuggestions,
+      applyCurationSuggestion
+    } = this.props
     // TODO: find a way of calling this method less frequently. It's relatively expensive.
     const definition = Contribution.foldFacets(rawDefinition, activeFacets)
     const { licensed } = definition
@@ -204,6 +233,8 @@ class FullDetailComponent extends Component {
                 validator={true}
                 placeholder={'SPDX license'}
                 onRevert={() => this.props.handleRevert('licensed.declared')}
+                suggested={Curation.getValue(curationSuggestions, 'licensed.declared')}
+                onApplySuggestion={() => applyCurationSuggestion('licensed.declared')}
               />
             </Col>
           </Row>
@@ -288,7 +319,17 @@ class FullDetailComponent extends Component {
   }
 
   render() {
-    const { curation, definition, harvest, onChange, previewDefinition, readOnly, handleRevert, changes } = this.props
+    const {
+      curation,
+      definition,
+      harvest,
+      onChange,
+      previewDefinition,
+      readOnly,
+      handleRevert,
+      changes,
+      curationSuggestions
+    } = this.props
     const entry = find(changes, (_, key) => key && key.startsWith('files'))
     if (!definition || !definition.item || !curation || !harvest) return null
     const item = { ...definition.item }
@@ -314,6 +355,7 @@ class FullDetailComponent extends Component {
                       previewDefinition={previewDefinition}
                       readOnly={readOnly}
                       onRevert={handleRevert}
+                      curationSuggestions={curationSuggestions}
                     />
                   </Col>
                   <Col md={6}>{this.renderContributions()}</Col>

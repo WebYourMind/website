@@ -8,6 +8,7 @@ import Modal from 'antd/lib/modal'
 import 'antd/dist/antd.css'
 import ContributePrompt from '../ContributePrompt'
 import FullDetailComponent from './FullDetailComponent'
+import Curation from '../../utils/curation'
 
 /**
  * Component that renders the Full Detail View as a Page or as a Modal
@@ -25,9 +26,10 @@ export class AbstractFullDetailsView extends Component {
       previewDefinition,
       readOnly,
       session,
-      curationSuggestions
+      latestCuration
     } = this.props
-    const { changes } = this.state
+    const { changes, appliedSuggestions } = this.state
+    const curationSuggestions = Curation.getSuggestions(latestCuration.item, curation.item, appliedSuggestions)
 
     return modalView ? (
       <Modal
@@ -50,8 +52,11 @@ export class AbstractFullDetailsView extends Component {
             onChange={this.onChange}
             handleClose={this.handleClose}
             handleSave={this.handleSave}
+            handleRevert={this.handleRevert}
             previewDefinition={previewDefinition}
             changes={changes}
+            curationSuggestions={curationSuggestions}
+            applyCurationSuggestion={this.applyCurationSuggestion}
           />
         )}
       </Modal>
@@ -67,6 +72,9 @@ export class AbstractFullDetailsView extends Component {
           onChange={this.onChange}
           changes={changes}
           previewDefinition={previewDefinition}
+          handleRevert={this.handleRevert}
+          curationSuggestions={curationSuggestions}
+          applyCurationSuggestion={this.applyCurationSuggestion}
           renderContributeButton={
             <Button bsStyle="success" disabled={isEmpty(changes)} onClick={this.doPromptContribute}>
               Contribute

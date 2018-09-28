@@ -29,6 +29,7 @@ export const UI_GET_CURATIONS_LIST = 'UI_GET_CURATIONS_LIST'
 export const UI_CONTRIBUTION_GET_URL = 'UI_CONTRIBUTION_GET_URL'
 export const UI_CONTRIBUTION_UPDATE_LIST = 'UI_CONTRIBUTION_UPDATE_LIST'
 export const UI_CONTRIBUTION_DEFINITIONS = 'UI_CONTRIBUTION_DEFINITIONS'
+export const UI_CONTRIBUTION_APPLY_SUGGESTION = 'UI_CONTRIBUTION_APPLY_SUGGESTION'
 
 export const UI_CURATE_UPDATE_FILTER = 'UI_CURATE_UPDATE_FILTER'
 export const UI_CURATE_UPDATE_FILTER_LIST = 'UI_CURATE_UPDATE_FILTER_LIST'
@@ -86,6 +87,10 @@ export function uiContributionGetData(token, entity) {
  */
 export function uiGetCurationData(token, entity, prNumber) {
   return getCurationDataAction(token, entity, UI_GET_CURATION_DATA, prNumber)
+}
+
+export function uiApplyCurationSuggestion(value) {
+  return { type: UI_CONTRIBUTION_APPLY_SUGGESTION, result: value }
 }
 
 export function uiContributionUpdateList(value) {
