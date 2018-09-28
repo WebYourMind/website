@@ -1,20 +1,11 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
 import { Grid, Button } from 'react-bootstrap'
 import isEmpty from 'lodash/isEmpty'
 import Modal from 'antd/lib/modal'
 import 'antd/dist/antd.css'
-import {
-  uiInspectGetDefinition,
-  uiInspectGetCuration,
-  uiInspectGetHarvested,
-  uiNavigation,
-  uiCurateGetDefinitionPreview,
-  uiCurateResetDefinitionPreview,
-  uiGetCurationsList
-} from '../../actions/ui'
 import ContributePrompt from '../ContributePrompt'
 import FullDetailComponent from './FullDetailComponent'
 

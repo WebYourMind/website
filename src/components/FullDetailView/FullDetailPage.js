@@ -1,15 +1,13 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import React, { Component } from 'react'
+import React from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { Grid, Button } from 'react-bootstrap'
 import omitBy from 'lodash/omitBy'
 import isEmpty from 'lodash/isEmpty'
 import cloneDeep from 'lodash/cloneDeep'
 import PropTypes from 'prop-types'
-import Modal from 'antd/lib/modal'
 import notification from 'antd/lib/notification'
 import 'antd/dist/antd.css'
 import {
@@ -28,16 +26,11 @@ import { ROUTE_DEFINITIONS } from '../../utils/routingConstants'
 import Contribution from '../../utils/contribution'
 import Definition from '../../utils/definition'
 import Auth from '../../utils/auth'
-import ContributePrompt from '../ContributePrompt'
-import FullDetailComponent from './FullDetailComponent'
 import Curation from '../../utils/curation'
 import NotificationButtons from '../NotificationButtons'
+import { AbstractFullDetailsView } from './AbstractFullDetailsView'
 
-/**
- * Component that renders the Full Detail View as a Page or as a Modal
- * based on modalView property
- */
-export class FullDetailPage extends Component {
+export class FullDetailPage extends AbstractFullDetailsView {
   static defaultProps = {
     readOnly: false
   }
@@ -82,7 +75,6 @@ export class FullDetailPage extends Component {
       this.handleNewSpec(component)
     }
     uiNavigation({ to: ROUTE_DEFINITIONS })
-    this.handleSuggestions()
   }
 
   // Get the data for the current definition
@@ -206,45 +198,6 @@ export class FullDetailPage extends Component {
     })
   }
 
-  handleRevert(value) {
-    const { uiCurateResetDefinitionPreview } = this.props
-    const { changes } = this.state
-    if (isEmpty(changes)) return
-    if (value) {
-      const revertedChanges = omitBy(changes, (_, index) => index.startsWith(value))
-      this.setState({ changes: revertedChanges, sequence: this.state.sequence + 1 }, () => this.previewDefinition())
-      return
-    }
-    const key = `open${Date.now()}`
-    const NotificationButtons = (
-      <Fragment>
-        <AntdButton
-          type="primary"
-          size="small"
-          onClick={() =>
-            this.setState({ changes: {} }, () => {
-              uiCurateResetDefinitionPreview()
-              notification.close(key)
-            })
-          }
-        >
-          Confirm
-        </AntdButton>
-        <AntdButton type="secondary" size="small" onClick={() => notification.close(key)}>
-          Dismiss Notification
-        </AntdButton>
-      </Fragment>
-    )
-    notification.open({
-      message: 'Confirm Revert?',
-      description: 'Are you sure to revert all the unsaved changes from the current definition?',
-      btn: NotificationButtons,
-      key,
-      onClose: notification.close(key),
-      duration: 0
-    })
-  }
-
   handleSuggestions() {
     const key = `open${Date.now()}`
     notification.open({
@@ -278,79 +231,6 @@ export class FullDetailPage extends Component {
     Auth.doLogin((token, permissions, username) => {
       this.props.login(token, permissions, username)
     })
-  }
-
-  render() {
-    const {
-      path,
-      definition,
-      curation,
-      harvest,
-      modalView,
-      visible,
-      previewDefinition,
-      readOnly,
-      session,
-      curationSuggestions
-    } = this.props
-    const { changes } = this.state
-
-    console.log(curationSuggestions)
-    return modalView ? (
-      <Modal
-        closable={false}
-        // no need for default buttons
-        footer={null}
-        centered
-        destroyOnClose={true}
-        visible={visible}
-        width={'85%'}
-        className="fullDetaiView__modal"
-      >
-        {visible && (
-          <FullDetailComponent
-            curation={curation}
-            definition={definition}
-            harvest={harvest}
-            path={path}
-            readOnly={readOnly}
-            modalView={modalView}
-            onChange={this.onChange}
-            handleClose={this.handleClose}
-            handleSave={this.handleSave}
-            handleRevert={this.handleRevert}
-            previewDefinition={previewDefinition}
-            changes={changes}
-          />
-        )}
-      </Modal>
-    ) : (
-      <Grid>
-        <FullDetailComponent
-          curation={curation}
-          definition={definition}
-          harvest={harvest}
-          path={path}
-          readOnly={readOnly}
-          modalView={false}
-          onChange={this.onChange}
-          changes={changes}
-          previewDefinition={previewDefinition}
-          handleRevert={this.handleRevert}
-          renderContributeButton={
-            <Button bsStyle="success" disabled={isEmpty(changes)} onClick={this.doPromptContribute}>
-              Contribute
-            </Button>
-          }
-        />
-        <ContributePrompt
-          ref={this.contributeModal}
-          session={session}
-          onLogin={this.handleLogin}
-          actionHandler={this.doContribute}
-        />
-      </Grid>
-    )
   }
 }
 

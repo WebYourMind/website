@@ -95,7 +95,7 @@ export default class InlineEditor extends React.Component {
   }
 
   render() {
-    const { onClick, readOnly, initialValue, value, onRevert, revertable } = this.props
+    const { onClick, readOnly, initialValue, value, onRevert, revertable, suggested } = this.props
     const changed = initialValue !== value
     return (
       <span className="list-singleLine">
@@ -119,14 +119,6 @@ export default class InlineEditor extends React.Component {
             {this.renderValue()}
           </Fragment>
         )}
-        {!readOnly &&
-          revertable && (
-            <i
-              className={`fas fa-undo editable-marker ${!changed && 'fa-disabled'}`}
-              onClick={() => onRevert && changed && onRevert()}
-            />
-          )}
-        {this.renderValue()}
       </span>
     )
   }
