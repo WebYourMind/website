@@ -3,6 +3,7 @@
 // DON'T COMMIT THIS FILE
 import 'whatwg-fetch'
 import { toPairs } from 'lodash'
+import EntitySpec from '../utils/entitySpec'
 
 export const API_LOCAL = 'http://localhost:4000'
 export const API_DEVELOP = 'https://dev-api.clearlydefined.io'
@@ -16,7 +17,7 @@ export const apiHome = process.env.REACT_APP_SERVER || getServiceDefaultUrl()
 function getServiceDefaultUrl() {
   switch (process.env.NODE_ENV) {
     case 'development':
-      return API_LOCAL
+      return API_DEVELOP
     case 'test':
       return API_DEVELOP
     case 'production':
@@ -47,13 +48,42 @@ export function harvest(token, spec) {
   return post(url(HARVEST), token, spec)
 }
 
-export function getCurationList(token, entity) {
-  console.log(entity)
-  return get(url(`${CURATIONS}/${entity.toPath()}`), token)
+export function getCuration(token, entity, params = {}) {
+  const { expandedPrs, pendingPrs } = params
+  return get(
+    url(`${CURATIONS}/${entity.toPath()}`, {
+      expanded: expandedPrs ? 'prs' : null,
+      state: pendingPrs ? 'pending' : null
+    }),
+    token
+  )
 }
 
-export function getCuration(token, entity) {
-  return get(url(`${CURATIONS}/${entity.toPath()}`), token)
+/**
+ * List all of the curations (if any) using the given coordinates as a pattern to match
+ * @param  {} token
+ * @param  {} entity
+ * @param  {} params
+ */
+export function getCurationList(token, entity, params = {}) {
+  const { pendingPrs } = params
+  const entityWithoutRevision = EntitySpec.asRevisionless(entity)
+  return get(
+    url(`${CURATIONS}/${entityWithoutRevision.toPath()}`, {
+      state: pendingPrs ? 'pending' : null
+    }),
+    token
+  )
+}
+
+/**
+ * Get the curation in the given PR relative to the specified coordinates
+ * @param  {} token
+ * @param  {} entity
+ * @param  {} prNumber
+ */
+export function getCurationData(token, entity, prNumber) {
+  return get(url(`${CURATIONS}/${entity.toPath()}/pr/${prNumber}`), token)
 }
 
 export function curate(token, spec) {
