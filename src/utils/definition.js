@@ -44,7 +44,7 @@ export default class Definition {
   }
 
   static isSourceEmpty(definition) {
-    return !!get(definition, 'described.sourceLocation')
+    return !get(definition, 'described.sourceLocation')
   }
 
   /**
@@ -69,5 +69,13 @@ export default class Definition {
     }
     const { [key]: omit, ...updatedChanges } = component.changes
     return { ...component, changes: updatedChanges }
+  }
+
+  static isCurated(definition) {
+    return isEmpty(get(definition, '_meta.merged'))
+  }
+
+  static hasPendingCurations(definition) {
+    return isEmpty(get(definition, '_meta.pending'))
   }
 }
