@@ -5,13 +5,8 @@ import React from 'react'
 import flatten from 'lodash/flatten'
 
 import { asyncActions } from './'
-<<<<<<< HEAD
-import { curate, getCuration, getCurationList } from '../api/clearlyDefined'
-import { uiNotificationNew } from '../actions/ui'
-=======
 import { curate, getCuration, getCurationList, getCurationData } from '../api/clearlyDefined'
 import { uiNotificationNew, uiGetCurationData } from '../actions/ui'
->>>>>>> webyourmind/issue-291
 
 export const CURATION_POST = 'CURATION_POST'
 export const CURATION_BODIES = 'CURATION_BODIES'
@@ -58,17 +53,6 @@ export function getCurationDataAction(token, entity, name, prNumber) {
     const actions = asyncActions(name)
     dispatch(actions.start())
     return getCurationData(token, entity, prNumber).then(
-      result => dispatch(actions.success(result)),
-      error => dispatch(actions.error(error))
-    )
-  }
-}
-
-export function getCurationListAction(token, entity) {
-  return dispatch => {
-    const actions = asyncActions(CURATION_BODIES)
-    dispatch(actions.start())
-    return getCurationList(token, entity).then(
       result => dispatch(actions.success(result)),
       error => dispatch(actions.error(error))
     )

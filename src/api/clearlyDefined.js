@@ -52,7 +52,7 @@ export function getCuration(token, entity, params = {}) {
   const { expandedPrs, pendingPrs } = params
   return get(
     url(`${CURATIONS}/${entity.toPath()}`, {
-      expanded: expandedPrs ? 'prs' : null,
+      expand: expandedPrs ? 'prs' : null,
       state: pendingPrs ? 'pending' : null
     }),
     token
@@ -90,8 +90,14 @@ export function curate(token, spec) {
   return patch(url(`${CURATIONS}`), token, spec)
 }
 
-export function getDefinition(token, entity) {
-  return get(url(`${DEFINITIONS}/${entity.toPath()}`), token)
+export function getDefinition(token, entity, params = {}) {
+  const { expandPrs } = params
+  return get(
+    url(`${DEFINITIONS}/${entity.toPath()}`, {
+      expand: expandPrs ? 'prs' : null
+    }),
+    token
+  )
 }
 
 export function getContributionData(token, entity) {
