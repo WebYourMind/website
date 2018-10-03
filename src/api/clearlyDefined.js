@@ -16,7 +16,7 @@ export const apiHome = process.env.REACT_APP_SERVER || getServiceDefaultUrl()
 function getServiceDefaultUrl() {
   switch (process.env.NODE_ENV) {
     case 'development':
-      return API_DEVELOP
+      return API_LOCAL
     case 'test':
       return API_DEVELOP
     case 'production':

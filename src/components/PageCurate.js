@@ -23,8 +23,6 @@ class PageCurate extends Component {
     this.doPromptPropose = this.doPromptPropose.bind(this)
     this.filterChanged = this.filterChanged.bind(this)
     this.onSearch = this.onSearch.bind(this)
-    this.contributeModal = React.createRef()
-    this.proposeModal = React.createRef()
   }
 
   componentDidMount() {
@@ -62,10 +60,14 @@ class PageCurate extends Component {
     dispatch(uiCurateGetDefinition(token, currentSpec))
   }
 
-  doContribute(description) {
+  /**
+   * Dispatch the action to save a curation
+   * @param  {} constributionInfo object that describes the curation
+   */
+  doContribute(constributionInfo) {
     const { dispatch, token } = this.props
     const { proposal, entitySpec } = this.state
-    const spec = { description, patch: proposal }
+    const spec = { constributionInfo, patch: proposal }
     dispatch(curateAction(token, entitySpec, spec))
   }
 
@@ -155,8 +157,8 @@ class PageCurate extends Component {
     const searchWidth = isCurator ? 7 : 9
     return (
       <Grid className="main-container">
-        <ContributePrompt ref={ref => (this.contributeModal = ref)} actionHandler={this.doContribute} />
-        <ProposePrompt ref={ref => (this.proposeModal = ref)} actionHandler={this.doPropose} />
+        <ContributePrompt ref="contributeModal" actionHandler={this.doContribute} />
+        <ProposePrompt ref="proposeModal" actionHandler={this.doPropose} />
         <Row className="show-grid spacer">
           <Col md={searchWidth} mdOffset={1}>
             <FilterBar

@@ -11,8 +11,8 @@ import npm from '../images/n-large.png'
 import pypi from '../images/pypi.png'
 import gem from '../images/gem.png'
 import nuget from '../images/nuget.svg'
-import moment from 'moment'
 import Contribution from '../utils/contribution'
+import Definition from '../utils/definition'
 
 export default class DefinitionEntry extends React.Component {
   static propTypes = {
@@ -48,12 +48,6 @@ export default class DefinitionEntry extends React.Component {
   }
 
   ifDifferent(field, then_, else_) {
-    if (field == 'attribution.parties') {
-      console.log(this.props.definition)
-      console.log(this.props.otherDefinition)
-      console.log(get(this.props.otherDefinition, field))
-      console.log(this.getOriginalValue(field))
-    }
     return this.props.otherDefinition && !isEqual(get(this.props.otherDefinition, field), this.getOriginalValue(field))
       ? then_
       : else_
@@ -230,17 +224,12 @@ export default class DefinitionEntry extends React.Component {
     // TODO: find a way of calling this method less frequently. It's relatively expensive.
     const definition = this.foldFacets(rawDefinition, this.props.activeFacets)
     const { licensed } = definition
-    // const initialFacets =
-    //   get(described, 'facets') || this.isSourceComponent(definition.coordinates)
-    //     ? ['Core', 'Data', 'Dev', 'Doc', 'Examples', 'Tests']
-    //     : ['Core']
     const totalFiles = get(licensed, 'files')
     const unlicensed = get(licensed, 'discovered.unknown')
     const unattributed = get(licensed, 'attribution.unknown')
     const unlicensedPercent = totalFiles ? this.getPercentage(unlicensed, totalFiles) : '-'
     const unattributedPercent = totalFiles ? this.getPercentage(unattributed, totalFiles) : '-'
-    // const toolList = get(described, 'tools', []).map(tool => (tool.startsWith('curation') ? tool.slice(0, 16) : tool))
-    const { readOnly } = this.props
+    const { readOnly, onRevert } = this.props
     return (
       <Row>
         <Col md={5}>
@@ -258,6 +247,7 @@ export default class DefinitionEntry extends React.Component {
                   onChange={this.fieldChange('licensed.declared')}
                   validator={value => true}
                   placeholder={'SPDX license'}
+                  onRevert={() => onRevert('licensed.declared')}
                 />
               )}
             </Col>
@@ -276,6 +266,7 @@ export default class DefinitionEntry extends React.Component {
                   onChange={this.fieldChange('described.sourceLocation', isEqual, Contribution.parseCoordinates)}
                   validator={value => true}
                   placeholder={'Source location'}
+                  onRevert={() => onRevert('described.sourceLocation')}
                 />,
                 'right',
                 this.printCoordinates
@@ -296,6 +287,7 @@ export default class DefinitionEntry extends React.Component {
                   onChange={this.fieldChange('described.releaseDate')}
                   validator={value => true}
                   placeholder={'YYYY-MM-DD'}
+                  onRevert={() => onRevert('described.releaseDate')}
                 />
               )}
             </Col>
@@ -311,12 +303,7 @@ export default class DefinitionEntry extends React.Component {
           <Row>
             <Col md={2}>{this.renderLabel('Attribution', true)}</Col>
             <Col md={10} className="definition__line">
-              {this.renderPopover(
-                licensed,
-                'attribution.parties',
-                'Attributions',
-                this.classIfDifferent('attribution.parties')
-              )}
+              {this.renderPopover(licensed, 'attribution.parties', 'Attributions')}
             </Col>
           </Row>
           <Row>
@@ -334,8 +321,11 @@ export default class DefinitionEntry extends React.Component {
     )
   }
 
-  renderPopover(licensed, key, title, classIfDifferent = '') {
+  renderPopover(licensed, key, title) {
     const values = get(licensed, key, [])
+    // compare facets without folding
+    if (key === 'attribution.parties') key = 'licensed.facets'
+    const classIfDifferent = this.classIfDifferent(key)
     if (!values) return null
 
     return (
@@ -381,7 +371,8 @@ export default class DefinitionEntry extends React.Component {
         headline={this.renderHeadline(definition)}
         message={this.renderMessage(definition)}
         buttons={renderButtons && renderButtons(definition)}
-        onClick={onClick}
+        onClick={!Definition.isDefinitionEmpty(definition) ? onClick : null}
+        isEmpty={Definition.isDefinitionEmpty(definition)}
         panel={component.expanded ? this.renderPanel(definition) : null}
       />
     )
