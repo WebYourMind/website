@@ -19,6 +19,8 @@ import InnerDataSection from './InnerDataSection'
 import HeaderSection from './HeaderSection'
 import LabelRenderer from '../Renderers/LabelRenderer'
 import LicensedSection from './LicensedSections'
+import ButtonWithTooltip from '../Renderers/ButtonWithTooltip'
+import CurationsSection from './CurationsSection'
 
 class FullDetailComponent extends Component {
   static propTypes = {
@@ -35,27 +37,9 @@ class FullDetailComponent extends Component {
     curationSuggestions: PropTypes.object
   }
 
-  renderContributions() {
-    return (
-      <div>
-        <LabelRenderer text={'Curations'} />
-        <p>No curations found for this component</p>
-      </div>
-    )
-  }
-
   renderScore(domain) {
     if (!domain) return null
     return <img className="list-buttons" src={getBadgeUrl(domain.toolScore, domain.score)} alt="score" />
-  }
-
-  renderButtonWithTip(button, tip) {
-    const toolTip = <Tooltip id="tooltip">{tip}</Tooltip>
-    return (
-      <OverlayTrigger placement="top" overlay={toolTip}>
-        {button}
-      </OverlayTrigger>
-    )
   }
 
   render() {
@@ -100,7 +84,9 @@ class FullDetailComponent extends Component {
                       curationSuggestions={curationSuggestions}
                     />
                   </Col>
-                  <Col md={6}>{this.renderContributions()}</Col>
+                  <Col md={6}>
+                    <CurationsSection />
+                  </Col>
                 </Row>
               </Fragment>
             </Section>
@@ -112,13 +98,15 @@ class FullDetailComponent extends Component {
                 <section>
                   <span>Files</span>
                   &nbsp;
-                  {this.renderButtonWithTip(
-                    <Button bsStyle="danger" onClick={() => handleRevert('files')} disabled={entry === undefined}>
-                      <i className="fas fa-undo" />
-                      <span>&nbsp;Revert Changes</span>
-                    </Button>,
-                    'Revert all changes of all the definitions'
-                  )}
+                  <ButtonWithTooltip
+                    button={
+                      <Button bsStyle="danger" onClick={() => handleRevert('files')} disabled={entry === undefined}>
+                        <i className="fas fa-undo" />
+                        <span>&nbsp;Revert Changes</span>
+                      </Button>
+                    }
+                    tooltip="Revert all changes of all the definitions"
+                  />
                 </section>
               }
             >
