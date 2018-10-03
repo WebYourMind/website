@@ -114,7 +114,7 @@ export default class ComponentList extends React.Component {
     const isSourceEmpty = Definition.isSourceEmpty(definition)
     const isCurated = Definition.isCurated(definition)
     const hasPendingCurations = Definition.hasPendingCurations(definition)
-    console.log(isSourceComponent, readOnly, isSourceEmpty)
+
     return (
       <div className="list-activity-area">
         {scores && <img className="list-buttons" src={getBadgeUrl(scores.tool, scores.effective)} alt="score" />}

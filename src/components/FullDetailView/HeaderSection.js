@@ -3,6 +3,7 @@
 import React from 'react'
 import { Row, Button, Col } from 'react-bootstrap'
 import isEmpty from 'lodash/isEmpty'
+import { Tag } from 'antd'
 import { getBadgeUrl } from '../../api/clearlyDefined'
 import Definition from '../../utils/definition'
 import ButtonWithTooltip from '../Renderers/ButtonWithTooltip'
@@ -11,19 +12,25 @@ const HeaderSection = props => {
   const { definition, modalView, changes, renderContributeButton, handleClose, handleSave, handleRevert } = props
   const { item } = definition
   const scores = Definition.computeScores(item)
+  const isCurated = Definition.isCurated(definition)
+  const hasPendingCurations = Definition.hasPendingCurations(definition)
   return (
     <Row className="row-detail-header">
       <Col md={8}>
         <div className="detail-header">
-          <h2>
-            {item && item.coordinates.name}
+          <div className="header-title">
+            <h2>{item && item.coordinates.name}</h2>
             &nbsp;&nbsp;
-            {scores && (
-              <span className="score-header">
-                <img className="list-buttons" src={getBadgeUrl(scores.tool, scores.effective)} alt="score" />
-              </span>
-            )}
-          </h2>
+            <div className="header-data">
+              {scores && (
+                <span className="score-header">
+                  <img className="list-buttons" src={getBadgeUrl(scores.tool, scores.effective)} alt="score" />
+                </span>
+              )}
+              {isCurated && <Tag color="green">Curated</Tag>}
+              {hasPendingCurations && <Tag color="gold">Pending Curations</Tag>}
+            </div>
+          </div>
           <p>{item.coordinates.revision}</p>
         </div>
       </Col>
