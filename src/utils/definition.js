@@ -1,11 +1,12 @@
+// Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
+// SPDX-License-Identifier: MIT
 import Contribution from './contribution'
 import EntitySpec from './entitySpec'
 import get from 'lodash/get'
 import isEqual from 'lodash/isEqual'
 import isEmpty from 'lodash/isEmpty'
-
-// Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
-// SPDX-License-Identifier: MIT
+import union from 'lodash/union'
+import orderBy from 'lodash/orderBy'
 
 // Abstract methods for Definition
 export default class Definition {
@@ -77,5 +78,25 @@ export default class Definition {
 
   static hasPendingCurations(definition) {
     return isEmpty(get(definition, '_meta.pending'))
+  }
+
+  /**
+   * Return a list of PRs sorted by PR number
+   * @param {*} definition
+   */
+  static getPrs(definition) {
+    const { pending, merged } = get(definition, '_meta')
+    return orderBy(
+      union(
+        pending.map(item => {
+          return { ...item, status: 'pending' }
+        }),
+        merged.map(item => {
+          return { ...item, status: 'merged' }
+        })
+      ),
+      ['number'],
+      ['desc']
+    )
   }
 }

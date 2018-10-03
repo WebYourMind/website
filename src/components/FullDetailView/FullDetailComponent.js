@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import React, { Component, Fragment } from 'react'
-import { Row, Button, Col, OverlayTrigger } from 'react-bootstrap'
+import { Row, Button, Col } from 'react-bootstrap'
 import PropTypes from 'prop-types'
 import Tabs from 'antd/lib/tabs'
 import cloneDeep from 'lodash/cloneDeep'
@@ -13,7 +13,7 @@ import FileList from '../FileList'
 import FacetsEditor from '../FacetsEditor'
 import 'antd/dist/antd.css'
 import Contribution from '../../utils/contribution'
-import { Tooltip } from 'antd'
+import Definition from '../../utils/definition'
 import DescribedSection from './DescribedSection'
 import InnerDataSection from './InnerDataSection'
 import HeaderSection from './HeaderSection'
@@ -85,7 +85,7 @@ class FullDetailComponent extends Component {
                     />
                   </Col>
                   <Col md={6}>
-                    <CurationsSection />
+                    <CurationsSection curations={Definition.getPrs(item)} />
                   </Col>
                 </Row>
               </Fragment>
