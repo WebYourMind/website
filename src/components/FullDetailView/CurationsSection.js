@@ -37,11 +37,13 @@ class CurationsSection extends Component {
     return (
       <div>
         <LabelRenderer text={'Curations'} />
-        {curations ? (
-          curations.map(curation => this.renderCuration(curation))
-        ) : (
-          <p>No curations found for this component</p>
-        )}
+        <div className="curationSection">
+          {curations ? (
+            curations.map(curation => this.renderCuration(curation))
+          ) : (
+            <p>No curations found for this component</p>
+          )}
+        </div>
       </div>
     )
   }
