@@ -21,6 +21,7 @@ import LabelRenderer from '../Renderers/LabelRenderer'
 import LicensedSection from './LicensedSections'
 import ButtonWithTooltip from '../Renderers/ButtonWithTooltip'
 import CurationsSection from './CurationsSection'
+import CurationData from './CurationData'
 
 class FullDetailComponent extends Component {
   static propTypes = {
@@ -34,7 +35,8 @@ class FullDetailComponent extends Component {
     readOnly: PropTypes.bool.isRequired,
     renderContributeButton: PropTypes.element,
     previewDefinition: PropTypes.object,
-    curationSuggestions: PropTypes.object
+    curationSuggestions: PropTypes.object,
+    getCurationData: PropTypes.func
   }
 
   renderScore(domain) {
@@ -52,7 +54,9 @@ class FullDetailComponent extends Component {
       readOnly,
       handleRevert,
       changes,
-      curationSuggestions
+      curationSuggestions,
+      getCurationData,
+      inspectedCuration
     } = this.props
     const entry = find(changes, (_, key) => key && key.startsWith('files'))
     if (!definition || !definition.item || !curation || !harvest) return null
@@ -130,7 +134,11 @@ class FullDetailComponent extends Component {
                       <InnerDataSection value={definition} name={'Current definition'} type={'yaml'} />
                     </Tabs.TabPane>
                     <Tabs.TabPane tab="Curations" key="2">
-                      <InnerDataSection value={curation} name={'Curations'} type={'json'} />
+                      <CurationData
+                        curations={Definition.getPrs(item)}
+                        onChange={getCurationData}
+                        inspectedCuration={inspectedCuration}
+                      />
                     </Tabs.TabPane>
                     <Tabs.TabPane tab="Harvested data" key="3">
                       <InnerDataSection value={harvest} name={'Harvested data'} type={'json'} />
