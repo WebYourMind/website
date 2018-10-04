@@ -72,11 +72,11 @@ export default class Definition {
   }
 
   static isCurated(definition) {
-    return isEmpty(get(definition, '_meta.merged'))
+    return !isEmpty(get(definition, '_meta.merged'))
   }
 
   static hasPendingCurations(definition) {
-    return isEmpty(get(definition, '_meta.pending'))
+    return !isEmpty(get(definition, '_meta.pending'))
   }
 
   /**
@@ -84,6 +84,7 @@ export default class Definition {
    * @param {*} definition
    */
   static getPrs(definition) {
+    if (!get(definition, '_meta')) return
     const { pending, merged } = get(definition, '_meta')
     return union(
       pending.map(item => {

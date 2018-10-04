@@ -12,8 +12,8 @@ const HeaderSection = props => {
   const { definition, modalView, changes, renderContributeButton, handleClose, handleSave, handleRevert } = props
   const { item } = definition
   const scores = Definition.computeScores(item)
-  const isCurated = Definition.isCurated(definition)
-  const hasPendingCurations = Definition.hasPendingCurations(definition)
+  const isCurated = Definition.isCurated(item)
+  const hasPendingCurations = Definition.hasPendingCurations(item)
   return (
     <Row className="row-detail-header">
       <Col md={8}>
