@@ -66,6 +66,12 @@ export function getDefinitionAction(token, entity, name) {
                   title: 'some cool changes',
                   contributor: 'jeffmcaffer',
                   curator: 'willbar'
+                },
+                {
+                  number: 63,
+                  title: 'some cool changes',
+                  contributor: 'jeffmcaffer',
+                  curator: 'willbar'
                 }
               ]
             }

@@ -6,7 +6,6 @@ import get from 'lodash/get'
 import isEqual from 'lodash/isEqual'
 import isEmpty from 'lodash/isEmpty'
 import union from 'lodash/union'
-import orderBy from 'lodash/orderBy'
 
 // Abstract methods for Definition
 export default class Definition {
@@ -86,17 +85,13 @@ export default class Definition {
    */
   static getPrs(definition) {
     const { pending, merged } = get(definition, '_meta')
-    return orderBy(
-      union(
-        pending.map(item => {
-          return { ...item, status: 'pending' }
-        }),
-        merged.map(item => {
-          return { ...item, status: 'merged' }
-        })
-      ),
-      ['number'],
-      ['desc']
+    return union(
+      pending.map(item => {
+        return { ...item, status: 'pending' }
+      }),
+      merged.map(item => {
+        return { ...item, status: 'merged' }
+      })
     )
   }
 }
