@@ -135,6 +135,12 @@ export default class ComponentList extends React.Component {
               </Button>,
               'Dig into this definition'
             )}
+          <CopyUrlButton
+            route={ROUTE_DEFINITIONS}
+            path={component.toPath()}
+            bsStyle="default"
+            className="list-fa-button"
+          />
           {!readOnly &&
             !isDefinitionEmpty &&
             this.renderButtonWithTip(
@@ -147,12 +153,6 @@ export default class ComponentList extends React.Component {
               </Button>,
               'Revert Changes of this Definition'
             )}
-          <CopyUrlButton
-            route={ROUTE_DEFINITIONS}
-            path={component.toPath()}
-            bsStyle="default"
-            className="list-fa-button"
-          />
         </ButtonGroup>
         {!readOnly && (
           <Button bsStyle="link" onClick={this.removeComponent.bind(this, component)}>
