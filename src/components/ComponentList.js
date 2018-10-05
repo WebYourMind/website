@@ -3,12 +3,13 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import { RowEntityList, DefinitionEntry } from './'
+import { RowEntityList, DefinitionEntry, CopyUrlButton } from './'
 import { Button, OverlayTrigger, Tooltip, ButtonGroup } from 'react-bootstrap'
 import { get } from 'lodash'
 import EntitySpec from '../utils/entitySpec'
 import { getBadgeUrl } from '../api/clearlyDefined'
 import Definition from '../utils/definition'
+import { ROUTE_DEFINITIONS } from '../utils/routingConstants'
 
 export default class ComponentList extends React.Component {
   static propTypes = {
@@ -146,6 +147,12 @@ export default class ComponentList extends React.Component {
               </Button>,
               'Revert Changes of this Definition'
             )}
+          <CopyUrlButton
+            route={ROUTE_DEFINITIONS}
+            path={component.toPath()}
+            bsStyle="default"
+            className="list-fa-button"
+          />
         </ButtonGroup>
         {!readOnly && (
           <Button bsStyle="link" onClick={this.removeComponent.bind(this, component)}>
