@@ -267,11 +267,11 @@ class PageDefinitions extends AbstractPageDefinitions {
     if (text) {
       this.onTextDrop(text)
     } else {
-      const files = e.dataTransfer.files || e.target.files
+      const files = Object.values(e.dataTransfer.files)
       const acceptedFiles = files[0].type === 'application/json'
 
-      if (acceptedFiles) this.onFileDrop(Object.values(files))
-      else this.onDropRejected(Object.values(files))
+      if (acceptedFiles) this.onFileDrop(files)
+      else this.onDropRejected(files)
     }
   }
 
