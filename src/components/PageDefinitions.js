@@ -4,7 +4,6 @@
 import React, { Fragment } from 'react'
 import { connect } from 'react-redux'
 import { Row, Col, Button, DropdownButton, MenuItem, OverlayTrigger, Tooltip } from 'react-bootstrap'
-// import Dropzone from 'react-dropzone'
 import pako from 'pako'
 import throat from 'throat'
 import base64js from 'base64-js'
@@ -17,6 +16,7 @@ import { uiNavigation, uiBrowseUpdateList, uiNotificationNew, uiRevertDefinition
 import { getDefinitionsAction } from '../actions/definitionActions'
 import { ROUTE_DEFINITIONS, ROUTE_SHARE } from '../utils/routingConstants'
 import EntitySpec from '../utils/entitySpec'
+import checkDroppedFiles from '../utils/checkDroppedFiles'
 import AbstractPageDefinitions from './AbstractPageDefinitions'
 import NotificationButtons from './NotificationButtons'
 
@@ -267,10 +267,11 @@ class PageDefinitions extends AbstractPageDefinitions {
       this.onTextDrop(text)
     } else {
       const files = Object.values(e.dataTransfer.files)
-      const acceptedFiles = files[0].type === 'application/json'
+      const checkedFiles = checkDroppedFiles(files)
+      const { acceptedFiles, rejectedFiles } = checkedFiles
 
-      if (acceptedFiles) this.onFileDrop(files)
-      else this.onDropRejected(files)
+      if (acceptedFiles.length) this.onFileDrop(acceptedFiles)
+      if (rejectedFiles.length) this.onDropRejected(rejectedFiles)
     }
   }
 
