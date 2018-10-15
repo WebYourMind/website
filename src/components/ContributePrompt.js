@@ -4,7 +4,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Modal, Form, Button } from 'react-bootstrap'
-import { FormGroup, ControlLabel, FormControl, Checkbox, Row, Col } from 'react-bootstrap'
+import { FormGroup, ControlLabel, FormControl, Checkbox } from 'react-bootstrap'
 import { FieldGroup } from './'
 
 export default class ContributePrompt extends Component {
