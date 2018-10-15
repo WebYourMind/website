@@ -6,7 +6,7 @@ import flatten from 'lodash/flatten'
 
 import { asyncActions } from './'
 import { curate, getCuration } from '../api/clearlyDefined'
-import { uiNotificationNew, uiBrowseUpdateList } from '../actions/ui'
+import { uiNotificationNew } from '../actions/ui'
 
 export const CURATION_POST = 'CURATION_POST'
 
@@ -21,7 +21,7 @@ export function getCurationAction(token, entity, name) {
   }
 }
 
-export function curateAction(token, spec, components) {
+export function curateAction(token, spec) {
   return dispatch => {
     const actions = asyncActions(CURATION_POST)
     dispatch(actions.start())
