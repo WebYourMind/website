@@ -16,7 +16,6 @@ import { uiNavigation, uiBrowseUpdateList, uiNotificationNew, uiRevertDefinition
 import { getDefinitionsAction } from '../actions/definitionActions'
 import { ROUTE_DEFINITIONS, ROUTE_SHARE } from '../utils/routingConstants'
 import EntitySpec from '../utils/entitySpec'
-import checkDroppedFiles from '../utils/checkDroppedFiles'
 import AbstractPageDefinitions from './AbstractPageDefinitions'
 import { getCurationAction } from '../actions/curationActions'
 import NotificationButtons from './Navigation/Ui/NotificationButtons'
@@ -268,7 +267,7 @@ class PageDefinitions extends AbstractPageDefinitions {
       this.onTextDrop(text)
     } else {
       const files = Object.values(e.dataTransfer.files)
-      const checkedFiles = checkDroppedFiles(files)
+      const checkedFiles = EntitySpec.checkDroppedFiles(files)
       const { acceptedFiles, rejectedFiles } = checkedFiles
 
       if (acceptedFiles.length) this.onFileDrop(acceptedFiles)
@@ -276,7 +275,11 @@ class PageDefinitions extends AbstractPageDefinitions {
     }
   }
 
-  onTextDrop = text => console.log(text)
+  onTextDrop = url => {
+    const path = EntitySpec.fromUrl(url)
+    console.log(path)
+    this.onAddComponent(path)
+  }
 
   onFileDrop(files) {
     const { dispatch } = this.props

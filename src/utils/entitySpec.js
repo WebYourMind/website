@@ -15,6 +15,8 @@ const toLowerCaseMap = {
   mavencentralsource: NONE
 }
 
+const acceptedFilesValues = ['application/json']
+
 function normalize(value, provider, property) {
   if (!value) return value
   const mask = toLowerCaseMap[provider] || 0
@@ -30,6 +32,41 @@ export default class EntitySpec {
     // eslint-disable-next-line no-unused-vars
     const [blank, delimiter, pr] = prSpec ? prSpec.split('/') : []
     return new EntitySpec(type, provider, namespace, name, revision, pr)
+  }
+
+  static checkDroppedFiles(files) {
+    let acceptedFiles = []
+    let rejectedFiles = []
+
+    files.forEach(file => {
+      const acceptedType = acceptedFilesValues.find(el => el === file.type)
+
+      if (acceptedType) acceptedFiles.push(file)
+      else rejectedFiles.push(file)
+    })
+
+    return {
+      acceptedFiles,
+      rejectedFiles
+    }
+  }
+
+  static fromUrl(url) {
+    const urlObject = new URL(url)
+    const test2 = urlObject.pathname.split('/')
+    const path = urlObject.pathname.startsWith('/') ? urlObject.pathname.slice(1) : urlObject.pathname
+
+    // console.log(test2)
+    // console.log(text.match(/^((http[s]?|ftp):\/)?\/?([^:\/\s]+)((\/\w+)*\/)([\w\-\.]+[^#?\s]+)(.*)?(#[\w\-]+)?$/))
+    // const test = 'npm/npmjs/-/bootstrap/4.1.3'
+    console.log(test2)
+    switch (urlObject.hostname) {
+      case 'www.npmjs.com':
+        const [packageName, name, version, revision] = path.split('/')
+        console.log(name, revision)
+        return `npm/npmjs/-/${name}/${revision}`
+    }
+    //return 'npm/npmjs/-/bootstrap/4.1.3';
   }
 
   static fromCoordinates(o) {
