@@ -32,7 +32,8 @@ export default class ContributePrompt extends Component {
       summary: '',
       details: '',
       resolution: '',
-      type: 'select'
+      type: 'select',
+      removeDefinitions: false
     })
   }
 
@@ -62,7 +63,7 @@ export default class ContributePrompt extends Component {
   render() {
     const { details, summary, show, type, resolution } = this.state
     const { session, onLogin } = this.props
-    console.log(this.state)
+
     return (
       <Modal show={show} onHide={this.close}>
         <Form>
