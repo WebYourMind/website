@@ -16,7 +16,6 @@ import { uiNavigation, uiBrowseUpdateList, uiNotificationNew, uiRevertDefinition
 import { getDefinitionsAction } from '../actions/definitionActions'
 import { ROUTE_DEFINITIONS, ROUTE_SHARE } from '../utils/routingConstants'
 import EntitySpec from '../utils/entitySpec'
-import checkDroppedFiles from '../utils/checkDroppedFiles'
 import AbstractPageDefinitions from './AbstractPageDefinitions'
 import NotificationButtons from './NotificationButtons'
 
@@ -267,7 +266,7 @@ class PageDefinitions extends AbstractPageDefinitions {
       this.onTextDrop(text)
     } else {
       const files = Object.values(e.dataTransfer.files)
-      const checkedFiles = checkDroppedFiles(files)
+      const checkedFiles = EntitySpec.checkDroppedFiles(files)
       const { acceptedFiles, rejectedFiles } = checkedFiles
 
       if (acceptedFiles.length) this.onFileDrop(acceptedFiles)
@@ -275,7 +274,11 @@ class PageDefinitions extends AbstractPageDefinitions {
     }
   }
 
-  onTextDrop = text => console.log(text)
+  onTextDrop = url => {
+    const path = EntitySpec.fromUrl(url)
+    console.log(path)
+    this.onAddComponent(path)
+  }
 
   onFileDrop(files) {
     const { dispatch } = this.props
@@ -306,6 +309,7 @@ class PageDefinitions extends AbstractPageDefinitions {
     const { dispatch, token, definitions } = this.props
     const component = typeof value === 'string' ? EntitySpec.fromPath(value) : value
     const path = component.toPath()
+
     !definitions.entries[path] && dispatch(getDefinitionsAction(token, [path]))
     dispatch(uiBrowseUpdateList({ add: component }))
   }
