@@ -6,7 +6,7 @@ import flatten from 'lodash/flatten'
 
 import { asyncActions } from './'
 import { curate, getCuration } from '../api/clearlyDefined'
-import { uiNotificationNew } from '../actions/ui'
+import { uiNotificationNew, uiBrowseUpdateList } from '../actions/ui'
 
 export const CURATION_POST = 'CURATION_POST'
 
@@ -21,12 +21,13 @@ export function getCurationAction(token, entity, name) {
   }
 }
 
-export function curateAction(token, spec) {
+export function curateAction(token, spec, components) {
   return dispatch => {
     const actions = asyncActions(CURATION_POST)
     dispatch(actions.start())
     dispatch(uiNotificationNew({ type: 'info', message: 'Started contribution.', timeout: 5000 }))
-    return curate(token, spec).then(
+
+    /*return curate(token, spec).then(
       result => {
         const prMessage = (
           <div>
@@ -55,6 +56,6 @@ export function curateAction(token, spec) {
           })
         } else dispatch(uiNotificationNew({ type: 'info', message: 'Failed contribution.', timeout: 5000 }))
       }
-    )
+    )*/
   }
 }

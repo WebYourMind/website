@@ -30,6 +30,7 @@ const addAll = (list, items) => {
 }
 
 const update = (list, item, newValue, comparator = null) => {
+  console.log(item, newValue)
   const test = comparator ? element => comparator(element, item) : element => element === item
   const entry = _.findIndex(list, test)
   if (entry < 0) return list

@@ -151,7 +151,9 @@ export default class AbstractPageDefinitions extends Component {
     const { dispatch, token, components } = this.props
     const patches = this.buildContributeSpec(components.list)
     const spec = { constributionInfo, patches }
-    dispatch(curateAction(token, spec))
+
+    dispatch(curateAction(token, spec, components.list))
+    this.refresh()
   }
 
   buildContributeSpec(list) {
