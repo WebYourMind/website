@@ -276,7 +276,6 @@ class PageDefinitions extends AbstractPageDefinitions {
 
   onTextDrop = url => {
     const path = EntitySpec.fromUrl(url)
-    console.log(path)
     this.onAddComponent(path)
   }
 
