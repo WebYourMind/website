@@ -26,7 +26,6 @@ export function curateAction(token, spec) {
     const actions = asyncActions(CURATION_POST)
     dispatch(actions.start())
     dispatch(uiNotificationNew({ type: 'info', message: 'Started contribution.', timeout: 5000 }))
-
     return curate(token, spec).then(
       result => {
         const prMessage = (
