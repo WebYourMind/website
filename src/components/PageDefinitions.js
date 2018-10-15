@@ -99,11 +99,11 @@ class PageDefinitions extends AbstractPageDefinitions {
 
   refresh = () => {
     const { components, dispatch } = this.props
-
+    const refreshedData = components.list.map(({ changes, ...keepAttrs }) => keepAttrs)
     if (this.hasChanges()) {
       dispatch(
         uiBrowseUpdateList({
-          transform: list => list.map(({ changes, ...keepAttrs }) => keepAttrs)
+          updateAll: refreshedData
         })
       )
     }

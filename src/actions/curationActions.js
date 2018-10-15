@@ -27,7 +27,7 @@ export function curateAction(token, spec, components) {
     dispatch(actions.start())
     dispatch(uiNotificationNew({ type: 'info', message: 'Started contribution.', timeout: 5000 }))
 
-    /*return curate(token, spec).then(
+    return curate(token, spec).then(
       result => {
         const prMessage = (
           <div>
@@ -56,6 +56,6 @@ export function curateAction(token, spec, components) {
           })
         } else dispatch(uiNotificationNew({ type: 'info', message: 'Failed contribution.', timeout: 5000 }))
       }
-    )*/
+    )
   }
 }
