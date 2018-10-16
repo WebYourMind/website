@@ -80,12 +80,12 @@ export default class EntitySpec {
     switch (hostname) {
       case NPM_WEBSITE:
         ;[packageName, name, version, revision] = pathname.split('/')
-        return revision ? `${providerPath[NPM_WEBSITE]}/${name}/${revision}` : this.providerErrorsFallback(NPM_WEBSITE)
+        return revision ? `${providerPath[hostname]}/${name}/${revision}` : this.providerErrorsFallback(hostname)
 
       case GITHUB_WEBSITE:
         ;[packageName, name, version, revision] = pathname.split('/')
         return revision
-          ? `${providerPath[GITHUB_WEBSITE]}/${packageName}/${name}/${revision}`
+          ? `${providerPath[hostname]}/${packageName}/${name}/${revision}`
           : this.providerErrorsFallback(GITHUB_WEBSITE)
 
       case PYPI_WEBSITE:
@@ -97,20 +97,16 @@ export default class EntitySpec {
       case MAVEN_WEBSITE:
         ;[packageName, name, version, revision] = pathname.split('/')
         return revision
-          ? `${providerPath[MAVEN_WEBSITE]}/${name}/${version}/${revision}`
-          : `maven/mavencentral/${name}/${version}`
+          ? `${providerPath[hostname]}/${name}/${version}/${revision}`
+          : `${providerPath[hostname]}/${name}/${version}`
 
       case NUGET_WEBSITE:
         ;[packageName, name, revision] = pathname.split('/')
-        return revision
-          ? `${providerPath[NUGET_WEBSITE]}/${name}/${revision}`
-          : `${providerPath[NUGET_WEBSITE]}/${packageName}`
+        return revision ? `${providerPath[hostname]}/${name}/${revision}` : `${providerPath[hostname]}/${packageName}`
 
       case RUBYGEM_WEBSITE:
         ;[packageName, name, version, revision] = pathname.split('/')
-        return revision
-          ? `${providerPath[RUBYGEM_WEBSITE]}/${name}/${revision}`
-          : `${providerPath[RUBYGEM_WEBSITE]}/${name}`
+        return revision ? `${providerPath[hostname]}/${name}/${revision}` : `${providerPath[hostname]}/${name}`
 
       default:
         return { errors: `${hostname} is not available as source provider` }

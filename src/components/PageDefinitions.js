@@ -279,10 +279,7 @@ class PageDefinitions extends AbstractPageDefinitions {
     const path = EntitySpec.fromUrl(url)
 
     if (path.errors) dispatch(uiNotificationNew({ type: 'warning', message: path.errors, timeout: 5000 }))
-    else {
-      console.log(path)
-      this.onAddComponent(path)
-    }
+    else this.onAddComponent(path)
   }
 
   onFileDrop(files) {
