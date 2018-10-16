@@ -22,6 +22,15 @@ const NUGET_WEBSITE = 'nuget.org'
 const PYPI_WEBSITE = 'pypi.org'
 const RUBYGEM_WEBSITE = 'rubygems.org'
 
+const providerPath = {
+  [NPM_WEBSITE]: 'npm/npmjs/-',
+  [GITHUB_WEBSITE]: 'git/github',
+  [PYPI_WEBSITE]: 'pypi/pypi/-',
+  [MAVEN_WEBSITE]: 'maven/mavencentral',
+  [NUGET_WEBSITE]: 'nuget/nuget/-',
+  [RUBYGEM_WEBSITE]: 'nuget/nuget/-'
+}
+
 const acceptedFilesValues = ['application/json']
 
 function normalize(value, provider, property) {
@@ -58,46 +67,53 @@ export default class EntitySpec {
     }
   }
 
+  static providerErrorsFallback(provider) {
+    return { errors: `${provider} need a version to be imported` }
+  }
+
   static fromUrl(url) {
     const urlObject = new URL(url)
     const pathname = urlObject.pathname.startsWith('/') ? urlObject.pathname.slice(1) : urlObject.pathname
-    const [packageName, name, version, revision] = pathname.split('/')
     const hostname = urlObject.hostname.replace('www.', '')
-    let path
+    let packageName, name, version, revision
 
     switch (hostname) {
       case NPM_WEBSITE:
-        if (revision) path = `npm/npmjs/-/${name}/${revision}`
-        else path = `npm/npmjs/-/${name}`
-        return path
+        ;[packageName, name, version, revision] = pathname.split('/')
+        return revision ? `${providerPath[NPM_WEBSITE]}/${name}/${revision}` : this.providerErrorsFallback(NPM_WEBSITE)
 
       case GITHUB_WEBSITE:
-        if (revision) path = `git/github/${packageName}/${name}/${revision}`
-        else path = `git/github/${packageName}/${name}`
-        return path
-
-      case MAVEN_WEBSITE:
-        if (revision) path = `maven/mavencentral/${name}/${version}/${revision}`
-        else path = `maven/mavencentral/${name}/${version}`
-        return path
-
-      case NUGET_WEBSITE:
-        if (version) path = `nuget/nuget/-/${name}/${version}`
-        else path = `nuget/nuget/-/${name}`
-        return path
+        ;[packageName, name, version, revision] = pathname.split('/')
+        return revision
+          ? `${providerPath[GITHUB_WEBSITE]}/${packageName}/${name}/${revision}`
+          : this.providerErrorsFallback(GITHUB_WEBSITE)
 
       case PYPI_WEBSITE:
-        if (version) path = `pypi/pypi/-/${name}/${version}`
-        else path = `pypi/pypi/-/${name}`
-        return path
+        ;[packageName, name, revision] = pathname.split('/')
+        return revision
+          ? `${providerPath[PYPI_WEBSITE]}/${name}/${revision}`
+          : this.providerErrorsFallback(PYPI_WEBSITE)
+
+      case MAVEN_WEBSITE:
+        ;[packageName, name, version, revision] = pathname.split('/')
+        return revision
+          ? `${providerPath[MAVEN_WEBSITE]}/${name}/${version}/${revision}`
+          : `maven/mavencentral/${name}/${version}`
+
+      case NUGET_WEBSITE:
+        ;[packageName, name, revision] = pathname.split('/')
+        return revision
+          ? `${providerPath[NUGET_WEBSITE]}/${name}/${revision}`
+          : `${providerPath[NUGET_WEBSITE]}/${packageName}`
 
       case RUBYGEM_WEBSITE:
-        if (revision) path = `gem/rubygems/-/${name}/${revision}`
-        else path = `gem/rubygems/-/${name}`
-        return path
+        ;[packageName, name, version, revision] = pathname.split('/')
+        return revision
+          ? `${providerPath[RUBYGEM_WEBSITE]}/${name}/${revision}`
+          : `${providerPath[RUBYGEM_WEBSITE]}/${name}`
 
       default:
-        return null
+        return { errors: `${hostname} is not available as source provider` }
     }
   }
 
