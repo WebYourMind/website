@@ -97,7 +97,6 @@ export default class EntitySpec {
         return path
 
       default:
-        console.error('ATTENTION: Source provider not available!')
         return null
     }
   }
