@@ -1,0 +1,63 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CurationData calls correct function to expand curation 1`] = `
+<div
+  style={
+    Object {
+      "height": "400px",
+      "overflowY": "auto",
+    }
+  }
+>
+  <Collapse
+    accordion={true}
+    bordered={false}
+    onChange={[Function]}
+    openAnimation={
+      Object {
+        "appear": [Function],
+        "enter": [Function],
+        "leave": [Function],
+      }
+    }
+    prefixCls="ant-collapse"
+  >
+    <CollapsePanel
+      header={
+        <CurationRenderer
+          curation={
+            Object {
+              "number": 100,
+            }
+          }
+        />
+      }
+      key="100"
+    >
+      <RawDataRenderer
+        name="Curations"
+        type="json"
+        value={Object {}}
+      />
+    </CollapsePanel>
+    <CollapsePanel
+      header={
+        <CurationRenderer
+          curation={
+            Object {
+              "number": 10,
+            }
+          }
+        />
+      }
+      key="10"
+    >
+      <RawDataRenderer
+        name="Curations"
+        type="json"
+        value={Object {}}
+      />
+    </CollapsePanel>
+  </Collapse>
+</div>
+`;
