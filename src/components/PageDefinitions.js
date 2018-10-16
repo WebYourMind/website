@@ -275,8 +275,11 @@ class PageDefinitions extends AbstractPageDefinitions {
   }
 
   onTextDrop = url => {
+    const { dispatch } = this.props
+
     const path = EntitySpec.fromUrl(url)
-    this.onAddComponent(path)
+    if (!path) dispatch(uiNotificationNew({ type: 'info', message: 'Source provider not available', timeout: 5000 }))
+    else this.onAddComponent(path)
   }
 
   onFileDrop(files) {
