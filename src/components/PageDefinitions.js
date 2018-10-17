@@ -18,9 +18,10 @@ import { getDefinitionsAction } from '../actions/definitionActions'
 import { ROUTE_DEFINITIONS, ROUTE_SHARE } from '../utils/routingConstants'
 import EntitySpec from '../utils/entitySpec'
 import AbstractPageDefinitions from './AbstractPageDefinitions'
-import NotificationButtons from './NotificationButtons'
+import { getCurationAction } from '../actions/curationActions'
+import NotificationButtons from './Navigation/Ui/NotificationButtons'
 
-class PageDefinitions extends AbstractPageDefinitions {
+export class PageDefinitions extends AbstractPageDefinitions {
   constructor(props) {
     super(props)
     this.onDrop = this.onDrop.bind(this)
@@ -283,7 +284,9 @@ class PageDefinitions extends AbstractPageDefinitions {
     const { dispatch, token, definitions } = this.props
     const component = typeof value === 'string' ? EntitySpec.fromPath(value) : value
     const path = component.toPath()
-    !definitions.entries[path] && dispatch(getDefinitionsAction(token, [path]))
+    !definitions.entries[path] &&
+      dispatch(getDefinitionsAction(token, [path])) &&
+      dispatch(getCurationAction(token, component))
     dispatch(uiBrowseUpdateList({ add: component }))
   }
 
