@@ -52,7 +52,7 @@ describe('definitions actions', () => {
     fetchMock.reset()
     fetchMock.restore()
   })
-  it('creates DEFINITION_BODIES when fetching definitions has been done', async () => {
+  it('creates DEFINITION_BODIES when fetching definitions has completed', async () => {
     await fetchMock.postOnce(url(`${DEFINITIONS}`), {
       body: mockedDefinition,
       headers: { 'content-type': 'application/json' }
