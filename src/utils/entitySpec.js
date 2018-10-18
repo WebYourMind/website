@@ -69,54 +69,6 @@ export default class EntitySpec {
     }
   }
 
-  // static extractPath(pathname, hostname) {
-  //   const path = pathname.split('/')
-  //   let packageName, nameSpace, name, version, revision
-  //
-  //   switch (hostname) {
-  //     case NPM_WEBSITE:
-  //       if (path.length === 5) {
-  //         ;[, nameSpace, name, , revision] = path
-  //
-  //         return revision && `${providerPath[hostname]}/${nameSpace}/${name}/${revision}`
-  //       } else {
-  //         nameSpace = '-'
-  //         ;[, name, , revision] = path
-  //
-  //         return revision && `${providerPath[hostname]}/${nameSpace}/${name}/${revision}`
-  //       }
-  //
-  //     case GITHUB_WEBSITE:
-  //       ;[packageName, name, , revision] = pathname.split('/')
-  //       return revision
-  //         ? `${providerPath[hostname]}/${packageName}/${name}/${revision}`
-  //         : this.providerErrorsFallback(hostname)
-  //
-  //     case PYPI_WEBSITE:
-  //       ;[packageName, name, revision] = pathname.split('/')
-  //       return revision ? `${providerPath[hostname]}/${name}/${revision}` : this.providerErrorsFallback(hostname)
-  //
-  //     case MAVEN_WEBSITE:
-  //       ;[, name, version, revision] = pathname.split('/')
-  //
-  //       return revision
-  //         ? `${providerPath[hostname]}/${name}/${version}/${revision}`
-  //         : this.providerErrorsFallback(hostname)
-  //
-  //     case NUGET_WEBSITE:
-  //       ;[packageName, name, revision] = pathname.split('/')
-  //       return revision ? `${providerPath[hostname]}/${name}/${revision}` : this.providerErrorsFallback(hostname)
-  //
-  //     case RUBYGEM_WEBSITE:
-  //       ;[packageName, name, , revision] = pathname.split('/')
-  //
-  //       return revision ? `${providerPath[hostname]}/${name}/${revision}` : this.providerErrorsFallback(hostname)
-  //
-  //     default:
-  //       return { errors: `${hostname} is not available as source provider` }
-  //   }
-  // }
-
   static extractPath(pathname, hostname) {
     const path = pathname.split('/')
     let packageName, nameSpace, name, version, revision
