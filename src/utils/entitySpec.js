@@ -31,6 +31,8 @@ const providerPath = {
   [RUBYGEM_WEBSITE]: 'gem/rubygems/-'
 }
 
+const providerWebsiteValues = [NPM_WEBSITE, GITHUB_WEBSITE, MAVEN_WEBSITE, NUGET_WEBSITE, PYPI_WEBSITE, RUBYGEM_WEBSITE]
+
 const acceptedFilesValues = ['application/json']
 
 function normalize(value, provider, property) {
@@ -67,6 +69,100 @@ export default class EntitySpec {
     }
   }
 
+  // static extractPath(pathname, hostname) {
+  //   const path = pathname.split('/')
+  //   let packageName, nameSpace, name, version, revision
+  //
+  //   switch (hostname) {
+  //     case NPM_WEBSITE:
+  //       if (path.length === 5) {
+  //         ;[, nameSpace, name, , revision] = path
+  //
+  //         return revision && `${providerPath[hostname]}/${nameSpace}/${name}/${revision}`
+  //       } else {
+  //         nameSpace = '-'
+  //         ;[, name, , revision] = path
+  //
+  //         return revision && `${providerPath[hostname]}/${nameSpace}/${name}/${revision}`
+  //       }
+  //
+  //     case GITHUB_WEBSITE:
+  //       ;[packageName, name, , revision] = pathname.split('/')
+  //       return revision
+  //         ? `${providerPath[hostname]}/${packageName}/${name}/${revision}`
+  //         : this.providerErrorsFallback(hostname)
+  //
+  //     case PYPI_WEBSITE:
+  //       ;[packageName, name, revision] = pathname.split('/')
+  //       return revision ? `${providerPath[hostname]}/${name}/${revision}` : this.providerErrorsFallback(hostname)
+  //
+  //     case MAVEN_WEBSITE:
+  //       ;[, name, version, revision] = pathname.split('/')
+  //
+  //       return revision
+  //         ? `${providerPath[hostname]}/${name}/${version}/${revision}`
+  //         : this.providerErrorsFallback(hostname)
+  //
+  //     case NUGET_WEBSITE:
+  //       ;[packageName, name, revision] = pathname.split('/')
+  //       return revision ? `${providerPath[hostname]}/${name}/${revision}` : this.providerErrorsFallback(hostname)
+  //
+  //     case RUBYGEM_WEBSITE:
+  //       ;[packageName, name, , revision] = pathname.split('/')
+  //
+  //       return revision ? `${providerPath[hostname]}/${name}/${revision}` : this.providerErrorsFallback(hostname)
+  //
+  //     default:
+  //       return { errors: `${hostname} is not available as source provider` }
+  //   }
+  // }
+
+  static extractPath(pathname, hostname) {
+    const path = pathname.split('/')
+    let packageName, nameSpace, name, version, revision
+
+    switch (hostname) {
+      case NPM_WEBSITE:
+        if (path.length === 5) {
+          ;[, nameSpace, name, , revision] = path
+        } else {
+          nameSpace = '-'
+          ;[, name, , revision] = path
+        }
+        return revision && `${providerPath[hostname]}/${nameSpace}/${name}/${revision}`
+
+      case GITHUB_WEBSITE:
+        ;[packageName, name, , revision] = pathname.split('/')
+        return revision
+          ? `${providerPath[hostname]}/${packageName}/${name}/${revision}`
+          : this.providerErrorsFallback(hostname)
+
+      case MAVEN_WEBSITE:
+        ;[, name, version, revision] = pathname.split('/')
+
+        return revision
+          ? `${providerPath[hostname]}/${name}/${version}/${revision}`
+          : this.providerErrorsFallback(hostname)
+
+      case PYPI_WEBSITE:
+      case NUGET_WEBSITE:
+        ;[, name, revision] = pathname.split('/')
+        return revision ? `${providerPath[hostname]}/${name}/${revision}` : this.providerErrorsFallback(hostname)
+
+      case RUBYGEM_WEBSITE:
+        ;[, name, , revision] = pathname.split('/')
+
+        return revision ? `${providerPath[hostname]}/${name}/${revision}` : this.providerErrorsFallback(hostname)
+
+      default:
+        return { errors: `${hostname} is not available as source provider` }
+    }
+  }
+
+  static checkValidHostname(hostname) {
+    return providerWebsiteValues.indexOf(hostname) >= 0 && true
+  }
+
   static providerErrorsFallback(provider) {
     return { errors: `${provider} need a version to be imported` }
   }
@@ -75,52 +171,13 @@ export default class EntitySpec {
     const urlObject = new URL(url)
     const pathname = urlObject.pathname.startsWith('/') ? urlObject.pathname.slice(1) : urlObject.pathname
     const hostname = urlObject.hostname.replace('www.', '')
-    let packageName, name, version, revision
+    const validHostname = this.checkValidHostname(hostname)
 
-    switch (hostname) {
-      case NPM_WEBSITE:
-        const npmPath = pathname.split('/')
+    if (!validHostname) return { errors: `${hostname} is not available as source provider` }
 
-        if (npmPath[1] === '@types') {
-          let types
-          ;[packageName, types, name, version, revision] = pathname.split('/')
-          return revision
-            ? `${providerPath[hostname]}/${types}/${name}/${revision}`
-            : this.providerErrorsFallback(hostname)
-        } else {
-          ;[packageName, name, version, revision] = pathname.split('/')
-          return revision ? `${providerPath[hostname]}/-/${name}/${revision}` : this.providerErrorsFallback(hostname)
-        }
+    const path = this.extractPath(pathname, hostname)
 
-      case GITHUB_WEBSITE:
-        ;[packageName, name, version, revision] = pathname.split('/')
-        return revision
-          ? `${providerPath[hostname]}/${packageName}/${name}/${revision}`
-          : this.providerErrorsFallback(GITHUB_WEBSITE)
-
-      case PYPI_WEBSITE:
-        ;[packageName, name, revision] = pathname.split('/')
-        return revision
-          ? `${providerPath[PYPI_WEBSITE]}/${name}/${revision}`
-          : this.providerErrorsFallback(PYPI_WEBSITE)
-
-      case MAVEN_WEBSITE:
-        ;[packageName, name, version, revision] = pathname.split('/')
-        return revision
-          ? `${providerPath[hostname]}/${name}/${version}/${revision}`
-          : `${providerPath[hostname]}/${name}/${version}`
-
-      case NUGET_WEBSITE:
-        ;[packageName, name, revision] = pathname.split('/')
-        return revision ? `${providerPath[hostname]}/${name}/${revision}` : `${providerPath[hostname]}/${packageName}`
-
-      case RUBYGEM_WEBSITE:
-        ;[packageName, name, version, revision] = pathname.split('/')
-        return revision ? `${providerPath[hostname]}/${name}/${revision}` : `${providerPath[hostname]}/${name}`
-
-      default:
-        return { errors: `${hostname} is not available as source provider` }
-    }
+    return path ? path : this.providerErrorsFallback(hostname)
   }
 
   static fromCoordinates(o) {
