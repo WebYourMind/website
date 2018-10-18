@@ -23,12 +23,12 @@ const PYPI_WEBSITE = 'pypi.org'
 const RUBYGEM_WEBSITE = 'rubygems.org'
 
 const providerPath = {
-  [NPM_WEBSITE]: 'npm/npmjs/-',
+  [NPM_WEBSITE]: 'npm/npmjs',
   [GITHUB_WEBSITE]: 'git/github',
   [PYPI_WEBSITE]: 'pypi/pypi/-',
   [MAVEN_WEBSITE]: 'maven/mavencentral',
   [NUGET_WEBSITE]: 'nuget/nuget/-',
-  [RUBYGEM_WEBSITE]: 'nuget/nuget/-'
+  [RUBYGEM_WEBSITE]: 'gem/rubygems/-'
 }
 
 const acceptedFilesValues = ['application/json']
@@ -79,8 +79,18 @@ export default class EntitySpec {
 
     switch (hostname) {
       case NPM_WEBSITE:
-        ;[packageName, name, version, revision] = pathname.split('/')
-        return revision ? `${providerPath[hostname]}/${name}/${revision}` : this.providerErrorsFallback(hostname)
+        const npmPath = pathname.split('/')
+
+        if (npmPath[1] === '@types') {
+          let types
+          ;[packageName, types, name, version, revision] = pathname.split('/')
+          return revision
+            ? `${providerPath[hostname]}/${types}/${name}/${revision}`
+            : this.providerErrorsFallback(hostname)
+        } else {
+          ;[packageName, name, version, revision] = pathname.split('/')
+          return revision ? `${providerPath[hostname]}/-/${name}/${revision}` : this.providerErrorsFallback(hostname)
+        }
 
       case GITHUB_WEBSITE:
         ;[packageName, name, version, revision] = pathname.split('/')
