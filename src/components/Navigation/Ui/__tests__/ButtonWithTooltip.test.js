@@ -1,6 +1,6 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import ButtonWithTooltip from '../Navigation/Ui/ButtonWithTooltip'
+import ButtonWithTooltip from '../ButtonWithTooltip'
 
 describe('ButtonWithTooltip', () => {
   it('renders without crashing', () => {

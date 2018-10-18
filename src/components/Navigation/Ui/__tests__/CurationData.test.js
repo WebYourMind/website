@@ -1,6 +1,6 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import CurationData from '../Navigation/Ui/CurationData'
+import CurationData from '../CurationData'
 import Collapse from 'antd/lib/collapse'
 const Panel = Collapse.Panel
 describe('CurationData', () => {
