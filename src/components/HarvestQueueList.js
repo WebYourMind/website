@@ -52,6 +52,7 @@ export default class HarvestQueueList extends React.Component {
   commitChanged(request, value) {
     const newRequest = clone(request)
     newRequest.revision = value ? value.sha : null
+    newRequest.commit = value
     this.setState({ ...this.state, contentSeq: this.state.contentSeq + 1 })
     this.props.onChange(request, newRequest)
   }
