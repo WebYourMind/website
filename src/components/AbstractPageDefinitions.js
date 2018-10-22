@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import React, { Component } from 'react'
-import { Grid, DropdownButton, MenuItem } from 'react-bootstrap'
+import { Modal, Grid, DropdownButton, MenuItem, FormGroup, Button } from 'react-bootstrap'
 import compact from 'lodash/compact'
 import filter from 'lodash/filter'
 import find from 'lodash/find'
@@ -11,7 +11,7 @@ import set from 'lodash/set'
 import sortBy from 'lodash/sortBy'
 import { curateAction } from '../actions/curationActions'
 import { login } from '../actions/sessionActions'
-import { ComponentList, Section, ContributePrompt } from './'
+import { ComponentList, Section, ContributePrompt, FieldGroup } from './'
 import FullDetailPage from './FullDetailView/FullDetailPage'
 import { uiBrowseUpdateFilterList } from '../actions/ui'
 import EntitySpec from '../utils/entitySpec'
@@ -76,6 +76,7 @@ export default class AbstractPageDefinitions extends Component {
     this.transform = this.transform.bind(this)
     this.onRemoveAll = this.onRemoveAll.bind(this)
     this.collapseAll = this.collapseAll.bind(this)
+    this.renderPopup = this.renderPopup.bind(this)
     this.contributeModal = React.createRef()
   }
 
@@ -403,6 +404,37 @@ export default class AbstractPageDefinitions extends Component {
     })
   }
 
+  renderPopup() {
+    return (
+      <Modal show={this.state.visible} onHide={() => this.setState({ visible: false })}>
+        <Modal.Header closeButton>
+          <Modal.Title>Type a name to apply to the downloaded file</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <FieldGroup
+            name="filename"
+            type="text"
+            label="Filename"
+            onChange={e => this.setState({ fileName: e.target.value })}
+            placeholder="Type a name to apply to the downloaded file"
+            maxLength={100}
+            required
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <div>
+            <FormGroup className="pull-right">
+              <Button onClick={() => this.setState({ visible: false })}>Cancel</Button>
+              <Button bsStyle="success" disabled={!this.state.fileName} type="button" onClick={() => this.doSave()}>
+                OK
+              </Button>
+            </FormGroup>
+          </div>
+        </Modal.Footer>
+      </Modal>
+    )
+  }
+
   render() {
     const { components, definitions, token, session } = this.props
     const { sequence, showFullDetail, path, currentComponent, currentDefinition } = this.state
@@ -450,6 +482,7 @@ export default class AbstractPageDefinitions extends Component {
             readOnly={this.readOnly()}
           />
         )}
+        {this.renderPopup()}
       </Grid>
     )
   }
