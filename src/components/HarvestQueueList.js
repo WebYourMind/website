@@ -64,6 +64,8 @@ export default class HarvestQueueList extends React.Component {
   }
 
   renderButtons(request) {
+    console.log('renderButtons', request)
+
     return (
       <div className="list-activity-area">
         {request.provider === 'github' && (
@@ -157,6 +159,7 @@ export default class HarvestQueueList extends React.Component {
   render() {
     const { loadMoreRows, listHeight, noRowsRenderer, list } = this.props
     const { sortOrder, contentSeq } = this.state
+
     return (
       <RowEntityList
         list={list}

@@ -24,6 +24,15 @@ export default class NpmVersionPicker extends Component {
     this.getOptions('')
   }
 
+  componentWillReceiveProps(nextProps) {
+    console.log('nextProps', nextProps)
+
+    this.setState(prevState => ({
+      ...prevState,
+      selected: nextProps.request.revision ? [nextProps.request.revision] : []
+    }))
+  }
+
   async getOptions(value) {
     try {
       const { namespace, name } = this.props.request
@@ -38,9 +47,14 @@ export default class NpmVersionPicker extends Component {
 
   onChange(values) {
     const { onChange } = this.props
+    console.log('VALUES', values)
+
     if (!onChange) return
     let value = values.length === 0 ? null : values[0]
     if (!value) return onChange(value)
+
+    console.log('VALUE', value)
+
     if (value.customOption) {
       value = value.label
       this.setState({ ...this.state, customValues: [...this.state.customValues, value] })
@@ -55,10 +69,19 @@ export default class NpmVersionPicker extends Component {
 
   render() {
     const { defaultInputValue } = this.props
-    const { customValues, options } = this.state
+    const { customValues, options, selected } = this.state
     const list = customValues.concat(options)
+
+    console.log(this.props.request)
+
+    console.log('list', list)
+    console.log('defaultInputValue', defaultInputValue)
+
+    console.log('SELECTED', selected)
+
     return (
       <Typeahead
+        selected={selected}
         options={list}
         // labelKey='id'
         defaultInputValue={defaultInputValue}
