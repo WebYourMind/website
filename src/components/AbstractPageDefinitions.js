@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import React, { Component } from 'react'
-import { Modal, Grid, DropdownButton, MenuItem, FormGroup, Button } from 'react-bootstrap'
+import { Modal, Grid, DropdownButton, MenuItem, FormGroup, InputGroup, FormControl, Button } from 'react-bootstrap'
 import compact from 'lodash/compact'
 import filter from 'lodash/filter'
 import find from 'lodash/find'
@@ -11,7 +11,7 @@ import set from 'lodash/set'
 import sortBy from 'lodash/sortBy'
 import { curateAction } from '../actions/curationActions'
 import { login } from '../actions/sessionActions'
-import { ComponentList, Section, ContributePrompt, FieldGroup } from './'
+import { ComponentList, Section, ContributePrompt } from './'
 import FullDetailPage from './FullDetailView/FullDetailPage'
 import { uiBrowseUpdateFilterList } from '../actions/ui'
 import EntitySpec from '../utils/entitySpec'
@@ -408,18 +408,19 @@ export default class AbstractPageDefinitions extends Component {
     return (
       <Modal show={this.state.visible} onHide={() => this.setState({ visible: false })}>
         <Modal.Header closeButton>
-          <Modal.Title>Type a name to apply to the downloaded file</Modal.Title>
+          <Modal.Title>Save the file with a name</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <FieldGroup
-            name="filename"
-            type="text"
-            label="Filename"
-            onChange={e => this.setState({ fileName: e.target.value })}
-            placeholder="Type a name to apply to the downloaded file"
-            maxLength={100}
-            required
-          />
+          <FormGroup>
+            <InputGroup>
+              <FormControl
+                type="text"
+                placeholder="Type a name to apply to the file that is going to be saved"
+                onChange={e => this.setState({ fileName: e.target.value })}
+              />
+              <InputGroup.Addon>.json</InputGroup.Addon>
+            </InputGroup>
+          </FormGroup>
         </Modal.Body>
         <Modal.Footer>
           <div>
