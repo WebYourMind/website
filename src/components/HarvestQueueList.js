@@ -64,8 +64,6 @@ export default class HarvestQueueList extends React.Component {
   }
 
   renderButtons(request) {
-    console.log('renderButtons', request)
-
     return (
       <div className="list-activity-area">
         {request.provider === 'github' && (
