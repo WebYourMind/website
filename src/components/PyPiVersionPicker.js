@@ -24,6 +24,13 @@ export default class PyPiVersionPicker extends Component {
     this.getOptions('')
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState(prevState => ({
+      ...prevState,
+      selected: nextProps.request.revision ? [nextProps.request.revision] : []
+    }))
+  }
+
   async getOptions(value) {
     try {
       const { name } = this.props.request
@@ -54,10 +61,11 @@ export default class PyPiVersionPicker extends Component {
 
   render() {
     const { defaultInputValue } = this.props
-    const { customValues, options } = this.state
+    const { customValues, options, selected } = this.state
     const list = customValues.concat(options)
     return (
       <Typeahead
+        selected={selected}
         options={list}
         // labelKey='id'
         defaultInputValue={defaultInputValue}

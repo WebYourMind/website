@@ -26,6 +26,13 @@ export default class GitHubCommitPicker extends Component {
     this.getOptions('')
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState(prevState => ({
+      ...prevState,
+      selected: nextProps.request.revision ? [nextProps.request.revision] : []
+    }))
+  }
+
   async getOptions(value) {
     try {
       const { namespace, name } = this.props.request
@@ -42,6 +49,9 @@ export default class GitHubCommitPicker extends Component {
     const { onChange } = this.props
     if (!onChange) return
     let value = values.length === 0 ? null : values[0]
+
+    console.log(value)
+
     if (!value) return onChange(value)
     if (value.customOption) {
       value = { tag: value.tag, sha: value.tag }
@@ -65,11 +75,17 @@ export default class GitHubCommitPicker extends Component {
 
   render() {
     const { defaultInputValue, allowNew } = this.props
-    const { customValues, options } = this.state
+    const { customValues, options, selected } = this.state
     const list = customValues.concat(options)
+
+    console.log('selected', selected)
+
+    console.log(this.state)
+
     return (
       <div onClick={e => e.stopPropagation()}>
         <Typeahead
+          selected={selected}
           options={list}
           labelKey="tag"
           defaultInputValue={defaultInputValue}
