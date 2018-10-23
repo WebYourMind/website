@@ -45,7 +45,6 @@ export default class NpmVersionPicker extends Component {
 
   onChange(values) {
     const { onChange } = this.props
-
     if (!onChange) return
     let value = values.length === 0 ? null : values[0]
     if (!value) return onChange(value)
