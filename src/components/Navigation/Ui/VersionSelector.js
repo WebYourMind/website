@@ -1,22 +1,43 @@
 import React, { Component } from 'react'
-import { Modal, FormGroup, InputGroup, FormControl, Button } from 'react-bootstrap'
+import { Modal, FormGroup, Button } from 'react-bootstrap'
 import { Select } from 'antd'
+import { getRevisions } from '../../../api/clearlyDefined'
 const Option = Select.Option
-const children = []
-for (let i = 10; i < 36; i++) {
-  children.push(<Option key={i.toString(36) + i}>{i.toString(36) + i}</Option>)
-}
 class VersionSelector extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      options: [],
+      selected: []
+    }
+  }
+  async componentWillReceiveProps(nextProps) {
+    const { component, token } = nextProps
+    if (!component) return
+    try {
+      const options = await getRevisions(token, component.name, component.type)
+      this.setState({ ...this.state, options })
+    } catch (error) {
+      console.log(error)
+      this.setState({ ...this.state, options: [] })
+    }
+  }
   handleChange = value => {
-    console.log(`selected ${value}`)
+    this.setState({ selected: value })
+  }
+  doSave = () => {
+    const { onSave } = this.props
+    const { selected } = this.state
+    onSave(selected)
   }
   render() {
-    const { multiple, show } = this.props
+    const { multiple, show, onClose } = this.props
+    const { options } = this.state
     const label = multiple
       ? `Pick one or move versions of the component to add to the definitions list`
       : `Pick a different version of the component`
     return (
-      <Modal show={show} onHide={() => this.setState({ showSavePopup: false })}>
+      <Modal show={show} onHide={onClose}>
         <Modal.Header closeButton>
           <Modal.Title>{label}</Modal.Title>
         </Modal.Header>
@@ -26,17 +47,18 @@ class VersionSelector extends Component {
               mode={multiple && 'multiple'}
               style={{ width: '100%' }}
               placeholder={label}
-              defaultValue={['a10', 'c12']}
               onChange={this.handleChange}
             >
-              {children}
+              {options.map(option => (
+                <Option key={option}>{option}</Option>
+              ))}
             </Select>
           </FormGroup>
         </Modal.Body>
         <Modal.Footer>
           <div>
             <FormGroup className="pull-right">
-              <Button onClick={() => this.setState({ showSavePopup: false })}>Cancel</Button>
+              <Button onClick={onClose}>Cancel</Button>
               <Button bsStyle="success" type="button" onClick={() => this.doSave()}>
                 OK
               </Button>

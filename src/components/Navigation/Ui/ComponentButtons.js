@@ -113,10 +113,10 @@ export default class ComponentButtons extends Component {
                   className="list-fa-button"
                   title={<i className="fas fa-exchange-alt" />}
                 >
-                  <MenuItem eventKey="1" onSelect={() => showVersionSelectorPopup(false)}>
+                  <MenuItem eventKey="1" onSelect={() => showVersionSelectorPopup(currentComponent, false)}>
                     Switch Version
                   </MenuItem>
-                  <MenuItem eventKey="2" onSelect={() => showVersionSelectorPopup(true)}>
+                  <MenuItem eventKey="2" onSelect={() => showVersionSelectorPopup(currentComponent, true)}>
                     Add more Versions
                   </MenuItem>
                 </DropdownButton>

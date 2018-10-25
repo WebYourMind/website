@@ -17,6 +17,7 @@ import { uiBrowseUpdateFilterList } from '../actions/ui'
 import EntitySpec from '../utils/entitySpec'
 import Definition from '../utils/definition'
 import Auth from '../utils/auth'
+import VersionSelector from './Navigation/Ui/VersionSelector'
 
 const sorts = [
   { value: 'license', label: 'License' },
@@ -77,6 +78,8 @@ export default class AbstractPageDefinitions extends Component {
     this.onRemoveAll = this.onRemoveAll.bind(this)
     this.collapseAll = this.collapseAll.bind(this)
     this.renderSavePopup = this.renderSavePopup.bind(this)
+    this.showVersionSelectorPopup = this.showVersionSelectorPopup.bind(this)
+    this.applySelectedVersions = this.applySelectedVersions.bind(this)
     this.contributeModal = React.createRef()
   }
 
@@ -436,9 +439,34 @@ export default class AbstractPageDefinitions extends Component {
     )
   }
 
+  showVersionSelectorPopup(component, multiple) {
+    this.setState({ showVersionSelectorPopup: true, multipleVersionSelection: multiple, selectedComponent: component })
+  }
+
+  applySelectedVersions(values) {
+    const { multipleVersionSelection, selectedComponent } = this.state
+    const { components } = this.props
+    console.log(values, multipleVersionSelection, selectedComponent)
+    if (!multipleVersionSelection) {
+      //Call redux action to update selectedComponent
+      selectedComponent.revision = values
+      this.onAddComponent(EntitySpec.fromCoordinates(selectedComponent))
+    }
+    //Call redux action to add new versions of the same component
+  }
+
   render() {
     const { components, definitions, session } = this.props
-    const { sequence, showFullDetail, path, currentComponent, currentDefinition } = this.state
+    const {
+      sequence,
+      showFullDetail,
+      path,
+      currentComponent,
+      currentDefinition,
+      multipleVersionSelection,
+      selectedComponent,
+      showVersionSelectorPopup
+    } = this.state
     return (
       <Grid className="main-container">
         <ContributePrompt
@@ -466,6 +494,7 @@ export default class AbstractPageDefinitions extends Component {
                 noRowsRenderer={this.noRowsRenderer}
                 sequence={sequence}
                 hasChange={this.hasChange}
+                showVersionSelectorPopup={this.showVersionSelectorPopup}
               />
             </div>
           )}
@@ -483,6 +512,13 @@ export default class AbstractPageDefinitions extends Component {
           />
         )}
         {this.renderSavePopup()}
+        <VersionSelector
+          show={showVersionSelectorPopup}
+          onClose={() => this.setState({ showVersionSelectorPopup: false })}
+          onSave={this.applySelectedVersions}
+          multiple={multipleVersionSelection}
+          component={selectedComponent}
+        />
       </Grid>
     )
   }
