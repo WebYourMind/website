@@ -8,6 +8,7 @@ import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { get } from 'lodash'
 import EntitySpec from '../utils/entitySpec'
 import ComponentButtons from './Navigation/Ui/ComponentButtons'
+import VersionSelector from './Navigation/Ui/VersionSelector'
 
 export default class ComponentList extends React.Component {
   static propTypes = {
@@ -100,6 +101,7 @@ export default class ComponentList extends React.Component {
               onRevert={onRevert}
               onRemove={onRemove}
               getDefinition={this.getDefinition}
+              showVersionSelectorPopup={multiple => this.showVersionSelectorPopup(component, multiple)}
             />
           )}
           onRevert={param => this.revertComponent(component, param)}
@@ -108,12 +110,21 @@ export default class ComponentList extends React.Component {
     )
   }
 
+  showVersionSelectorPopup(component, multiple) {
+    this.setState({ showVersionSelectorPopup: true, multipleVersionSelection: multiple, selectedComponent: component })
+  }
+
   render() {
     const { loadMoreRows, listHeight, noRowsRenderer, list, listLength, renderFilterBar } = this.props
-    const { sortOrder, contentSeq } = this.state
+    const { sortOrder, contentSeq, showVersionSelectorPopup, multipleVersionSelection, selectedComponent } = this.state
     return (
       <div>
         {renderFilterBar()}
+        <VersionSelector
+          show={showVersionSelectorPopup}
+          multiple={multipleVersionSelection}
+          component={selectedComponent}
+        />
         <RowEntityList
           list={list}
           listLength={listLength}

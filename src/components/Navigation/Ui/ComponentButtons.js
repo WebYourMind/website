@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Tag } from 'antd'
 import { get } from 'lodash'
-import { Button, ButtonGroup } from 'react-bootstrap'
+import { Button, ButtonGroup, DropdownButton, MenuItem } from 'react-bootstrap'
 import { CopyUrlButton } from '../../'
 import EntitySpec from '../../../utils/entitySpec'
 import Definition from '../../../utils/definition'
@@ -57,7 +57,7 @@ export default class ComponentButtons extends Component {
   }
 
   render() {
-    const { definition, currentComponent, readOnly, hasChange } = this.props
+    const { definition, currentComponent, readOnly, hasChange, showVersionSelectorPopup } = this.props
     const component = EntitySpec.fromCoordinates(currentComponent)
     const isSourceComponent = this.isSourceComponent(component)
     const scores = Definition.computeScores(definition)
@@ -103,6 +103,26 @@ export default class ComponentButtons extends Component {
             bsStyle="default"
             className="list-fa-button"
           />
+          {!isDefinitionEmpty && (
+            <ButtonWithTooltip
+              tip={'Switch or add other versions of this definition'}
+              button={
+                <DropdownButton
+                  pullRight
+                  id={'versionsdropdown'}
+                  className="list-fa-button"
+                  title={<i className="fas fa-exchange-alt" />}
+                >
+                  <MenuItem eventKey="1" onSelect={() => showVersionSelectorPopup(false)}>
+                    Switch Version
+                  </MenuItem>
+                  <MenuItem eventKey="2" onSelect={() => showVersionSelectorPopup(true)}>
+                    Add more Versions
+                  </MenuItem>
+                </DropdownButton>
+              }
+            />
+          )}
           {!readOnly &&
             !isDefinitionEmpty && (
               <ButtonWithTooltip
