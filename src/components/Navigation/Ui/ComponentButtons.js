@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { Tag } from 'antd'
 import { get } from 'lodash'
 import { Button, ButtonGroup, DropdownButton, MenuItem } from 'react-bootstrap'
+import { Menu, Dropdown, Icon, message } from 'antd'
 import { CopyUrlButton } from '../../'
 import EntitySpec from '../../../utils/entitySpec'
 import Definition from '../../../utils/definition'
@@ -106,19 +107,22 @@ export default class ComponentButtons extends Component {
           <ButtonWithTooltip
             tip={'Switch or add other versions of this definition'}
             button={
-              <DropdownButton
-                pullRight
-                id={'versionsdropdown'}
-                className="list-fa-button"
-                title={<i className="fas fa-exchange-alt" />}
+              <Dropdown
+                overlay={
+                  <Menu>
+                    <Menu.Item onClick={() => showVersionSelectorPopup(currentComponent, false)}>
+                      Switch Version
+                    </Menu.Item>
+                    <Menu.Item onClick={() => showVersionSelectorPopup(currentComponent, true)}>
+                      Add more Versions
+                    </Menu.Item>
+                  </Menu>
+                }
               >
-                <MenuItem eventKey="1" onSelect={() => showVersionSelectorPopup(currentComponent, false)}>
-                  Switch Version
-                </MenuItem>
-                <MenuItem eventKey="2" onSelect={() => showVersionSelectorPopup(currentComponent, true)}>
-                  Add more Versions
-                </MenuItem>
-              </DropdownButton>
+                <Button className="list-fa-button">
+                  <i className="fas fa-exchange-alt" /> <Icon type="down" />
+                </Button>
+              </Dropdown>
             }
           />
           {!readOnly &&
