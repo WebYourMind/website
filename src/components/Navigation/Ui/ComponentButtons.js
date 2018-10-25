@@ -103,26 +103,24 @@ export default class ComponentButtons extends Component {
             bsStyle="default"
             className="list-fa-button"
           />
-          {!isDefinitionEmpty && (
-            <ButtonWithTooltip
-              tip={'Switch or add other versions of this definition'}
-              button={
-                <DropdownButton
-                  pullRight
-                  id={'versionsdropdown'}
-                  className="list-fa-button"
-                  title={<i className="fas fa-exchange-alt" />}
-                >
-                  <MenuItem eventKey="1" onSelect={() => showVersionSelectorPopup(currentComponent, false)}>
-                    Switch Version
-                  </MenuItem>
-                  <MenuItem eventKey="2" onSelect={() => showVersionSelectorPopup(currentComponent, true)}>
-                    Add more Versions
-                  </MenuItem>
-                </DropdownButton>
-              }
-            />
-          )}
+          <ButtonWithTooltip
+            tip={'Switch or add other versions of this definition'}
+            button={
+              <DropdownButton
+                pullRight
+                id={'versionsdropdown'}
+                className="list-fa-button"
+                title={<i className="fas fa-exchange-alt" />}
+              >
+                <MenuItem eventKey="1" onSelect={() => showVersionSelectorPopup(currentComponent, false)}>
+                  Switch Version
+                </MenuItem>
+                <MenuItem eventKey="2" onSelect={() => showVersionSelectorPopup(currentComponent, true)}>
+                  Add more Versions
+                </MenuItem>
+              </DropdownButton>
+            }
+          />
           {!readOnly &&
             !isDefinitionEmpty && (
               <ButtonWithTooltip

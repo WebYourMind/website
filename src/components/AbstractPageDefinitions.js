@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import { Modal, Grid, DropdownButton, MenuItem, FormGroup, InputGroup, FormControl, Button } from 'react-bootstrap'
 import compact from 'lodash/compact'
 import filter from 'lodash/filter'
@@ -9,6 +9,8 @@ import find from 'lodash/find'
 import get from 'lodash/get'
 import set from 'lodash/set'
 import sortBy from 'lodash/sortBy'
+import notification from 'antd/lib/notification'
+import AntdButton from 'antd/lib/button'
 import { curateAction } from '../actions/curationActions'
 import { login } from '../actions/sessionActions'
 import { ComponentList, Section, ContributePrompt } from './'
@@ -443,16 +445,50 @@ export default class AbstractPageDefinitions extends Component {
     this.setState({ showVersionSelectorPopup: true, multipleVersionSelection: multiple, selectedComponent: component })
   }
 
-  applySelectedVersions(values) {
+  applySelectedVersions(versions) {
     const { multipleVersionSelection, selectedComponent } = this.state
-    const { components } = this.props
-    console.log(values, multipleVersionSelection, selectedComponent)
     if (!multipleVersionSelection) {
-      //Call redux action to update selectedComponent
-      selectedComponent.revision = values
-      this.onAddComponent(EntitySpec.fromCoordinates(selectedComponent))
+      return this.setState({ showVersionSelectorPopup: false }, async () => {
+        if (selectedComponent.changes) {
+          const key = `open${Date.now()}`
+          const NotificationButtons = (
+            <Fragment>
+              <AntdButton
+                type="primary"
+                size="small"
+                onClick={async () => {
+                  await this.onRemoveComponent(selectedComponent)
+                  await this.onAddComponent(
+                    EntitySpec.fromCoordinates({ ...selectedComponent, revision: versions, changes: {} })
+                  )
+                  notification.close(key)
+                }}
+              >
+                Confirm
+              </AntdButton>{' '}
+              <AntdButton type="secondary" size="small" onClick={() => notification.close(key)}>
+                Dismiss
+              </AntdButton>
+            </Fragment>
+          )
+          notification.open({
+            message: 'Confirm the switch of the version? All the changes of the current definition will be lost',
+            btn: NotificationButtons,
+            key,
+            onClose: notification.close(key),
+            duration: 0
+          })
+        } else {
+          await this.onRemoveComponent(selectedComponent)
+          await this.onAddComponent(EntitySpec.fromCoordinates({ ...selectedComponent, revision: versions }))
+        }
+      })
     }
-    //Call redux action to add new versions of the same component
+    this.setState({ showVersionSelectorPopup: false }, () => {
+      versions.map(version => {
+        this.onAddComponent(EntitySpec.fromCoordinates({ ...selectedComponent, revision: version }))
+      })
+    })
   }
 
   render() {

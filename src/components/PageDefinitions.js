@@ -314,7 +314,6 @@ export class PageDefinitions extends AbstractPageDefinitions {
 
   onAddComponent(value, after = null) {
     const { dispatch, token, definitions } = this.props
-    console.log(value)
     const component = typeof value === 'string' ? EntitySpec.fromPath(value) : value
     const path = component.toPath()
     !definitions.entries[path] &&
