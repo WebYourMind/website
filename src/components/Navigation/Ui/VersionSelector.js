@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import { Modal, FormGroup, Button } from 'react-bootstrap'
 import { Select } from 'antd'
 import { getRevisions } from '../../../api/clearlyDefined'
-import { PropTypes } from 'react-bs-notifier/lib/alert-timer'
+
 const Option = Select.Option
 class VersionSelector extends Component {
   static propTypes = {
@@ -22,6 +23,7 @@ class VersionSelector extends Component {
   }
   async componentWillReceiveProps(nextProps) {
     const { component, token, multiple } = nextProps
+    console.log(component)
     if (!component) return
     try {
       const label = multiple
