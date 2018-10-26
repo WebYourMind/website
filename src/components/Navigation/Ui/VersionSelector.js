@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { Modal, FormGroup, Button } from 'react-bootstrap'
 import { Select } from 'antd'
 import { getRevisions } from '../../../api/clearlyDefined'
+import EntitySpec from '../../../utils/entitySpec'
 
 const Option = Select.Option
 class VersionSelector extends Component {
@@ -21,16 +22,20 @@ class VersionSelector extends Component {
       label: ''
     }
   }
+
   async componentWillReceiveProps(nextProps) {
     const { component, token, multiple } = nextProps
-    console.log(component)
     if (!component) return
     try {
       const label = multiple
-        ? `Pick one or move versions of ${component.name} to add to the definitions list`
-        : `Pick a different version of ${component.name}`
+        ? `Pick one or move versions of ${EntitySpec.getEntityName(component)} to add to the definitions list`
+        : `Pick a different version of ${EntitySpec.getEntityName(component)}`
 
-      const options = await getRevisions(token, component.name, component.type)
+      const options = await getRevisions(
+        token,
+        EntitySpec.getEntityName(component),
+        EntitySpec.getEntityType(component)
+      )
       this.setState({ ...this.state, options, label })
     } catch (error) {
       console.log(error)
@@ -43,14 +48,31 @@ class VersionSelector extends Component {
   doSave = () => {
     const { onSave } = this.props
     const { selected } = this.state
-    onSave(selected)
+    this.setState(
+      {
+        options: [],
+        selected: [],
+        label: ''
+      },
+      () => onSave(selected)
+    )
+  }
+  onClose = () => {
+    const { onClose } = this.props
+    this.setState(
+      {
+        options: [],
+        selected: [],
+        label: ''
+      },
+      () => onClose()
+    )
   }
   render() {
-    const { multiple, show, onClose, component } = this.props
+    const { multiple, show, component } = this.props
     const { options, label } = this.state
-
     return (
-      <Modal show={show} onHide={onClose}>
+      <Modal show={show} onHide={this.onClose}>
         <Modal.Header closeButton>
           <Modal.Title>{label}</Modal.Title>
         </Modal.Header>
@@ -63,7 +85,9 @@ class VersionSelector extends Component {
               onChange={this.handleChange}
             >
               {options.map(option => (
-                <Option key={option}>{option}</Option>
+                <Option key={EntitySpec.getRevisionToKey(option, component)}>
+                  {EntitySpec.getRevisionToString(option, component)}
+                </Option>
               ))}
             </Select>
           </FormGroup>
@@ -71,7 +95,7 @@ class VersionSelector extends Component {
         <Modal.Footer>
           <div>
             <FormGroup className="pull-right">
-              <Button onClick={onClose}>Cancel</Button>
+              <Button onClick={this.onClose}>Cancel</Button>
               <Button bsStyle="success" type="button" onClick={() => this.doSave()}>
                 OK
               </Button>

@@ -498,7 +498,7 @@ export default class AbstractPageDefinitions extends Component {
     return (
       <VersionSelector
         show={showVersionSelectorPopup}
-        onClose={() => this.setState({ showVersionSelectorPopup: false })}
+        onClose={() => this.setState({ showVersionSelectorPopup: false, selectedComponent: null })}
         onSave={this.applySelectedVersions}
         multiple={multipleVersionSelection}
         component={selectedComponent}
