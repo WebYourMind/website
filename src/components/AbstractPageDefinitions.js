@@ -80,6 +80,7 @@ export default class AbstractPageDefinitions extends Component {
     this.onRemoveAll = this.onRemoveAll.bind(this)
     this.collapseAll = this.collapseAll.bind(this)
     this.renderSavePopup = this.renderSavePopup.bind(this)
+    this.renderVersionSelectopPopup = this.renderVersionSelectopPopup.bind(this)
     this.showVersionSelectorPopup = this.showVersionSelectorPopup.bind(this)
     this.applySelectedVersions = this.applySelectedVersions.bind(this)
     this.contributeModal = React.createRef()
@@ -472,7 +473,8 @@ export default class AbstractPageDefinitions extends Component {
             </Fragment>
           )
           notification.open({
-            message: 'Confirm the switch of the version? All the changes of the current definition will be lost',
+            message:
+              'This definition has some changes. Do you confirm to change the version? All the unsaved changes will be lost.',
             btn: NotificationButtons,
             key,
             onClose: notification.close(key),
@@ -491,18 +493,22 @@ export default class AbstractPageDefinitions extends Component {
     })
   }
 
+  renderVersionSelectopPopup() {
+    const { multipleVersionSelection, selectedComponent, showVersionSelectorPopup } = this.state
+    return (
+      <VersionSelector
+        show={showVersionSelectorPopup}
+        onClose={() => this.setState({ showVersionSelectorPopup: false })}
+        onSave={this.applySelectedVersions}
+        multiple={multipleVersionSelection}
+        component={selectedComponent}
+      />
+    )
+  }
+
   render() {
     const { components, definitions, session } = this.props
-    const {
-      sequence,
-      showFullDetail,
-      path,
-      currentComponent,
-      currentDefinition,
-      multipleVersionSelection,
-      selectedComponent,
-      showVersionSelectorPopup
-    } = this.state
+    const { sequence, showFullDetail, path, currentComponent, currentDefinition } = this.state
     return (
       <Grid className="main-container">
         <ContributePrompt
@@ -548,13 +554,7 @@ export default class AbstractPageDefinitions extends Component {
           />
         )}
         {this.renderSavePopup()}
-        <VersionSelector
-          show={showVersionSelectorPopup}
-          onClose={() => this.setState({ showVersionSelectorPopup: false })}
-          onSave={this.applySelectedVersions}
-          multiple={multipleVersionSelection}
-          component={selectedComponent}
-        />
+        {this.renderVersionSelectopPopup()}
       </Grid>
     )
   }

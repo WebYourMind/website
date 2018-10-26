@@ -1,7 +1,8 @@
 import React from 'react'
 import { mount, shallow } from 'enzyme'
 import ComponentButtons from '../ComponentButtons'
-import { Button, ButtonGroup, MenuItem, DropdownButton } from 'react-bootstrap'
+import { Button, ButtonGroup } from 'react-bootstrap'
+import { Menu, Dropdown } from 'antd'
 
 const mockedDefinition = {
   described: {
@@ -77,9 +78,9 @@ describe('ComponentButtons', () => {
     )
     const buttons = wrapper.find(Button)
     await buttons.forEach(button => button.simulate('click'))
-    const dropdown = wrapper.find(DropdownButton)
+    const dropdown = wrapper.find(Dropdown)
     await dropdown.simulate('click')
-    const menuItems = wrapper.find(MenuItem)
+    const menuItems = wrapper.find(Menu)
     await menuItems.forEach(menuItem => menuItem.simulate('select'))
   })
 })

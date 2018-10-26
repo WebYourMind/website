@@ -2,21 +2,34 @@ import React, { Component } from 'react'
 import { Modal, FormGroup, Button } from 'react-bootstrap'
 import { Select } from 'antd'
 import { getRevisions } from '../../../api/clearlyDefined'
+import { PropTypes } from 'react-bs-notifier/lib/alert-timer'
 const Option = Select.Option
 class VersionSelector extends Component {
+  static propTypes = {
+    multiple: PropTypes.bool,
+    show: PropTypes.bool,
+    onClose: PropTypes.func,
+    onSave: PropTypes.func,
+    component: PropTypes.object
+  }
   constructor(props) {
     super(props)
     this.state = {
       options: [],
-      selected: []
+      selected: [],
+      label: ''
     }
   }
   async componentWillReceiveProps(nextProps) {
-    const { component, token } = nextProps
+    const { component, token, multiple } = nextProps
     if (!component) return
     try {
+      const label = multiple
+        ? `Pick one or move versions of ${component.name} to add to the definitions list`
+        : `Pick a different version of ${component.name}`
+
       const options = await getRevisions(token, component.name, component.type)
-      this.setState({ ...this.state, options })
+      this.setState({ ...this.state, options, label })
     } catch (error) {
       console.log(error)
       this.setState({ ...this.state, options: [] })
@@ -31,11 +44,9 @@ class VersionSelector extends Component {
     onSave(selected)
   }
   render() {
-    const { multiple, show, onClose } = this.props
-    const { options } = this.state
-    const label = multiple
-      ? `Pick one or move versions of the component to add to the definitions list`
-      : `Pick a different version of the component`
+    const { multiple, show, onClose, component } = this.props
+    const { options, label } = this.state
+
     return (
       <Modal show={show} onHide={onClose}>
         <Modal.Header closeButton>
