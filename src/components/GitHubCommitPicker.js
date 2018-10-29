@@ -34,6 +34,8 @@ export default class GitHubCommitPicker extends Component {
       ...prevState,
       selected: nextProps.request.commit ? [nextProps.request.commit] : []
     }))
+  }
+
   componentDidUpdate() {
     if (this.state.shouldUpdate) this.getOptions('')
   }
@@ -41,7 +43,6 @@ export default class GitHubCommitPicker extends Component {
   componentWillUnmount() {
     this.isUnmounted = true
   }
-
 
   async getOptions(value) {
     try {
