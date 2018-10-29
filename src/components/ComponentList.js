@@ -191,6 +191,7 @@ export default class ComponentList extends React.Component {
           classOnDifference="bg-info"
           renderButtons={() => this.renderButtons(definition, component)}
           onRevert={param => this.revertComponent(component, param)}
+          onDragEnd={event => this.removeComponent(component, event)}
         />
       </div>
     )

@@ -33,6 +33,7 @@ export default class TwoLineEntry extends React.Component {
       highlight,
       isEmpty,
       draggable,
+      onDragEnd,
       item
     } = this.props
     return (
@@ -40,9 +41,9 @@ export default class TwoLineEntry extends React.Component {
         className="two-line-entry"
         draggable={draggable}
         onDragStart={ev => {
-          console.log('dragstart', item)
-          ev.dataTransfer.setData('text/plain', item)
+          ev.dataTransfer.setData('text/plain', JSON.stringify(item))
         }}
+        onDragEnd={onDragEnd}
       >
         <div className={`list-row${isEmpty ? ' isEmpty' : ''}`} onClick={onClick}>
           {image && <img className={`list-image${highlight ? ' list-highlight' : ''}`} src={image} alt="" />}
