@@ -22,9 +22,28 @@ export default class TwoLineEntry extends React.Component {
   }
 
   render() {
-    const { buttons, image, headline, message, onClick, letter, panel, highlight, isEmpty } = this.props
+    const {
+      buttons,
+      image,
+      headline,
+      message,
+      onClick,
+      letter,
+      panel,
+      highlight,
+      isEmpty,
+      draggable,
+      item
+    } = this.props
     return (
-      <div className="two-line-entry">
+      <div
+        className="two-line-entry"
+        draggable={draggable}
+        onDragStart={ev => {
+          console.log('dragstart', item)
+          ev.dataTransfer.setData('text/plain', item)
+        }}
+      >
         <div className={`list-row${isEmpty ? ' isEmpty' : ''}`} onClick={onClick}>
           {image && <img className={`list-image${highlight ? ' list-highlight' : ''}`} src={image} alt="" />}
           {letter && !image && <span className="list-letter">{letter.slice(0, 1)}</span>}
