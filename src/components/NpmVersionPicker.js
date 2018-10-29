@@ -15,7 +15,7 @@ export default class NpmVersionPicker extends Component {
 
   constructor(props) {
     super(props)
-    this.state = { customValues: [], options: [] }
+    this.state = { customValues: [], options: [], selected: props.request.revision ? [props.request.revision] : [] }
     this.onChange = this.onChange.bind(this)
     this.filter = this.filter.bind(this)
   }
@@ -64,7 +64,6 @@ export default class NpmVersionPicker extends Component {
     const { defaultInputValue } = this.props
     const { customValues, options, selected } = this.state
     const list = customValues.concat(options)
-
     return (
       <Typeahead
         selected={selected}

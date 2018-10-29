@@ -17,7 +17,7 @@ export default class GitHubCommitPicker extends Component {
 
   constructor(props) {
     super(props)
-    this.state = { customValues: [], options: [] }
+    this.state = { customValues: [], options: [], selected: props.request.commit ? [props.request.commit] : [] }
     this.onChange = this.onChange.bind(this)
     this.filter = this.filter.bind(this)
   }

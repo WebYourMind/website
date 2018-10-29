@@ -15,7 +15,7 @@ export default class PyPiVersionPicker extends Component {
 
   constructor(props) {
     super(props)
-    this.state = { customValues: [], options: [] }
+    this.state = { customValues: [], options: [], selected: props.request.revision ? [props.request.revision] : [] }
     this.onChange = this.onChange.bind(this)
     this.filter = this.filter.bind(this)
   }

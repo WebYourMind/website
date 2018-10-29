@@ -176,7 +176,7 @@ class HarvestQueueList extends React.Component {
   }
 }
 
-function mapStateToProps(state, ownProps) {
+function mapStateToProps(state) {
   return {
     token: state.session.token
   }
