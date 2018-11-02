@@ -20,6 +20,7 @@ import EntitySpec from '../utils/entitySpec'
 import AbstractPageDefinitions from './AbstractPageDefinitions'
 import { getCurationAction } from '../actions/curationActions'
 import NotificationButtons from './Navigation/Ui/NotificationButtons'
+import { createGist } from '../api/clearlyDefined'
 
 export class PageDefinitions extends AbstractPageDefinitions {
   constructor(props) {
@@ -215,6 +216,9 @@ export class PageDefinitions extends AbstractPageDefinitions {
         <MenuItem eventKey="2" onSelect={() => this.setState({ showSavePopup: true })}>
           File
         </MenuItem>
+        <MenuItem eventKey="3" onSelect={() => this.setState({ showSavePopup: true, saveType: 'gist' })}>
+          Gist
+        </MenuItem>
         <MenuItem divider />
         <MenuItem disabled>Definitions (Not implemented)</MenuItem>
         <MenuItem disabled>SPDX (Not implemented)</MenuItem>
@@ -236,7 +240,9 @@ export class PageDefinitions extends AbstractPageDefinitions {
     const fileObject = { filter: this.state.activeFilters, sortBy: this.state.activeSort, coordinates: spec }
     const file = new File([JSON.stringify(fileObject, null, 2)], `${this.state.fileName}.json`)
     this.setState({ showSavePopup: false, fileName: null })
-    saveAs(file)
+    if (this.state.saveType === 'gist')
+      return this.doSaveAsGist(`${this.state.fileName}.json`, JSON.stringify(fileObject))
+    else saveAs(file)
   }
 
   doSaveAsUrl() {
@@ -247,6 +253,37 @@ export class PageDefinitions extends AbstractPageDefinitions {
       pako.deflate(JSON.stringify(fileObject))
     )}`
     this.copyToClipboard(url, 'URL copied to clipboard')
+  }
+
+  doSaveAsGist(fileName, fileContent) {
+    const { token } = this.props
+
+    createGist(token, {
+      files: {
+        [fileName]: {
+          content: fileContent
+        }
+      }
+    })
+      .then(res => {
+        console.log(res)
+        return this.props.dispatch(
+          uiNotificationNew({
+            type: 'info',
+            message: (
+              <div>
+                Gist File has been created and will be available{' '}
+                <a href={res.html_url} target="_blank">
+                  here
+                </a>{' '}
+                in a few minutes
+              </div>
+            ),
+            timeout: 5000
+          })
+        )
+      })
+      .catch(err => console.log(err))
   }
 
   copyToClipboard(text, message) {
