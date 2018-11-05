@@ -266,17 +266,15 @@ export class PageDefinitions extends AbstractPageDefinitions {
       }
     })
       .then(res => {
-        console.log(res)
         return this.props.dispatch(
           uiNotificationNew({
             type: 'info',
             message: (
               <div>
-                Gist File has been created and will be available{' '}
+                Gist File has been created is available{' '}
                 <a href={res.html_url} target="_blank">
                   here
-                </a>{' '}
-                in a few minutes
+                </a>
               </div>
             ),
             timeout: 5000
