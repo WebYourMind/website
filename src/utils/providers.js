@@ -31,16 +31,16 @@ export class Provider {
   checkValidHostname(providerHostnames, hostname) {
     return providerHostnames.indexOf(hostname) >= 0 && true
   }
-
-  static providerErrorsFallback(provider) {
-    return { errors: `${provider} need a version to be imported` }
-  }
 }
 
 export class GenericProvider {
   constructor(urlPath, hostname) {
     this.hostname = hostname
     this.urlPath = urlPath
+  }
+
+  providerErrorsFallback(provider) {
+    return { errors: `${provider} need a version to be imported` }
   }
 }
 
@@ -59,7 +59,7 @@ export class NpmProvider extends GenericProvider {
       nameSpace = '-'
       ;[, name, , revision] = this.urlPath
     }
-    return revision ? `${this.path}/${nameSpace}/${name}/${revision}` : Provider.providerErrorsFallback(this.hostname)
+    return revision ? `${this.path}/${nameSpace}/${name}/${revision}` : this.providerErrorsFallback(this.hostname)
   }
 }
 
@@ -77,7 +77,7 @@ export class GitHubProvider extends GenericProvider {
     } else {
       ;[packageName, name, , revision] = this.urlPath
     }
-    return revision ? `${this.path}/${packageName}/${name}/${revision}` : Provider.providerErrorsFallback(this.hostname)
+    return revision ? `${this.path}/${packageName}/${name}/${revision}` : this.providerErrorsFallback(this.hostname)
   }
 }
 
@@ -90,7 +90,7 @@ export class MavenProvider extends GenericProvider {
 
   getPath() {
     const [, name, version, revision] = this.urlPath
-    return revision ? `${this.path}/${name}/${version}/${revision}` : Provider.providerErrorsFallback(this.hostname)
+    return revision ? `${this.path}/${name}/${version}/${revision}` : this.providerErrorsFallback(this.hostname)
   }
 }
 
@@ -103,7 +103,7 @@ export class PyPiProvider extends GenericProvider {
 
   getPath() {
     const [, name, revision] = this.urlPath
-    return revision ? `${this.path}/${name}/${revision}` : Provider.providerErrorsFallback(this.hostname)
+    return revision ? `${this.path}/${name}/${revision}` : this.providerErrorsFallback(this.hostname)
   }
 }
 
@@ -116,7 +116,7 @@ export class NugetProvider extends GenericProvider {
 
   getPath() {
     const [, name, revision] = this.urlPath
-    return revision ? `${this.path}/${name}/${revision}` : Provider.providerErrorsFallback(this.hostname)
+    return revision ? `${this.path}/${name}/${revision}` : this.providerErrorsFallback(this.hostname)
   }
 }
 export class RubyGemProvider extends GenericProvider {
@@ -128,6 +128,6 @@ export class RubyGemProvider extends GenericProvider {
 
   getPath() {
     const [, name, , revision] = this.urlPath
-    return revision ? `${this.path}/${name}/${revision}` : Provider.providerErrorsFallback(this.hostname)
+    return revision ? `${this.path}/${name}/${revision}` : this.providerErrorsFallback(this.hostname)
   }
 }
