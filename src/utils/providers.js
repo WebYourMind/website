@@ -19,8 +19,7 @@ export class Provider {
   }
 
   // Accept a URL, and passes to each single provider the properties to analyze it
-  setUrl(url) {
-    console.log(url)
+  async setUrl(url) {
     try {
       const urlObject = new URL(url)
       this.pathname = urlObject.pathname.startsWith('/') ? urlObject.pathname.slice(1) : urlObject.pathname
@@ -28,19 +27,24 @@ export class Provider {
       this.urlPath = this.pathname.split('/')
       this.providers.map(provider => provider.setUrl(this.urlPath, this.hostname))
     } catch (errors) {
-      console.log(errors)
+      return false
     }
   }
 
-  // Given a URL, returns the path of the specific provider
+  // Given a URL, returns the content of the specific provider
   async getContent() {
-    const path = await this.providers.reduce(async (result, provider) => {
-      const isValid = await this.isValid(this.hostname, provider.hostnames)
-      if (!isValid) return result
-      const returnedPath = await provider.get()
-      return returnedPath
-    }, false)
-    return path
+    try {
+      const content = await this.providers.reduce(async (result, provider) => {
+        const isValid = await this.isValid(this.hostname, provider.hostnames)
+        if (!isValid) return result
+        const returnedContent = await provider.get()
+        return returnedContent
+      }, false)
+      return content
+    } catch (errors) {
+      console.log(errors)
+      return false
+    }
   }
 
   isValid(hostname, hostnames) {
@@ -59,8 +63,8 @@ export class GenericProvider {
     this.urlPath = urlPath
   }
 
-  providerErrorsFallback(provider) {
-    return { errors: `${provider} need a version to be imported` }
+  providerErrorsFallback(message) {
+    return { errors: message }
   }
 }
 
@@ -84,7 +88,9 @@ export class NpmProvider extends GenericProvider {
       nameSpace = '-'
       ;[, name, , revision] = this.urlPath
     }
-    return revision ? `${this.path}/${nameSpace}/${name}/${revision}` : this.providerErrorsFallback(this.hostname)
+    return revision
+      ? `${this.path}/${nameSpace}/${name}/${revision}`
+      : this.providerErrorsFallback(`${this.hostname} need a version to be imported`)
   }
 }
 
@@ -102,7 +108,9 @@ export class GitHubProvider extends GenericProvider {
     } else {
       ;[packageName, name, , revision] = this.urlPath
     }
-    return revision ? `${this.path}/${packageName}/${name}/${revision}` : this.providerErrorsFallback(this.hostname)
+    return revision
+      ? `${this.path}/${packageName}/${name}/${revision}`
+      : this.providerErrorsFallback(`${this.hostname} need a version to be imported`)
   }
 }
 
@@ -115,7 +123,9 @@ export class MavenProvider extends GenericProvider {
 
   get() {
     const [, name, version, revision] = this.urlPath
-    return revision ? `${this.path}/${name}/${version}/${revision}` : this.providerErrorsFallback(this.hostname)
+    return revision
+      ? `${this.path}/${name}/${version}/${revision}`
+      : this.providerErrorsFallback(`${this.hostname} need a version to be imported`)
   }
 }
 
@@ -128,7 +138,9 @@ export class PyPiProvider extends GenericProvider {
 
   get() {
     const [, name, revision] = this.urlPath
-    return revision ? `${this.path}/${name}/${revision}` : this.providerErrorsFallback(this.hostname)
+    return revision
+      ? `${this.path}/${name}/${revision}`
+      : this.providerErrorsFallback(`${this.hostname} need a version to be imported`)
   }
 }
 
@@ -141,7 +153,9 @@ export class NugetProvider extends GenericProvider {
 
   get() {
     const [, name, revision] = this.urlPath
-    return revision ? `${this.path}/${name}/${revision}` : this.providerErrorsFallback(this.hostname)
+    return revision
+      ? `${this.path}/${name}/${revision}`
+      : this.providerErrorsFallback(`${this.hostname} need a version to be imported`)
   }
 }
 export class RubyGemProvider extends GenericProvider {
@@ -153,7 +167,9 @@ export class RubyGemProvider extends GenericProvider {
 
   get() {
     const [, name, , revision] = this.urlPath
-    return revision ? `${this.path}/${name}/${revision}` : this.providerErrorsFallback(this.hostname)
+    return revision
+      ? `${this.path}/${name}/${revision}`
+      : this.providerErrorsFallback(`${this.hostname} need a version to be imported`)
   }
 }
 
@@ -180,9 +196,8 @@ export class GistProvider extends GenericProvider {
 
   // Gist provider needs to retrieve data from the API
   get() {
-    console.log(this.urlPath)
     const [user, gistId] = this.urlPath
-    if (!gistId) return this.providerErrorsFallback(this.hostname)
+    if (!gistId) return this.providerErrorsFallback(`${this.hostname} need a valid ID to be imported`)
     return getGist(gistId)
       .then(res => {
         return map(res.files, file => JSON.parse(file.content))[0]

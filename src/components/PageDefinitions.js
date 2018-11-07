@@ -243,7 +243,6 @@ export class PageDefinitions extends AbstractPageDefinitions {
     this.setState({ showSavePopup: false, fileName: null })
     if (this.state.saveType === 'gist')
       return GistProvider.save(token, `${this.state.fileName}.json`, JSON.stringify(fileObject)).then(res => {
-        console.log(res)
         return this.props.dispatch(
           uiNotificationNew({
             type: 'info',
@@ -305,7 +304,9 @@ export class PageDefinitions extends AbstractPageDefinitions {
   onTextDrop = async url => {
     const { dispatch } = this.props
     const provider = new Provider()
-    provider.setUrl(url)
+    const providerResult = await provider.setUrl(url)
+    if (typeof providerResult === 'boolean')
+      return dispatch(uiNotificationNew({ type: 'danger', message: 'Error loading non-URL string', timeout: 5000 }))
     const providerContent = await provider.getContent()
     if (providerContent.errors)
       return dispatch(uiNotificationNew({ type: 'warning', message: providerContent.errors, timeout: 5000 }))
