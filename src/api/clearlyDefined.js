@@ -165,6 +165,10 @@ export function createGist(token, file) {
   return post('https://api.github.com/gists', token, file)
 }
 
+export function getGist(file) {
+  return get(`https://api.github.com/gists/${file}`)
+}
+
 // ========================== utilities ====================
 
 export function url(path, query) {

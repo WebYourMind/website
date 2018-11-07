@@ -1,5 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
+import map from 'lodash/map'
+import { createGist, getGist } from '../api/clearlyDefined'
 
 // Provider class is intended to exposing methods that could be used on each single specific provider
 export class Provider {
@@ -11,25 +13,31 @@ export class Provider {
       new MavenProvider(),
       new PyPiProvider(),
       new NugetProvider(),
-      new RubyGemProvider()
+      new RubyGemProvider(),
+      new GistProvider()
     ]
   }
 
   // Accept a URL, and passes to each single provider the properties to analyze it
   setUrl(url) {
-    const urlObject = new URL(url)
-    this.pathname = urlObject.pathname.startsWith('/') ? urlObject.pathname.slice(1) : urlObject.pathname
-    this.hostname = urlObject.hostname.replace('www.', '')
-    this.urlPath = this.pathname.split('/')
-    this.providers.map(provider => provider.setUrl(this.urlPath, this.hostname))
+    console.log(url)
+    try {
+      const urlObject = new URL(url)
+      this.pathname = urlObject.pathname.startsWith('/') ? urlObject.pathname.slice(1) : urlObject.pathname
+      this.hostname = urlObject.hostname.replace('www.', '')
+      this.urlPath = this.pathname.split('/')
+      this.providers.map(provider => provider.setUrl(this.urlPath, this.hostname))
+    } catch (errors) {
+      console.log(errors)
+    }
   }
 
   // Given a URL, returns the path of the specific provider
-  async getPath() {
+  async getContent() {
     const path = await this.providers.reduce(async (result, provider) => {
       const isValid = await this.isValid(this.hostname, provider.hostnames)
       if (!isValid) return result
-      const returnedPath = await provider.getPath()
+      const returnedPath = await provider.get()
       return returnedPath
     }, false)
     return path
@@ -67,8 +75,8 @@ export class NpmProvider extends GenericProvider {
     this.path = 'npm/npmjs' // Basic path structure for this provider
   }
 
-  // Specific function to parse the URL structure and convert it to a Definition path
-  getPath() {
+  // Function to parse the URL structure and convert it to specific data of the provider
+  get() {
     let nameSpace, name, revision
     if (this.urlPath.length === 5) {
       ;[, nameSpace, name, , revision] = this.urlPath
@@ -87,7 +95,7 @@ export class GitHubProvider extends GenericProvider {
     this.path = 'git/github'
   }
 
-  getPath() {
+  get() {
     let packageName, name, revision
     if (this.urlPath.length === 5) {
       ;[packageName, name, , , revision] = this.urlPath
@@ -105,7 +113,7 @@ export class MavenProvider extends GenericProvider {
     this.path = 'maven/mavencentral'
   }
 
-  getPath() {
+  get() {
     const [, name, version, revision] = this.urlPath
     return revision ? `${this.path}/${name}/${version}/${revision}` : this.providerErrorsFallback(this.hostname)
   }
@@ -118,7 +126,7 @@ export class PyPiProvider extends GenericProvider {
     this.path = 'pypi/pypi/-'
   }
 
-  getPath() {
+  get() {
     const [, name, revision] = this.urlPath
     return revision ? `${this.path}/${name}/${revision}` : this.providerErrorsFallback(this.hostname)
   }
@@ -131,7 +139,7 @@ export class NugetProvider extends GenericProvider {
     this.path = 'nuget/nuget/-'
   }
 
-  getPath() {
+  get() {
     const [, name, revision] = this.urlPath
     return revision ? `${this.path}/${name}/${revision}` : this.providerErrorsFallback(this.hostname)
   }
@@ -143,8 +151,42 @@ export class RubyGemProvider extends GenericProvider {
     this.path = 'gem/rubygems/-'
   }
 
-  getPath() {
+  get() {
     const [, name, , revision] = this.urlPath
     return revision ? `${this.path}/${name}/${revision}` : this.providerErrorsFallback(this.hostname)
+  }
+}
+
+export class GistProvider extends GenericProvider {
+  constructor(urlPath, hostname) {
+    super(urlPath, hostname)
+    this.hostnames = ['gist.github.com']
+  }
+
+  static async save(token, fileName, fileContent) {
+    try {
+      const res = await createGist(token, {
+        files: {
+          [fileName]: {
+            content: fileContent
+          }
+        }
+      })
+      return res.html_url
+    } catch (errors) {
+      console.log(errors)
+    }
+  }
+
+  // Gist provider needs to retrieve data from the API
+  get() {
+    console.log(this.urlPath)
+    const [user, gistId] = this.urlPath
+    if (!gistId) return this.providerErrorsFallback(this.hostname)
+    return getGist(gistId)
+      .then(res => {
+        return map(res.files, file => JSON.parse(file.content))[0]
+      })
+      .catch(errors => console.log(errors))
   }
 }

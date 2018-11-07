@@ -11,6 +11,7 @@ import { saveAs } from 'file-saver'
 import notification from 'antd/lib/notification'
 import AntdButton from 'antd/lib/button'
 import chunk from 'lodash/chunk'
+import isObject from 'lodash/isObject'
 import isEmpty from 'lodash/isEmpty'
 import { FilterBar } from './'
 import { uiNavigation, uiBrowseUpdateList, uiNotificationNew, uiRevertDefinition } from '../actions/ui'
@@ -20,7 +21,7 @@ import EntitySpec from '../utils/entitySpec'
 import AbstractPageDefinitions from './AbstractPageDefinitions'
 import { getCurationAction } from '../actions/curationActions'
 import NotificationButtons from './Navigation/Ui/NotificationButtons'
-import { createGist } from '../api/clearlyDefined'
+import { GistProvider, Provider } from '../utils/providers'
 
 export class PageDefinitions extends AbstractPageDefinitions {
   constructor(props) {
@@ -235,13 +236,29 @@ export class PageDefinitions extends AbstractPageDefinitions {
   }
 
   doSave() {
-    const { components } = this.props
+    const { components, token } = this.props
     const spec = this.buildSaveSpec(components.list)
     const fileObject = { filter: this.state.activeFilters, sortBy: this.state.activeSort, coordinates: spec }
     const file = new File([JSON.stringify(fileObject, null, 2)], `${this.state.fileName}.json`)
     this.setState({ showSavePopup: false, fileName: null })
     if (this.state.saveType === 'gist')
-      return this.doSaveAsGist(`${this.state.fileName}.json`, JSON.stringify(fileObject))
+      return GistProvider.save(token, `${this.state.fileName}.json`, JSON.stringify(fileObject)).then(res => {
+        console.log(res)
+        return this.props.dispatch(
+          uiNotificationNew({
+            type: 'info',
+            message: (
+              <div>
+                A new Gist File has been created and is available{' '}
+                <a href={res} target="_blank">
+                  here
+                </a>
+              </div>
+            ),
+            timeout: 5000
+          })
+        )
+      })
     else saveAs(file)
   }
 
@@ -253,35 +270,6 @@ export class PageDefinitions extends AbstractPageDefinitions {
       pako.deflate(JSON.stringify(fileObject))
     )}`
     this.copyToClipboard(url, 'URL copied to clipboard')
-  }
-
-  doSaveAsGist(fileName, fileContent) {
-    const { token } = this.props
-
-    createGist(token, {
-      files: {
-        [fileName]: {
-          content: fileContent
-        }
-      }
-    })
-      .then(res => {
-        return this.props.dispatch(
-          uiNotificationNew({
-            type: 'info',
-            message: (
-              <div>
-                Gist File has been created is available{' '}
-                <a href={res.html_url} target="_blank">
-                  here
-                </a>
-              </div>
-            ),
-            timeout: 5000
-          })
-        )
-      })
-      .catch(err => console.log(err))
   }
 
   copyToClipboard(text, message) {
@@ -314,12 +302,15 @@ export class PageDefinitions extends AbstractPageDefinitions {
     }
   }
 
-  onTextDrop = url => {
+  onTextDrop = async url => {
     const { dispatch } = this.props
-    const path = EntitySpec.fromUrl(url)
-
-    if (path.errors) dispatch(uiNotificationNew({ type: 'warning', message: path.errors, timeout: 5000 }))
-    else this.onAddComponent(path)
+    const provider = new Provider()
+    provider.setUrl(url)
+    const providerContent = await provider.getContent()
+    if (providerContent.errors)
+      return dispatch(uiNotificationNew({ type: 'warning', message: providerContent.errors, timeout: 5000 }))
+    if (isObject(providerContent)) return this.loadFromListSpec(providerContent)
+    return this.onAddComponent(providerContent)
   }
 
   onFileDrop(files) {
