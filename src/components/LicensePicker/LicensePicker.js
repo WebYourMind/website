@@ -17,7 +17,8 @@ export default class LicensePicker extends Component {
     this.ruleObject = {
       license: '',
       operator: '',
-      laterVersions: false
+      laterVersions: false,
+      childrens: []
     }
     this.state = {
       rules: [{ ...this.ruleObject, id: new Date() }],
@@ -63,6 +64,13 @@ export default class LicensePicker extends Component {
       const licenseExpression = LicensePickerUtils.getLicenseString(rules)
       this.setState({ licenseExpression, isValid: valid(licenseExpression) })
     }
+  }
+
+  addNewGroup = index => {
+    // Add a children rule related to the index element
+    const rules = [...this.state.rules]
+    rules[index].childrens.push({ ...this.ruleObject, id: new Date() })
+    this.setState({ rules })
   }
 
   render() {

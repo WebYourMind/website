@@ -20,7 +20,7 @@ export default class RuleRenderer extends Component {
           <option>AND</option>
           <option>OR</option>
         </select>
-        <button onClick={addNewGroup}>Add new Group</button>
+        <button onClick={() => addNewGroup(index)}>Add new Group</button>
       </div>
     )
   }
