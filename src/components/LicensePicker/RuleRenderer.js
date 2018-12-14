@@ -6,9 +6,9 @@ import SpdxPicker from '../SpdxPicker'
 export default class RuleRenderer extends Component {
   render() {
     const { index, rule, changeRulesOperator, updateLicense, considerLaterVersions, addNewGroup } = this.props
-
+    console.log(rule)
     return (
-      <div key={index}>
+      <div style={{ padding: '10px' }} key={rule.id}>
         <SpdxPicker value={rule.license} onChange={value => updateLicense(value, index)} />
         <div>
           <input type="checkbox" onChange={event => considerLaterVersions(event.target.checked, index)} value="+" />

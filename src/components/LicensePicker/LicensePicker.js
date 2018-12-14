@@ -20,7 +20,7 @@ export default class LicensePicker extends Component {
       laterVersions: false
     }
     this.state = {
-      rules: [this.ruleObject],
+      rules: [{ ...this.ruleObject, id: new Date() }],
       sequence: 0
     }
   }
@@ -30,13 +30,15 @@ export default class LicensePicker extends Component {
 
   updateLicense = (value, index) => {
     const rules = [...this.state.rules]
-    rules[index] = { ...rules[index], license: value || '' }
+    if (!value && index > 0) {
+      rules.splice(index, 1)
+    } else rules[index] = { ...rules[index], license: value || '' }
     this.setState({ rules, sequence: this.state.sequence + 1 })
   }
 
   addNewRule = () => {
     const rules = [...this.state.rules]
-    rules.push(this.ruleObject)
+    rules.push({ ...this.ruleObject, id: new Date() })
     this.setState({ rules })
   }
 
@@ -44,21 +46,15 @@ export default class LicensePicker extends Component {
     const rules = [...this.state.rules]
     rules[index] = { ...rules[index], operator: value || '' }
     this.setState(
-      {
-        rules,
-        sequence: this.state.sequence + 1
-      },
-      () => index === this.state.rules.length - 1 && this.addNewRule()
+      { rules, sequence: this.state.sequence + 1 },
+      () => index === this.state.rules.length - 1 && value !== '' && this.addNewRule()
     )
   }
 
   considerLaterVersions = (value, index) => {
     const rules = [...this.state.rules]
     rules[index] = { ...rules[index], laterVersions: value || '' }
-    this.setState({
-      rules,
-      sequence: this.state.sequence + 1
-    })
+    this.setState({ rules, sequence: this.state.sequence + 1 })
   }
 
   componentDidUpdate(prevProps, prevState) {
