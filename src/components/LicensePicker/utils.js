@@ -14,4 +14,18 @@ export default class LicensePickerUtils {
       })
       .join(` `)
   }
+
+  static async findPath(rules, id) {
+    const item = await this.deepFind(rules, id)
+    return `${item.join('.childrens.')}`
+  }
+
+  static async deepFind(rulesList, id, indexes = []) {
+    const item = rulesList.reduce((result, arrayItem, index) => {
+      if (result.length) return result
+      if (arrayItem.id === id) return [...indexes, index]
+      return arrayItem.childrens.length ? this.deepFind(arrayItem.childrens, id, [...indexes, index]) : result
+    }, [])
+    return item
+  }
 }
