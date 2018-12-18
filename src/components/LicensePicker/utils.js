@@ -10,7 +10,9 @@ export default class LicensePickerUtils {
       .map((rule, index) => {
         return `${rules[index - 1] && rules[index - 1].operator !== '' ? `${rules[index - 1].operator} ` : ''}${
           rule.license
-        }${rule.laterVersions ? '+' : ''}`
+        }${rule.laterVersions ? '+' : ''}${
+          rule.childrens.length ? ` ${rule.operator} (${this.getLicenseString(rule.childrens)})` : ''
+        }`
       })
       .join(` `)
   }
