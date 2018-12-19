@@ -20,7 +20,7 @@ export default class LicensePickerUtils {
   }
 
   static parseLicense(license) {
-    parse(license)
+    return parse(license) || {}
   }
 
   static stringify(obj) {

@@ -20,24 +20,33 @@ export default class LicensePicker extends Component {
     super(props)
     this.ruleObject = {
       license: '',
-      operator: '',
-      laterVersions: false,
+      conjunction: '',
+      plus: false,
       childrens: []
     }
+    this.licenseObject = {}
     this.state = {
-      rules: [{ ...this.ruleObject, id: new Date() }],
+      rules: {},
       sequence: 0
     }
   }
   static propTypes = {
-    //prop: PropTypes
+    value: PropTypes.string //existing license
+  }
+
+  componentDidMount() {
+    this.setState({
+      licenseExpression: this.props.value,
+      rules: LicensePickerUtils.parseLicense(this.props.value),
+      isValid: valid(this.props.value)
+    })
   }
 
   componentDidUpdate(prevProps, prevState) {
     const { rules, sequence } = this.state
     if (sequence !== prevState.sequence) {
-      const licenseExpression = LicensePickerUtils.getLicenseString(rules)
-      this.setState({ licenseExpression, isValid: valid(licenseExpression) })
+      const licenseExpression = LicensePickerUtils.stringify(rules)
+      this.setState({ ...this.state, licenseExpression, isValid: valid(licenseExpression) })
     }
   }
 
@@ -64,17 +73,17 @@ export default class LicensePicker extends Component {
     this.setState({ rules })
   }
 
-  changeRulesOperator = async (value, id) => {
+  changeRulesConjunction = async (value, id) => {
     const rules = [...this.state.rules]
     const path = await LicensePickerUtils.findPath(rules, id)
-    set(rules, `${path}.operator`, value || '')
+    set(rules, `${path}.conjunction`, value || '')
     this.setState({ rules, sequence: this.state.sequence + 1 }, () => value !== '' && this.addNewRule(path, id))
   }
 
   considerLaterVersions = async (value, id) => {
     const rules = [...this.state.rules]
     const path = await LicensePickerUtils.findPath(rules, id)
-    set(rules, `${path}.laterVersions`, value || '')
+    set(rules, `${path}.plus`, value || '')
     this.setState({ rules, sequence: this.state.sequence + 1 })
   }
 
@@ -90,22 +99,19 @@ export default class LicensePicker extends Component {
 
   render() {
     const { rules, licenseExpression, isValid } = this.state
+    console.log(rules)
     return (
       <div>
         <div>
           License Expression: <span style={{ background: `${isValid ? 'green' : 'red'}` }}>{licenseExpression}</span>
         </div>
-        {rules.map((rule, index) => (
-          <RuleRenderer
-            key={index}
-            index={index}
-            rule={rule}
-            changeRulesOperator={this.changeRulesOperator}
-            updateLicense={this.updateLicense}
-            considerLaterVersions={this.considerLaterVersions}
-            addNewGroup={this.addNewGroup}
-          />
-        ))}
+        <RuleRenderer
+          rule={rules}
+          changeRulesOperator={this.changeRulesConjunction}
+          updateLicense={this.updateLicense}
+          considerLaterVersions={this.considerLaterVersions}
+          addNewGroup={this.addNewGroup}
+        />
       </div>
     )
   }
