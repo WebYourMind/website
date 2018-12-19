@@ -1,5 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
+import parse from 'spdx-expression-parse'
+const NOASSERTION = 'NOASSERTION'
 
 // Shared methods appliable to License Picker
 export default class LicensePickerUtils {
@@ -15,6 +17,18 @@ export default class LicensePickerUtils {
         }`
       })
       .join(` `)
+  }
+
+  static parseLicense(license) {
+    parse(license)
+  }
+
+  static stringify(obj) {
+    if (obj.hasOwnProperty('noassertion')) return NOASSERTION
+    if (obj.license) return `${obj.license}${obj.plus ? '+' : ''}${obj.exception ? ` WITH ${obj.exception}` : ''}`
+    const left = obj.left.conjunction === 'or' ? `(${this.stringify(obj.left)})` : this.stringify(obj.left)
+    const right = obj.right.conjunction === 'or' ? `(${this.stringify(obj.right)})` : this.stringify(obj.right)
+    return `${left} ${obj.conjunction.toUpperCase()} ${right}`
   }
 
   static async findPath(rules, id) {
