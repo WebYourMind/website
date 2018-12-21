@@ -20,7 +20,7 @@ export default class LicensePickerUtils {
   }
 
   static parseLicense(license) {
-    return parse(license) || {}
+    return license ? parse(license) : {}
   }
 
   static stringify(obj) {
@@ -29,19 +29,5 @@ export default class LicensePickerUtils {
     const left = obj.left.conjunction === 'or' ? `(${this.stringify(obj.left)})` : this.stringify(obj.left)
     const right = obj.right.conjunction === 'or' ? `(${this.stringify(obj.right)})` : this.stringify(obj.right)
     return `${left} ${obj.conjunction.toUpperCase()} ${right}`
-  }
-
-  static async findPath(rules, id) {
-    const item = await this.deepFind(rules, id)
-    return `${item.join('.childrens.')}`
-  }
-
-  static async deepFind(rulesList, id, indexes = []) {
-    const item = rulesList.reduce((result, arrayItem, index) => {
-      if (result.length) return result
-      if (arrayItem.id === id) return [...indexes, index]
-      return arrayItem.childrens.length ? this.deepFind(arrayItem.childrens, id, [...indexes, index]) : result
-    }, [])
-    return item
   }
 }
