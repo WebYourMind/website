@@ -58,27 +58,12 @@ export default class LicensePicker extends Component {
     this.setState({ rules, sequence: this.state.sequence + 1 })
   }
 
-  addNewRule = (path, conjunction) => {
-    //const rules = { ...this.state.rules }
-    // IF rules.path === {license} -> {left: {license}, conjunction, right:{}}
-    /*const pathArray = toPath(path)
-    if (pathArray.length === 1) rules.push({ ...this.ruleObject, id: new Date() })
-    else {
-      pathArray.splice(pathArray.length - 1)
-      const rule = get(rules, pathArray)
-      if (rule[rule.length - 1].id !== id) return
-      rule.push({ ...this.ruleObject, id: new Date() })
-      set(rules, pathArray, rule)
-    }
-    this.setState({ rules })*/
-  }
-
   changeRulesConjunction = async (value, path) => {
     const rules = { ...this.state.rules }
-    return this.setState(
-      { rules: LicensePickerUtils.createRules(value, rules, path), sequence: this.state.sequence + 1 },
-      () => value !== '' && this.addNewRule(path, value)
-    )
+    return this.setState({
+      rules: LicensePickerUtils.createRules(value, rules, path),
+      sequence: this.state.sequence + 1
+    })
   }
 
   considerLaterVersions = async (value, path) => {

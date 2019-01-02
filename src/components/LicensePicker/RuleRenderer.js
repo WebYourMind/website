@@ -11,7 +11,6 @@ export default class RuleRenderer extends Component {
 
   renderRule = (rule, path) => {
     const { changeRulesOperator, updateLicense, considerLaterVersions, addNewGroup } = this.props
-    console.log(rule, path)
     if (rule.license || rule.license === '')
       return (
         <div style={{ padding: '10px' }}>
