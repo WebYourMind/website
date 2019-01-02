@@ -59,9 +59,8 @@ export default class LicensePicker extends Component {
   }
 
   addNewRule = (path, conjunction) => {
-    const rules = { ...this.state.rules }
+    //const rules = { ...this.state.rules }
     // IF rules.path === {license} -> {left: {license}, conjunction, right:{}}
-
     /*const pathArray = toPath(path)
     if (pathArray.length === 1) rules.push({ ...this.ruleObject, id: new Date() })
     else {
@@ -76,67 +75,8 @@ export default class LicensePicker extends Component {
 
   changeRulesConjunction = async (value, path) => {
     const rules = { ...this.state.rules }
-    const currentPath = path.slice(0, path.length - 1)
-    const currentRule = get(rules, toPath(path), rules)
-    let newRules = {}
-
-    if (path[path.length - 1] === 'left') {
-      set(rules, [...currentPath, 'conjunction'], value)
-      return this.setState(
-        { rules, sequence: this.state.sequence + 1 },
-        () => value !== '' && this.addNewRule(path, value)
-      )
-    }
-
-    if (path.length > 0) {
-      newRules = { ...rules }
-      if (value === 'or') {
-        if (get(rules, toPath([...currentPath, 'conjunction']), rules) === 'and') {
-          if (currentPath.length > 0) {
-            set(newRules, currentPath, {
-              conjunction: 'or',
-              left: { ...get(rules, toPath(currentPath), rules) },
-              right: { license: '' }
-            })
-          } else {
-            newRules = {
-              conjunction: 'or',
-              left: { ...get(rules, toPath(currentPath), rules) },
-              right: { license: '' }
-            }
-          }
-        }
-      }
-      if (value === 'and') {
-        if (get(rules, toPath([...currentPath, 'conjunction']), rules) === 'and') {
-          if (currentPath.length > 0) {
-            let obj = { ...get(rules, toPath([...path])) }
-            if (!obj.left)
-              obj = { left: { ...get(rules, toPath([...path])) }, conjunction: value, right: { license: '' } }
-            else obj.conjunction = value
-            set(newRules, toPath(path), obj)
-          } else {
-            newRules = {
-              conjunction: 'and',
-              left: { ...get(rules, toPath([...currentPath, 'left']), rules) },
-              right: {
-                conjunction: 'and',
-                left: { ...get(rules, toPath([...currentPath, 'right'])) },
-                right: { license: '' }
-              }
-            }
-          }
-        } else {
-          set(rules, [...path, 'conjunction'], value)
-          return this.setState(
-            { rules, sequence: this.state.sequence + 1 },
-            () => value !== '' && this.addNewRule(path, value)
-          )
-        }
-      }
-    } else newRules = { left: { ...currentRule }, conjunction: value || '', right: { license: '', conjunction: '' } }
     return this.setState(
-      { rules: newRules, sequence: this.state.sequence + 1 },
+      { rules: LicensePickerUtils.createRules(value, rules, path), sequence: this.state.sequence + 1 },
       () => value !== '' && this.addNewRule(path, value)
     )
   }
