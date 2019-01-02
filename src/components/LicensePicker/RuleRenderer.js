@@ -9,7 +9,11 @@ export default class RuleRenderer extends Component {
     super(props)
   }
 
-  renderRule = (rule, path) => {
+  shouldComponentUpdate() {
+    return true
+  }
+
+  renderRule = (rule, path, conjunction) => {
     const { changeRulesOperator, updateLicense, considerLaterVersions, addNewGroup } = this.props
     if (rule.license || rule.license === '')
       return (
@@ -19,29 +23,46 @@ export default class RuleRenderer extends Component {
             <input type="checkbox" onChange={event => considerLaterVersions(event.target.checked, path)} value="+" />
             Any later version
           </div>
-          <select onChange={event => changeRulesOperator(event.target.value, path)}>
+          <select disabled={rule.license === ''} onChange={event => changeRulesOperator(event.target.value, path)}>
             <option />
-            <option>WITH</option>
-            <option>AND</option>
-            <option>OR</option>
+            <option selected={conjunction === 'WITH' ? true : false}>WITH</option>
+            <option selected={rule.license !== '' && conjunction === 'AND' ? true : false}>AND</option>
+            <option selected={rule.license !== '' && conjunction === 'OR' ? true : false}>OR</option>
           </select>
           <button onClick={() => addNewGroup([...path, 'license'])}>Add new Group</button>
         </div>
       )
+    console.log(path.slice(0, path.length - 1), rule)
     return (
       <Fragment>
-        <div
-          style={{ padding: '10px', border: rule.left && !rule.left.license ? '1px solid' : null }}
-          key={toPath(path)}
-        >
-          {this.renderRule(rule.left, [...path, 'left'])}
+        <div style={{ padding: '10px', border: rule.left && !rule.left.license ? '1px solid' : null }}>
+          {this.renderRule(
+            rule.left,
+            [...path, 'left'],
+            rule.left.conjunction ? rule.left.conjunction : rule.conjunction
+          )}
         </div>
-        <div
-          style={{ padding: '10px', border: rule.right && !rule.right.license ? '1px solid' : null }}
-          key={toPath(path)}
-        >
-          {this.renderRule(rule.right, [...path, 'right'])}
+        {rule.left &&
+          rule.left.conjunction && (
+            <select onChange={event => changeRulesOperator(event.target.value, path)}>
+              <option />
+              <option selected={rule.conjunction === 'WITH' ? true : false}>WITH</option>
+              <option selected={rule.conjunction === 'AND' ? true : false}>AND</option>
+              <option selected={rule.conjunction === 'OR' ? true : false}>OR</option>
+            </select>
+          )}
+        <div style={{ padding: '10px', border: rule.right && !rule.right.license ? '1px solid' : null }}>
+          {this.renderRule(rule.right, [...path, 'right'], rule.right.conjunction && rule.right.conjunction)}
         </div>
+        {rule.right &&
+          rule.right.conjunction && (
+            <select onChange={event => changeRulesOperator(event.target.value, path)}>
+              <option />
+              <option selected={rule.conjunction === 'WITH' ? true : false}>WITH</option>
+              <option selected={rule.conjunction === 'AND' ? true : false}>AND</option>
+              <option selected={rule.conjunction === 'OR' ? true : false}>OR</option>
+            </select>
+          )}
       </Fragment>
     )
   }
