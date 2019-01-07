@@ -29,7 +29,7 @@ export default class LicensePickerUtils {
       obj[path[0]] = this.createRules(conjunction, obj[path[0]], path.slice(1))
       return obj
     }
-
+    if (path.length === 0) return this.createRuleObject(conjunction, obj.left || obj, obj.right && obj.right)
     const ruleConjunction = obj[path[0]] && obj[path[0]].conjunction ? obj.conjunction : conjunction
     const left =
       path[0] === 'left'

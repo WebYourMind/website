@@ -33,7 +33,6 @@ export default class RuleRenderer extends Component {
           {path.length > 0 && <button onClick={() => removeRule(path)}>Remove Rule</button>}
         </div>
       )
-    console.log(path.slice(0, path.length - 1), rule)
     return (
       <Fragment>
         <div style={{ padding: '10px', border: rule.left && !rule.left.license ? '1px solid' : null }}>
@@ -43,16 +42,16 @@ export default class RuleRenderer extends Component {
             rule.left.conjunction ? rule.left.conjunction : rule.conjunction
           )}
         </div>
-        {/*rule.left &&
-          rule.left.conjunction && (
-            <select onChange={event => changeRulesOperator(event.target.value, path)}>
-              <option />
-              <option selected={rule.conjunction === 'WITH' ? true : false}>WITH</option>
-              <option selected={rule.conjunction === 'AND' ? true : false}>AND</option>
-              <option selected={rule.conjunction === 'OR' ? true : false}>OR</option>
-            </select>
-          )*/}
         <div style={{ padding: '10px', border: rule.right && !rule.right.license ? '1px solid' : null }}>
+          {rule.left &&
+            rule.left.conjunction && (
+              <select onChange={event => changeRulesOperator(event.target.value, path)}>
+                <option />
+                <option selected={rule.conjunction === 'WITH' ? true : false}>WITH</option>
+                <option selected={rule.conjunction === 'AND' ? true : false}>AND</option>
+                <option selected={rule.conjunction === 'OR' ? true : false}>OR</option>
+              </select>
+            )}
           {this.renderRule(rule.right, [...path, 'right'], rule.right.conjunction && rule.right.conjunction)}
         </div>
         {/*rule.right &&
