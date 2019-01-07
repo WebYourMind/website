@@ -24,7 +24,7 @@ export default class RuleRenderer extends Component {
             Any later version
           </div>
           <select disabled={rule.license === ''} onChange={event => changeRulesOperator(event.target.value, path)}>
-            <option />
+            <option selected={rule.license === ''} />
             <option selected={conjunction === 'WITH' ? true : false}>WITH</option>
             <option selected={rule.license !== '' && conjunction === 'AND' ? true : false}>AND</option>
             <option selected={rule.license !== '' && conjunction === 'OR' ? true : false}>OR</option>
@@ -54,15 +54,6 @@ export default class RuleRenderer extends Component {
             )}
           {this.renderRule(rule.right, [...path, 'right'], rule.right.conjunction && rule.right.conjunction)}
         </div>
-        {/*rule.right &&
-          rule.right.conjunction && (
-            <select onChange={event => changeRulesOperator(event.target.value, path)}>
-              <option />
-              <option selected={rule.conjunction === 'WITH' ? true : false}>WITH</option>
-              <option selected={rule.conjunction === 'AND' ? true : false}>AND</option>
-              <option selected={rule.conjunction === 'OR' ? true : false}>OR</option>
-            </select>
-          )*/}
       </Fragment>
     )
   }
