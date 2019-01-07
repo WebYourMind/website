@@ -14,7 +14,7 @@ export default class RuleRenderer extends Component {
   }
 
   renderRule = (rule, path, conjunction) => {
-    const { changeRulesOperator, updateLicense, considerLaterVersions, addNewGroup } = this.props
+    const { changeRulesOperator, updateLicense, considerLaterVersions, addNewGroup, removeRule } = this.props
     if (rule.license || rule.license === '')
       return (
         <div style={{ padding: '10px' }}>
@@ -30,6 +30,7 @@ export default class RuleRenderer extends Component {
             <option selected={rule.license !== '' && conjunction === 'OR' ? true : false}>OR</option>
           </select>
           <button onClick={() => addNewGroup([...path, 'license'])}>Add new Group</button>
+          {path.length > 0 && <button onClick={() => removeRule(path)}>Remove Rule</button>}
         </div>
       )
     console.log(path.slice(0, path.length - 1), rule)
@@ -42,7 +43,7 @@ export default class RuleRenderer extends Component {
             rule.left.conjunction ? rule.left.conjunction : rule.conjunction
           )}
         </div>
-        {rule.left &&
+        {/*rule.left &&
           rule.left.conjunction && (
             <select onChange={event => changeRulesOperator(event.target.value, path)}>
               <option />
@@ -50,11 +51,11 @@ export default class RuleRenderer extends Component {
               <option selected={rule.conjunction === 'AND' ? true : false}>AND</option>
               <option selected={rule.conjunction === 'OR' ? true : false}>OR</option>
             </select>
-          )}
+          )*/}
         <div style={{ padding: '10px', border: rule.right && !rule.right.license ? '1px solid' : null }}>
           {this.renderRule(rule.right, [...path, 'right'], rule.right.conjunction && rule.right.conjunction)}
         </div>
-        {rule.right &&
+        {/*rule.right &&
           rule.right.conjunction && (
             <select onChange={event => changeRulesOperator(event.target.value, path)}>
               <option />
@@ -62,7 +63,7 @@ export default class RuleRenderer extends Component {
               <option selected={rule.conjunction === 'AND' ? true : false}>AND</option>
               <option selected={rule.conjunction === 'OR' ? true : false}>OR</option>
             </select>
-          )}
+          )*/}
       </Fragment>
     )
   }

@@ -74,13 +74,21 @@ export default class LicensePicker extends Component {
   }
 
   addNewGroup = async rule => {
-    // Add a children rule related to the index element
+    // Add a children rule related to the rule element
     const rules = [...this.state.rules]
     const path = await LicensePickerUtils.findPath(rules, rule.id)
     const childrens = [...get(rules, `${path}.childrens`)]
     childrens.push({ ...this.ruleObject, id: new Date() })
     set(rules, `${path}.childrens`, childrens)
     this.setState({ rules })
+  }
+
+  removeRule = async rule => {
+    const rules = { ...this.state.rules }
+    return this.setState({
+      rules: LicensePickerUtils.removeRule(rules, rule),
+      sequence: this.state.sequence + 1
+    })
   }
 
   render() {
@@ -96,6 +104,7 @@ export default class LicensePicker extends Component {
           updateLicense={this.updateLicense}
           considerLaterVersions={this.considerLaterVersions}
           addNewGroup={this.addNewGroup}
+          removeRule={this.removeRule}
         />
       </div>
     )

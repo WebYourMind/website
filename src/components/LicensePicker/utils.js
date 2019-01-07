@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: MIT
 import parse from 'spdx-expression-parse'
 import isNil from 'lodash/isNil'
+import unset from 'lodash/unset'
+import get from 'lodash/get'
+import set from 'lodash/set'
 const NOASSERTION = 'NOASSERTION'
 
 // Shared methods appliable to License Picker
@@ -50,5 +53,20 @@ export default class LicensePickerUtils {
 
   static createRuleObject(conjunction, left, right) {
     return { conjunction, left, right: right || { license: '' } }
+  }
+
+  static removeRule(rules, path) {
+    const parentPath = path.slice(0, path.length - 1)
+    const pathToRemove = path[path.length - 1]
+    const currentRule = get(rules, parentPath, rules)
+    if (currentRule[pathToRemove === 'left' ? 'right' : 'left'].license === '') return rules
+    unset(rules, path)
+    const parentRule = get(rules, parentPath, rules)
+    if (!parentRule.hasOwnProperty('right') || !parentRule.hasOwnProperty('left')) {
+      const newRule = parentRule.left ? { ...parentRule.left } : { ...parentRule.right }
+      if (parentPath.length > 0) set(rules, parentPath, newRule)
+      else return newRule
+    }
+    return rules
   }
 }
