@@ -18,10 +18,35 @@ export default class LicensePickerUtils {
     if (!obj) return null
     if (obj.hasOwnProperty('noassertion')) return NOASSERTION
     if (obj.license) return `${obj.license}${obj.plus ? '+' : ''}${obj.exception ? ` WITH ${obj.exception}` : ''}`
-    const left = obj.left && obj.left.conjunction === 'or' ? `(${this.stringify(obj.left)})` : this.stringify(obj.left)
+    const left =
+      obj.left && obj.left.conjunction && obj.left.conjunction.toLowerCase() === 'or'
+        ? `(${this.stringify(obj.left)})`
+        : this.stringify(obj.left)
     const right =
-      obj.right && obj.right.conjunction === 'or' ? `(${this.stringify(obj.right)})` : this.stringify(obj.right)
+      obj.right && obj.right.conjunction && obj.right.conjunction.toLowerCase() === 'or'
+        ? `(${this.stringify(obj.right)})`
+        : this.stringify(obj.right)
     return left && `${left} ${!isNil(right) && obj.conjunction ? `${obj.conjunction.toUpperCase()} ${right}` : ''}`
+  }
+
+  static createGroup(obj, path) {
+    if (path.length > 1 && obj.hasOwnProperty(path[0]) && obj[path[0]].hasOwnProperty(path[1])) {
+      obj[path[0]] = this.createGroup(obj[path[0]], path.slice(1))
+      return obj
+    }
+    if (path.length === 0)
+      return {
+        left: obj,
+        conjunction: 'and',
+        right: this.createGroupObject()
+      }
+    return {
+      ...obj,
+      [path[0]]: {
+        ...obj[path[0]],
+        right: this.createRuleObject(obj[path[0]].conjunction, obj[path[0]].right, this.createGroupObject())
+      }
+    }
   }
 
   static createRules(conjunction, obj, path) {
@@ -49,6 +74,14 @@ export default class LicensePickerUtils {
           : obj.conjunction === conjunction && this.createRuleObject(conjunction, obj.right)
 
     return this.createRuleObject(ruleConjunction, left, right)
+  }
+
+  static createGroupObject() {
+    return {
+      left: { license: '' },
+      conjunction: 'and',
+      right: { license: '' }
+    }
   }
 
   static createRuleObject(conjunction, left, right) {
