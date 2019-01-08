@@ -7,7 +7,6 @@ import valid from 'spdx-expression-validate'
 import set from 'lodash/set'
 import unset from 'lodash/unset'
 import toPath from 'lodash/toPath'
-import RuleRenderer from './RuleRenderer'
 import RuleBuilder from './RuleBuilder'
 
 /**
