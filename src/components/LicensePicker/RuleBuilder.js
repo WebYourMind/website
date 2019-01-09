@@ -71,10 +71,18 @@ export default class RuleBuilder extends Component {
           </ToggleButtonGroup>
           <div>
             {!rule.left || !rule.right ? (
-              <Button onClick={() => changeRulesOperator('AND', path)}>Add Rule</Button>
+              <Button id="changeRulesOperator" onClick={() => changeRulesOperator('AND', path)}>
+                Add Rule
+              </Button>
             ) : null}
-            <Button onClick={() => addNewGroup(path)}>Add Group</Button>
-            {path.length > 0 && <Button onClick={() => removeRule(path)}>x</Button>}
+            <Button id="addNewGroup" onClick={() => addNewGroup(path)}>
+              Add Group
+            </Button>
+            {path.length > 0 && (
+              <Button id="removeRule" onClick={() => removeRule(path)}>
+                x
+              </Button>
+            )}
           </div>
         </Col>
         <div>

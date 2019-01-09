@@ -4,7 +4,6 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import valid from 'spdx-expression-validate'
 import set from 'lodash/set'
-import unset from 'lodash/unset'
 import toPath from 'lodash/toPath'
 import { Button, Row, Col } from 'react-bootstrap'
 import RuleBuilder from './RuleBuilder'
@@ -49,9 +48,7 @@ export default class LicensePicker extends Component {
     if (!value) return
     const rules = { ...this.state.rules }
     const currentPath = [...path, 'license']
-    if (!value && currentPath !== ['license']) {
-      unset(rules, `${currentPath}`)
-    } else set(rules, toPath(currentPath), value || '')
+    set(rules, toPath(currentPath), value || '')
     this.setState({ rules, sequence: this.state.sequence + 1 })
   }
 
