@@ -1,12 +1,21 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 import React, { Component, Fragment } from 'react'
+import PropTypes from 'prop-types'
 import { ToggleButtonGroup, ToggleButton, Button, Row, Col } from 'react-bootstrap'
 import SpdxPicker from '../SpdxPicker'
 
 export default class RuleBuilder extends Component {
   constructor(props) {
     super(props)
+  }
+  static propTypes = {
+    rule: PropTypes.object, //object containing current license rules
+    changeRulesOperator: PropTypes.func, //callback function called when switching a conjunction operator
+    updateLicense: PropTypes.func, //callback function called when changing a specific license value
+    considerLaterVersions: PropTypes.func, //callback function called when applying a plus operator
+    addNewGroup: PropTypes.func, //callback function called when adding a new license group object
+    removeRule: PropTypes.func //callback function called when removing a single license or a group
   }
   renderRule = (rule, path, conjunction = null, parentRule = {}) => {
     const { changeRulesOperator, updateLicense, considerLaterVersions, addNewGroup, removeRule } = this.props
