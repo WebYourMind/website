@@ -31,8 +31,8 @@ export default class LicensePicker extends Component {
 
   componentDidMount() {
     this.setState({
-      licenseExpression: this.props.value,
-      rules: LicensePickerUtils.parseLicense(this.props.value),
+      licenseExpression: this.props.value || '',
+      rules: this.props.value ? LicensePickerUtils.parseLicense(this.props.value) : { license: '' },
       isValid: this.props.value ? valid(this.props.value) : false
     })
   }
