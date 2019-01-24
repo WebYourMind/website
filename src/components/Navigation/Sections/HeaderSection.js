@@ -37,7 +37,7 @@ export default class HeaderSection extends Component {
               <div className="header-data">
                 {scores && (
                   <span className="score-header">
-                    <ScoreRenderer scores={scores} />
+                    <ScoreRenderer scores={scores} definition={item} />
                   </span>
                 )}
                 {isCurated && <Tag color="green">Curated</Tag>}

@@ -69,7 +69,7 @@ export default class ComponentButtons extends Component {
     const hasPendingCurations = Definition.hasPendingCurations(definition)
     return (
       <div className="list-activity-area">
-        {scores && <ScoreRenderer scores={scores} />}
+        {scores && <ScoreRenderer scores={scores} definition={definition} />}
         {isCurated && <Tag color="green">Curated</Tag>}
         {hasPendingCurations && <Tag color="gold">Pending Curations</Tag>}
         <ButtonGroup>
