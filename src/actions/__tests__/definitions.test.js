@@ -2,7 +2,7 @@ import configureMockStore from 'redux-mock-store'
 import thunk from 'redux-thunk'
 import fetchMock from 'fetch-mock'
 import * as definitionActions from '../definitionActions'
-import { DEFINITIONS, url } from '../../api/clearlyDefined'
+import { DEFINITIONS, url, BROWSE } from '../../api/clearlyDefined'
 import { asyncActions } from '..'
 
 const middlewares = [thunk]
