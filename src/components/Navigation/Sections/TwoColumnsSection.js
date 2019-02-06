@@ -29,7 +29,7 @@ class TwoColumnsSection extends Component {
 
   render() {
     const { definition, elements } = this.props
-
+    console.log(elements)
     return (
       <Row>
         {elements.map((element, index) => (
