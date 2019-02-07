@@ -91,6 +91,7 @@ export default (name = '', transformer = null, comparator = null) => {
     }
 
     if (result.add) {
+      console.log(state)
       const newList = add(state.list, result.add, comparator)
       return {
         ...state,
@@ -144,7 +145,8 @@ export default (name = '', transformer = null, comparator = null) => {
         ...state,
         sequence: ++state.sequence,
         list: result.updateAll,
-        transformedList: transformer ? transformer(result.updateAll) : result.updateAll
+        transformedList: transformer ? transformer(result.updateAll) : result.updateAll,
+        data: result.data
       }
     }
 
