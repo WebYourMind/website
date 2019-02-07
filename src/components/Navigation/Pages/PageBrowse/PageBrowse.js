@@ -16,6 +16,7 @@ import FilterBar from '../../Sections/FilterBar'
 import FullDetailPage from '../../../FullDetailView/FullDetailPage'
 import ProviderButtons from '../../Ui/ProviderButtons'
 import ContributePrompt from '../../../ContributePrompt'
+import { licenses, releaseDates } from '../../../../utils/utils'
 
 /**
  * Page that show to the user a list of interesting definitions to curate
@@ -85,6 +86,8 @@ class PageBrowse extends SystemManagedList {
         onFilter={this.onFilter}
         onSort={this.onSort}
         hasComponents={!this.hasComponents()}
+        showSourceFilter={false}
+        customLicenses={licenses.filter(license => license.value !== 'absence' && license.value !== 'presence')}
       />
     )
   }
