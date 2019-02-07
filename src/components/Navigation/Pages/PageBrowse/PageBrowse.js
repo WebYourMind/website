@@ -98,9 +98,10 @@ class PageBrowse extends SystemManagedList {
     )
   }
 
-  updateData() {
+  async updateData(continuationToken) {
     const { activeFilters, activeSort, activeProvider } = this.state
     const query = { type: activeProvider, maxLicensedScore: 70, maxDescribedScore: 70 }
+    if (continuationToken) query.continuationToken = continuationToken
     if (activeSort) query.sort = activeSort
     map(activeFilters, (item, key) => {
       switch (key) {
@@ -117,11 +118,12 @@ class PageBrowse extends SystemManagedList {
           break
       }
     })
-    this.props.dispatch(uiBrowseGet(this.props.token, query))
+    return await this.props.dispatch(uiBrowseGet(this.props.token, query))
   }
 
-  loadMoreRows = ({ startIndex, stopIndex }) => {
-    console.log('loadMoreRows')
+  loadMoreRows = async () => {
+    const { components } = this.props
+    if (components.data) return await this.updateData(components.data)
   }
 
   render() {
