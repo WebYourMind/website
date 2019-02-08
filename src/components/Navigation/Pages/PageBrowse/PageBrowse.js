@@ -16,7 +16,7 @@ import FilterBar from '../../Sections/FilterBar'
 import FullDetailPage from '../../../FullDetailView/FullDetailPage'
 import ProviderButtons from '../../Ui/ProviderButtons'
 import ContributePrompt from '../../../ContributePrompt'
-import { licenses, releaseDates } from '../../../../utils/utils'
+import { licenses } from '../../../../utils/utils'
 
 /**
  * Page that show to the user a list of interesting definitions to curate
@@ -111,6 +111,7 @@ class PageBrowse extends SystemManagedList {
         case 'curate':
           if (item === 'licensed') query.maxLicensedScore = 70
           if (item === 'described') query.maxDescribedScore = 70
+          break
         case 'licensed.declared':
           query.license = item
           break

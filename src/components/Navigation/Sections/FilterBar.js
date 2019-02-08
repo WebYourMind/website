@@ -41,6 +41,7 @@ export default class FilterBar extends Component {
       showLicenseFilter,
       showReleaseDateFilter,
       showSourceFilter,
+      showCurateFilter,
       customLicenses,
       customSorts,
       customSources,
