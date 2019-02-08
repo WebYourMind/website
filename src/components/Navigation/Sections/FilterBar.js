@@ -15,10 +15,10 @@ export default class FilterBar extends Component {
     showLicenseFilter: PropTypes.bool,
     showSourceFilter: PropTypes.bool,
     showReleaseDateFilter: PropTypes.bool,
-    customLicenses: PropTypes.object,
-    customSorts: PropTypes.object,
-    customSources: PropTypes.object,
-    customReleaseDates: PropTypes.object
+    customLicenses: PropTypes.array,
+    customSorts: PropTypes.array,
+    customSources: PropTypes.array,
+    customReleaseDates: PropTypes.array
   }
 
   static defaultProps = {
