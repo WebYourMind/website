@@ -87,6 +87,8 @@ class PageBrowse extends SystemManagedList {
         onSort={this.onSort}
         hasComponents={!this.hasComponents()}
         showSourceFilter={false}
+        showReleaseDateFilter={false}
+        showCurateFilter={true}
         customLicenses={licenses.filter(license => license.value !== 'absence' && license.value !== 'presence')}
       />
     )
