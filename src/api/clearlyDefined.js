@@ -107,15 +107,15 @@ export function getContributionData(token, entity) {
 }
 
 export function browseDefinitions(token, query) {
-  return post(url(DEFINITIONS), token, query)
+  return get(url(DEFINITIONS, query), token)
 }
 
 export function getDefinitions(token, list) {
   return post(url(`${DEFINITIONS}`), token, list)
 }
 
-export function getDefinitionSuggestions(token, prefix, type) {
-  return getList(url(DEFINITIONS, { pattern: prefix, type }), token)
+export function getDefinitionSuggestions(token, prefix) {
+  return getList(url(DEFINITIONS, { pattern: prefix }), token)
 }
 
 export function getSuggestedData(token, entity) {
@@ -203,6 +203,14 @@ export function getNugetRevisions(token, path) {
 export function getRevisions(token, path, type, provider) {
   const origin = _.get(ORIGINS, `${provider}.${type}`)
   return get(url(`${origin}/${path}/revisions`), token)
+}
+
+export function getStats(key) {
+  return get(url(`stats/${key}`))
+}
+
+export function getStatus(key) {
+  return get(url(`status/${key}`))
 }
 
 // ========================== utilities ====================
