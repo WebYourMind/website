@@ -33,7 +33,15 @@ export default Component => {
      *
      */
     getSubrows = subRows => {
-      subRows &&
+      const rows = subRows.reduce((previousValue, currentValue, currentIndex) => {
+        if (currentValue._pivotVal === 'undefined' && currentValue._subRows) {
+          console.log(currentValue)
+          const subItems = this.getSubrows(currentValue._subRows)
+        }
+      }, [])
+      return rows
+
+      /*subRows &&
         subRows.forEach((subRow, index) => {
           if (subRow._pivotVal === 'undefined' && subRow._subRows) {
             let items = this.getSubrows(subRow._subRows)
@@ -45,7 +53,7 @@ export default Component => {
             })
             subRows.splice(index, 1)
           }
-        })
+        })*/
       return subRows
     }
 

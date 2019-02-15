@@ -198,16 +198,21 @@ export default class FileList extends Component {
     ])
   }
 
+  shouldComponentUpdate() {
+    return true
+  }
+
   render() {
-    const { files, isFiltering } = this.state
+    const { files, isFiltering, expanded } = this.state
     return (
       <TreeTable
         showPagination={false}
         sortable={false}
         defaultPageSize={15}
         filterable
-        freezeWhenExpanded={false}
+        expanded={expanded}
         manual={false}
+        onExpandedChange={newExpanded => this.setState({ expanded: newExpanded })}
         onFilteredChange={() => this.setState({ isFiltering: true })}
         noDataText={
           isFiltering ? "Current filters didn't match any data" : 'There are currently no files for this definition'
@@ -235,7 +240,7 @@ const columns = []
  * @param  {} files The files object coming from the definition
  * @return {Object} Return a new object containing the files object modified
  */
-const parsePaths = (files, component, preview) => {
+export const parsePaths = (files, component, preview) => {
   return transform(files, (result, file, key) => {
     file.id = key
     const folders = file.path.split('/')
