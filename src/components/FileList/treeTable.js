@@ -33,6 +33,7 @@ export default Component => {
      *
      */
     getSubrows = subRows => {
+      return subRows
       const rows = subRows.reduce((previousValue, currentValue, currentIndex) => {
         if (currentValue._pivotVal === 'undefined' && currentValue._subRows) {
           console.log(currentValue)
