@@ -161,7 +161,8 @@
   }
 }
 
-.section-button {
+.section-button,
+.list-activity-area {
   // same as .btn-sm
   @media screen and (max-width: 992px) {
     .btn {
@@ -193,7 +194,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 300px;
 }
 
 .editable-marker {
