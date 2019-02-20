@@ -193,7 +193,7 @@ export default class DefinitionEntry extends React.Component {
       <Row>
         <Col md={5}>
           <Row>
-            <Col md={2}>{this.renderLabel('Declared', true)}</Col>
+            <Col md={2}>{this.renderLabel('Declared')}</Col>
             <Col md={10} className="definition__line">
               {this.renderWithToolTipIfDifferent(
                 'licensed.declared',
@@ -210,7 +210,7 @@ export default class DefinitionEntry extends React.Component {
             </Col>
           </Row>
           <Row>
-            <Col md={2}>{this.renderLabel('Source', true)}</Col>
+            <Col md={2}>{this.renderLabel('Source')}</Col>
             <Col md={10} className="definition__line">
               {this.renderWithToolTipIfDifferent(
                 'described.sourceLocation',
@@ -233,7 +233,7 @@ export default class DefinitionEntry extends React.Component {
             </Col>
           </Row>
           <Row>
-            <Col md={2}>{this.renderLabel('Release', true)}</Col>
+            <Col md={2}>{this.renderLabel('Release')}</Col>
             <Col md={10} className="definition__line">
               {this.renderWithToolTipIfDifferent(
                 'described.releaseDate',
@@ -262,7 +262,7 @@ export default class DefinitionEntry extends React.Component {
             </Col>
           </Row>
           <Row>
-            <Col md={2}>{this.renderLabel('Attribution', true)}</Col>
+            <Col md={2}>{this.renderLabel('Attribution')}</Col>
             <Col md={10} className="definition__line">
               {this.renderPopover(licensed, 'attribution.parties', 'Attributions')}
             </Col>
