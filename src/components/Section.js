@@ -7,23 +7,25 @@ import { Row, Col } from 'react-bootstrap'
 
 export default class Section extends Component {
   static propTypes = {
-    actionButton: PropTypes.element
+    actionButton: PropTypes.element,
+    children: PropTypes.element,
+    name: PropTypes.string
   }
 
   render() {
     const { name, actionButton, children } = this.props
     return (
-      <div>
+      <>
         <Row className="section-header">
-          <Col sm={4}>
+          <Col sm={3} md={4}>
             <div className="section-title">{name}</div>
           </Col>
-          <Col sm={8}>
+          <Col sm={9} md={8}>
             <div className="section-button">{actionButton}</div>
           </Col>
         </Row>
         {children}
-      </div>
+      </>
     )
   }
 }
