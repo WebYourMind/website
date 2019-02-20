@@ -147,6 +147,35 @@
 
 .section-title {
   font-size: 2em;
+
+}
+
+.section-button {
+  // same as .btn-sm
+  @media screen and (max-width: 992px) {
+    .btn {
+      padding: 5px 10px;
+      font-size: 12px;
+      line-height: 1.5;
+      border-radius: 3px;
+    }
+  }
+  // same as .btn-xs
+  @media screen and (max-width: 767px) {
+    .btn {
+      padding: 1px 5px;
+      font-size: 12px;
+      line-height: 1.5;
+      border-radius: 3px;
+    }
+  }
+}
+
+.buttons-bar {
+  .btn-group,
+  .btn {
+    margin-left: 3px;
+  }
 }
 
 .editable-field {
