@@ -74,17 +74,14 @@ export default class ComponentButtons extends Component {
         {hasPendingCurations && <Tag color="gold">Pending Curations</Tag>}
         <ButtonGroup>
           {!isSourceComponent && !readOnly && !isSourceEmpty && (
-            <ButtonWithTooltip
-              name="addSourceComponent"
-              tip={'Add the definition for source that matches this package'}
-            >
+            <ButtonWithTooltip tip="Add the definition for source that matches this package">
               <Button className="list-fa-button" onClick={this.addSourceForComponent.bind(this, component)}>
                 <i className="fas fa-code" />
               </Button>
             </ButtonWithTooltip>
           )}
           {!isDefinitionEmpty && (
-            <ButtonWithTooltip tip={'Dig into this definition'}>
+            <ButtonWithTooltip tip="Dig into this definition">
               <Button
                 className="list-fa-button"
                 onClick={this.inspectComponent.bind(this, currentComponent, definition)}
@@ -100,8 +97,8 @@ export default class ComponentButtons extends Component {
             className="list-fa-button"
           />
           {!hideVersionSelector && (
-            <ButtonWithTooltip tip={'Switch or add other versions of this definition'}>
-              <div>
+            <ButtonWithTooltip tip="Switch or add other versions of this definition">
+              <>
                 <Dropdown
                   trigger={['click']}
                   overlay={
@@ -125,11 +122,11 @@ export default class ComponentButtons extends Component {
                     <i className="fas fa-exchange-alt" /> <Icon type="down" />
                   </Button>
                 </Dropdown>
-              </div>
+              </>
             </ButtonWithTooltip>
           )}
           {!readOnly && !isDefinitionEmpty && (
-            <ButtonWithTooltip tip={'Revert Changes of this Definition'}>
+            <ButtonWithTooltip tip="Revert Changes of this Definition">
               <Button
                 className="list-fa-button"
                 onClick={() => this.revertComponent(component)}
