@@ -16,7 +16,17 @@ export default class Section extends Component {
     const { name, actionButton, children } = this.props
     return (
       <>
-        <Row className="section-header">
+        <Row className="section-header hidden-md hidden-lg hidden-sm">
+          <Col xs={12}>
+            <div className="section-title">{name}</div>
+          </Col>
+        </Row>
+        <Row className="hidden-md hidden-lg hidden-sm">
+          <Col xs={12}>
+            <div className="section-button">{actionButton}</div>
+          </Col>
+        </Row>
+        <Row className="section-header visible-md-block visible-lg-block visible-sm-block">
           <Col sm={3} md={4}>
             <div className="section-title">{name}</div>
           </Col>
