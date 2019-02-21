@@ -122,9 +122,9 @@ export class PageDefinitions extends UserManagedList {
               <a href="https://github.com/clearlydefined/curated-data">
                 https://github.com/clearlydefined/curated-data
               </a>
-              , , ...
+              , ...{' '}
             </li>
-            <li>a saved ClearlyDefined component list, package-lock.json or project-log.json</li>
+            <li>a saved ClearlyDefined component list, package-lock.json, project-log.json, ... </li>
           </ul>
         </div>
       </div>
