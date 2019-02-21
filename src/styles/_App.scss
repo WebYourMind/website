@@ -162,7 +162,8 @@
 }
 
 .section-button,
-.list-activity-area {
+.list-activity-area,
+.filter-bar {
   // same as .btn-sm
   @media screen and (max-width: 992px) {
     .btn {
@@ -172,10 +173,30 @@
       border-radius: 3px;
     }
   }
+
   // same as .btn-xs
   @media screen and (max-width: 767px) {
     .btn {
       padding: 1px 5px;
+      font-size: 12px;
+      line-height: 1.5;
+      border-radius: 3px;
+    }
+  }
+}
+
+#buttonbar-collapse,
+.dropdown-menu-right {
+  padding: 0;
+  margin: -1px 0 0;
+  border: 1px;
+}
+
+.section-body {
+  // same as .btn-sm
+  @media screen and (max-width: 992px) {
+    .btn {
+      padding: 5px 10px;
       font-size: 12px;
       line-height: 1.5;
       border-radius: 3px;

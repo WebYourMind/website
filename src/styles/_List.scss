@@ -100,6 +100,10 @@
     font-weight: bold;
     margin-bottom: 2px;
   }
+
+  @media screen and (max-width: 992px) {
+    margin: 0 10px;
+  }
 }
 
 .list-singleLine {
@@ -147,8 +151,8 @@
   padding-right: 10px;
 
   @media screen and (max-width: 992px) {
+    min-width: 50%;
     padding-right: 5px;
-    width: 50%;
   }
 }
 
@@ -182,6 +186,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
+  @media screen and (max-width: 992px) {
+    padding: 10px;
+  }
 }
 
 .list-filter {

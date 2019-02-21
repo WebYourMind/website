@@ -8,6 +8,9 @@ import { RowEntityList, DefinitionEntry } from './'
 import EntitySpec from '../utils/entitySpec'
 import ComponentButtons from './Navigation/Ui/ComponentButtons'
 
+// 1.4x if mobile
+const isMobileMultiplier = window.innerWidth > 991 ? 1 : 1.4
+
 export default class ComponentList extends React.Component {
   static propTypes = {
     list: PropTypes.array,
@@ -61,7 +64,7 @@ export default class ComponentList extends React.Component {
 
   rowHeight({ index }) {
     const component = this.props.list[index]
-    return component && component.expanded ? 150 : 50
+    return component && component.expanded ? 150 * isMobileMultiplier : 50
   }
 
   toggleExpanded(component) {
@@ -128,7 +131,7 @@ export default class ComponentList extends React.Component {
           list={list}
           listLength={listLength}
           loadMoreRows={loadMoreRows}
-          listHeight={listHeight}
+          listHeight={listHeight * isMobileMultiplier}
           rowRenderer={this.renderRow}
           rowHeight={this.rowHeight}
           noRowsRenderer={noRowsRenderer}

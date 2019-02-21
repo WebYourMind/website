@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Tag } from 'antd'
 import { get } from 'lodash'
-import { Button, ButtonGroup } from 'react-bootstrap'
+import { Button, ButtonGroup, ButtonToolbar, Dropdown as BSDropdown } from 'react-bootstrap'
 import { Menu, Dropdown, Icon } from 'antd'
 import { CopyUrlButton } from '../../'
 import EntitySpec from '../../../utils/entitySpec'
@@ -58,13 +58,82 @@ export default class ComponentButtons extends Component {
     this.props.showVersionSelectorPopup(component, multiple)
   }
 
-  render() {
+  renderButtonGroup(className = '') {
     const { definition, currentComponent, readOnly, hasChange, hideVersionSelector } = this.props
     const component = EntitySpec.fromCoordinates(currentComponent)
     const isSourceComponent = this.isSourceComponent(component)
-    const scores = Definition.computeScores(definition)
-    const isDefinitionEmpty = Definition.isDefinitionEmpty(definition)
     const isSourceEmpty = Definition.isSourceEmpty(definition)
+    const isDefinitionEmpty = Definition.isDefinitionEmpty(definition)
+    return (
+      <ButtonGroup className={`collapse navbar-collapse ${className}`} id="buttonbar-collapse">
+        {!isSourceComponent && !readOnly && !isSourceEmpty && (
+          <ButtonWithTooltip tip="Add the definition for source that matches this package">
+            <Button className="list-fa-button" onClick={this.addSourceForComponent.bind(this, component)}>
+              <i className="fas fa-code" />
+            </Button>
+          </ButtonWithTooltip>
+        )}
+        {!isDefinitionEmpty && (
+          <ButtonWithTooltip tip="Dig into this definition">
+            <Button className="list-fa-button" onClick={this.inspectComponent.bind(this, currentComponent, definition)}>
+              <i className="fas fa-search" />
+            </Button>
+          </ButtonWithTooltip>
+        )}
+        <CopyUrlButton
+          route={ROUTE_DEFINITIONS}
+          path={component.toPath()}
+          bsStyle="default"
+          className="list-fa-button"
+        />
+        {!hideVersionSelector && (
+          <ButtonWithTooltip tip="Switch or add other versions of this definition">
+            <>
+              <Dropdown
+                trigger={['click']}
+                overlay={
+                  <Menu>
+                    <Menu.Item
+                      data-test-id="switch-component-version"
+                      onClick={this.showVersionSelectorPopup.bind(this, currentComponent, false)}
+                    >
+                      Switch version
+                    </Menu.Item>
+                    <Menu.Item
+                      data-test-id="add-component-version"
+                      onClick={this.showVersionSelectorPopup.bind(this, currentComponent, true)}
+                    >
+                      Add more versions
+                    </Menu.Item>
+                  </Menu>
+                }
+              >
+                <Button className="list-fa-button" onClick={event => event.stopPropagation()}>
+                  <i className="fas fa-exchange-alt" /> <Icon type="down" />
+                </Button>
+              </Dropdown>
+            </>
+          </ButtonWithTooltip>
+        )}
+        {!readOnly && !isDefinitionEmpty && (
+          <ButtonWithTooltip tip="Revert Changes of this Definition">
+            <Button
+              className="list-fa-button"
+              onClick={() => this.revertComponent(component)}
+              disabled={!hasChange(component)}
+            >
+              <i className="fas fa-undo" />
+            </Button>
+          </ButtonWithTooltip>
+        )}
+      </ButtonGroup>
+    )
+  }
+
+  render() {
+    const { definition, currentComponent, readOnly } = this.props
+    const component = EntitySpec.fromCoordinates(currentComponent)
+    const scores = Definition.computeScores(definition)
     const isCurated = Definition.isCurated(definition)
     const hasPendingCurations = Definition.hasPendingCurations(definition)
     return (
@@ -72,71 +141,18 @@ export default class ComponentButtons extends Component {
         {scores && <ScoreRenderer scores={scores} definition={definition} />}
         {isCurated && <Tag color="green">Curated</Tag>}
         {hasPendingCurations && <Tag color="gold">Pending Curations</Tag>}
-        <ButtonGroup>
-          {!isSourceComponent && !readOnly && !isSourceEmpty && (
-            <ButtonWithTooltip tip="Add the definition for source that matches this package">
-              <Button className="list-fa-button" onClick={this.addSourceForComponent.bind(this, component)}>
-                <i className="fas fa-code" />
-              </Button>
-            </ButtonWithTooltip>
-          )}
-          {!isDefinitionEmpty && (
-            <ButtonWithTooltip tip="Dig into this definition">
-              <Button
-                className="list-fa-button"
-                onClick={this.inspectComponent.bind(this, currentComponent, definition)}
-              >
-                <i className="fas fa-search" />
-              </Button>
-            </ButtonWithTooltip>
-          )}
-          <CopyUrlButton
-            route={ROUTE_DEFINITIONS}
-            path={component.toPath()}
-            bsStyle="default"
-            className="list-fa-button"
-          />
-          {!hideVersionSelector && (
-            <ButtonWithTooltip tip="Switch or add other versions of this definition">
-              <>
-                <Dropdown
-                  trigger={['click']}
-                  overlay={
-                    <Menu>
-                      <Menu.Item
-                        data-test-id="switch-component-version"
-                        onClick={this.showVersionSelectorPopup.bind(this, currentComponent, false)}
-                      >
-                        Switch version
-                      </Menu.Item>
-                      <Menu.Item
-                        data-test-id="add-component-version"
-                        onClick={this.showVersionSelectorPopup.bind(this, currentComponent, true)}
-                      >
-                        Add more versions
-                      </Menu.Item>
-                    </Menu>
-                  }
-                >
-                  <Button className="list-fa-button" onClick={event => event.stopPropagation()}>
-                    <i className="fas fa-exchange-alt" /> <Icon type="down" />
-                  </Button>
-                </Dropdown>
-              </>
-            </ButtonWithTooltip>
-          )}
-          {!readOnly && !isDefinitionEmpty && (
-            <ButtonWithTooltip tip="Revert Changes of this Definition">
-              <Button
-                className="list-fa-button"
-                onClick={() => this.revertComponent(component)}
-                disabled={!hasChange(component)}
-              >
-                <i className="fas fa-undo" />
-              </Button>
-            </ButtonWithTooltip>
-          )}
-        </ButtonGroup>
+        <ButtonToolbar className="hidden-md hidden-lg hidden-sm">
+          <BSDropdown id="split-button-pull-right">
+            <BSDropdown.Toggle>
+              <span className="sr-only">Toggle navigation</span>
+              <span className="icon-bar" />
+              <span className="icon-bar" />
+              <span className="icon-bar" />
+            </BSDropdown.Toggle>
+            <BSDropdown.Menu className="dropdown-menu-right">{this.renderButtonGroup()}</BSDropdown.Menu>
+          </BSDropdown>
+        </ButtonToolbar>
+        {this.renderButtonGroup('visible-md-block visible-lg-block visible-sm-block')}
         {!readOnly && (
           <Button bsStyle="link" onClick={this.removeComponent.bind(this, component)}>
             <i className="fas fa-times list-remove" />
