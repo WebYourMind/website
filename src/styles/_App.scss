@@ -105,7 +105,7 @@
   margin: 3rem;
 
   @media screen and (max-width: 992px) {
-    margin: 1rem;
+    margin: 4rem 1rem 1rem;
   }
 }
 
@@ -151,6 +151,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
+  @media screen and (max-width: 992px) {
+    padding-top: 20px;
+  }
 }
 
 .section-title {
