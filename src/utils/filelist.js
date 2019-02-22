@@ -4,6 +4,51 @@ import Contribution from './contribution'
 
 // Abstract methods for FileList
 export default class FileListSpec {
+  static pathToTreeFolders(files, component, preview) {
+    const treeFolders = files.reduce((result, file, key) => {
+      const folders = file.path.split('/')
+      let index = null
+      console.log(folders.length, folders)
+      const generatedFolders = this.getFolders({ ...file, folders }, component, preview, key)
+      console.log(
+        result.findIndex(folder => {
+          console.log(folder, generatedFolders)
+          return folder.name === generatedFolders.name
+        })
+      )
+      /*if ((index = result.findIndex(folder => folder.name === generatedFolders.name)))
+        result[index].children
+          ? result[index].children.push(generatedFolders)
+          : (result[index].children = [generatedFolders])
+      else*/ result.push(
+        generatedFolders
+      )
+      return result
+    }, [])
+    console.log(treeFolders)
+    return treeFolders
+  }
+
+  static getFolders(file, component, preview, key) {
+    console.log(file.folders)
+    if (file.folders.length === 1) {
+      return {
+        name: file.path,
+        license: file.license || null
+        //facets: FileListSpec.getFileFacets(file.facets, component, preview, key),
+        //attributions: FileListSpec.getFileAttributions(file.attributions, component, preview, key)
+      }
+    } else {
+      const folderName = file.folders[0]
+      file.folders.splice(0, 1)
+
+      return {
+        name: folderName,
+        children: [this.getFolders({ ...file }, component, preview, key)]
+      }
+    }
+  }
+
   static getFileFacets(facets, component, preview, key) {
     if (!preview || !preview.files || !preview.files[key] || !preview.files[key].facets) {
       if (!facets)
@@ -52,3 +97,68 @@ export default class FileListSpec {
     )
   }
 }
+
+const data = [
+  {
+    key: 1,
+    name: 'John Brown sr.',
+    age: 60,
+    address: 'New York No. 1 Lake Park',
+    children: [
+      {
+        key: 11,
+        name: 'John Brown',
+        age: 42,
+        address: 'New York No. 2 Lake Park'
+      },
+      {
+        key: 12,
+        name: 'John Brown jr.',
+        age: 30,
+        address: 'New York No. 3 Lake Park',
+        children: [
+          {
+            key: 121,
+            name: 'Jimmy Brown',
+            age: 16,
+            address: 'New York No. 3 Lake Park'
+          }
+        ]
+      },
+      {
+        key: 13,
+        name: 'Jim Green sr.',
+        age: 72,
+        address: 'London No. 1 Lake Park',
+        children: [
+          {
+            key: 131,
+            name: 'Jim Green',
+            age: 42,
+            address: 'London No. 2 Lake Park',
+            children: [
+              {
+                key: 1311,
+                name: 'Jim Green jr.',
+                age: 25,
+                address: 'London No. 3 Lake Park'
+              },
+              {
+                key: 1312,
+                name: 'Jimmy Green sr.',
+                age: 18,
+                address: 'London No. 4 Lake Park'
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    key: 2,
+    name: 'Joe Black',
+    age: 32,
+    address: 'Sidney No. 1 Lake Park'
+  }
+]

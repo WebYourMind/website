@@ -1,280 +1,181 @@
-// Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
-// SPDX-License-Identifier: MIT
-
 import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import ReactTable from 'react-table'
-import 'react-table/react-table.css'
-import transform from 'lodash/transform'
-import isEqual from 'lodash/isEqual'
-import get from 'lodash/get'
-import treeTableHOC from './treeTable'
-import FilterCustomComponent from './FilterCustomComponent'
-import FacetsRenderer from '../FacetsRenderer'
-import LicensesRenderer from '../LicensesRenderer'
-import CopyrightsRenderer from '../CopyrightsRenderer'
+import { Table, Input, Button, Icon } from 'antd'
+import CopyrightsRenderer from '../../components/CopyrightsRenderer'
+import LicensesRenderer from '../../components/LicensesRenderer'
+import FacetsRenderer from '../../components/FacetsRenderer'
 import Contribution from '../../utils/contribution'
 import FileListSpec from '../../utils/filelist'
-// Import Custom TreeTable HOC
-const TreeTable = treeTableHOC(ReactTable)
-
-/**
- * A File List Tree-view, according to https://github.com/clearlydefined/website/issues/191
- *
- */
 export default class FileList extends Component {
-  static propTypes = {
-    readOnly: PropTypes.bool
-  }
-
-  static defaultProps = {
-    readOnly: false
-  }
-
   state = {
-    files: [],
-    expanded: {},
-    isFiltering: false
+    filteredInfo: null,
+    sortedInfo: null
   }
 
-  componentDidMount() {
-    // Data are parsed to create a tree-folder structure
-    const { files, component, previewDefinition } = this.props
-    if (!files) return this.setState({ files: [] }, () => this.forceUpdate())
-    const definitionFiles = parsePaths(files, component.item, previewDefinition)
-    this.setState({ files: definitionFiles, rawData: definitionFiles }, () => this.forceUpdate())
-  }
-  componentWillReceiveProps(nextProps) {
-    // Data are parsed to create a tree-folder structure
-    const { files, component, previewDefinition } = nextProps
-    if (!files) return this.setState({ files: [] }, () => this.forceUpdate())
-    const definitionFiles = parsePaths(files, component.item, previewDefinition)
-    this.setState({ files: definitionFiles, rawData: definitionFiles }, () => this.forceUpdate())
+  getColumnSearchProps = dataIndex => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+      <div style={{ padding: 8 }}>
+        <Input
+          ref={node => {
+            this.searchInput = node
+          }}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => this.handleSearch(selectedKeys, confirm)}
+          style={{ width: 188, marginBottom: 8, display: 'block' }}
+        />
+        <Button
+          type="primary"
+          onClick={() => this.handleSearch(selectedKeys, confirm)}
+          icon="search"
+          size="small"
+          style={{ width: 90, marginRight: 8 }}
+        >
+          Search
+        </Button>
+        <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+          Reset
+        </Button>
+      </div>
+    ),
+    filterIcon: filtered => <Icon type="search" style={{ color: filtered ? '#1890ff' : undefined }} />,
+    onFilter: (value, record) =>
+      record[dataIndex]
+        .toString()
+        .toLowerCase()
+        .includes(value.toLowerCase()),
+    onFilterDropdownVisibleChange: visible => {
+      if (visible) {
+        setTimeout(() => this.searchInput.select())
+      }
+    }
+  })
+
+  handleSearch = (selectedKeys, confirm) => {
+    confirm()
+    this.setState({ searchText: selectedKeys[0] })
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return nextState.files.length !== this.state.files.length || !isEqual(nextProps.changes, this.props.changes)
+  handleReset = clearFilters => {
+    clearFilters()
+    this.setState({ searchText: '' })
   }
 
-  getNameCellEntry = (definition, row) => {
-    if (!row || !definition) return null
-    const { provider, namespace, name, revision } = definition.coordinates
-    const path = get(row, 'original.path')
-    if (provider !== 'github' || !path) return row.value
-    return (
-      <a
-        href={`https://github.com/${namespace}/${name}/blob/${revision}/${path}`}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        {row.value}
-      </a>
-    )
+  handleChange = (pagination, filters, sorter) => {
+    this.setState({
+      filteredInfo: filters,
+      sortedInfo: sorter
+    })
   }
 
-  generateColumns = columns => {
-    const { component, previewDefinition, readOnly } = this.props
-    return columns.concat([
+  clearFilters = () => {
+    this.setState({ filteredInfo: null })
+  }
+
+  clearAll = () => {
+    this.setState({
+      filteredInfo: null,
+      sortedInfo: null
+    })
+  }
+
+  setAgeSort = () => {
+    this.setState({
+      sortedInfo: {
+        order: 'descend',
+        columnKey: 'age'
+      }
+    })
+  }
+
+  render() {
+    const { readOnly, component, previewDefinition, files } = this.props
+    let { sortedInfo, filteredInfo } = this.state
+    sortedInfo = sortedInfo || {}
+    filteredInfo = filteredInfo || {}
+    const columns = [
       {
-        Header: 'Name',
-        accessor: 'name',
-        resizable: false,
-        style: {},
-        Cell: row => (
-          <div style={{ paddingLeft: `${10 * (row.level - 1)}px` }}>{this.getNameCellEntry(component.item, row)}</div>
-        ),
-        filterMethod: (filter, rows) =>
-          rows.filter(item =>
-            item._original ? item._original.path.toLowerCase().includes(filter.value.filterValue.toLowerCase()) : true
-          ),
-        filterAll: true
+        title: 'Name',
+        dataIndex: 'name',
+        key: 'name',
+        sorter: (a, b) => a.name.length - b.name.length,
+        sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
+        ...this.getColumnSearchProps('name'),
+        render: (text, record, index) => <span>{text}</span>
       },
       {
-        Header: 'Facets',
-        accessor: 'facets',
-        resizable: false,
-        Cell: row => <FacetsRenderer item={row} />,
-        filterMethod: (filter, rows) => {
-          const filterValue = filter.value.filterValue.toLowerCase()
-          return rows.filter(item => {
-            if (item && item.facets && item.facets.length) {
-              return item.facets.findIndex(f => f.value.includes(filterValue)) > -1
-            }
-            return true
-          })
-        },
-        filterAll: true
+        title: 'Facets',
+        dataIndex: 'facets',
+        key: 'facets',
+        sorter: (a, b) => a.facets.length - b.facets.length,
+        sortOrder: sortedInfo.columnKey === 'facets' && sortedInfo.order,
+        ...this.getColumnSearchProps('facets'),
+        render: (value, record) => <FacetsRenderer values={value || []} />
       },
       {
-        Header: 'Licenses',
-        id: 'license',
-        accessor: 'license',
-        resizable: false,
-        Cell: row =>
-          row.original && (
-            <LicensesRenderer
-              field={`files[${row.original.id}].license`}
-              readOnly={readOnly}
-              initialValue={get(component.item, `files[${row.original.id}].license`)}
-              value={Contribution.getValue(component.item, previewDefinition, `files[${row.original.id}].license`)}
-              onChange={license => {
-                this.props.onChange(`files[${row.original.id}]`, license, null, license => {
-                  const attributions = Contribution.getValue(
-                    component.item,
-                    previewDefinition,
-                    `files[${row.original.id}].attributions`
-                  )
-                  return {
-                    path: row.original.path,
-                    license,
-                    ...(attributions ? { attributions } : {})
-                  }
-                })
-              }}
-            />
-          ),
-        filterMethod: (filter, rows) =>
-          filter.value.filterValue
-            ? rows.filter(item => {
-                if (!item._original) return true
-                const value = Contribution.getValue(
+        title: 'Licenses',
+        dataIndex: 'license',
+        key: 'license',
+        sorter: (a, b) => a.license.length - b.license.length,
+        sortOrder: sortedInfo.columnKey === 'license' && sortedInfo.order,
+        ...this.getColumnSearchProps('license'),
+        render: (value, record) => (
+          <LicensesRenderer
+            field={`files[${record.id}].license`}
+            readOnly={readOnly}
+            initialValue={'MIT'}
+            value={'MIT'}
+            onChange={license => {
+              this.props.onChange(`files[${record.id}]`, license, null, license => {
+                const attributions = Contribution.getValue(
                   component.item,
                   previewDefinition,
-                  `files[${item._original.id}].license`
+                  `files[${record.id}].attributions`
                 )
-                return value
-                  ? value
-                      .toString()
-                      .toLowerCase()
-                      .includes(filter.value.filterValue.toLowerCase())
-                  : false
+                return {
+                  path: record.path,
+                  license,
+                  ...(attributions ? { attributions } : {})
+                }
               })
-            : rows,
-        filterAll: true
+            }}
+          />
+        )
       },
       {
-        Header: 'Copyrights',
-        accessor: 'attributions',
-        resizable: false,
-        Cell: row => (
+        title: 'Copyrights',
+        dataIndex: 'attributions',
+        key: 'facets',
+        sorter: (a, b) => a.facets.length - b.facets.length,
+        sortOrder: sortedInfo.columnKey === 'facets' && sortedInfo.order,
+        ...this.getColumnSearchProps('facets'),
+        render: (value, record) => (
           <CopyrightsRenderer
-            field={row.original && `files[${row.original.id}].attributions`}
+            field={record && `files[${record.id}].attributions`}
             container={document.getElementsByClassName('ReactTable')[0]}
-            item={row.value}
+            item={value}
             readOnly={readOnly}
+            selections={false}
             onSave={value => {
-              this.props.onChange(`files[${row.original.id}]`, value, null, value => {
+              this.props.onChange(`files[${record.id}]`, value, null, value => {
                 return {
-                  path: row.original.path,
-                  license: Contribution.getValue(
-                    component.item,
-                    previewDefinition,
-                    `files[${row.original.id}].license`
-                  ),
+                  path: record.path,
+                  license: Contribution.getValue(component.item, previewDefinition, `files[${record.id}].license`),
                   attributions: value
                 }
               })
             }}
           />
-        ),
-        filterMethod: (filter, rows) => {
-          if (!filter.value.filterValue) return rows
-          const filterValue = filter.value.filterValue.toLowerCase()
-          return rows.filter(item => {
-            if (!item._original) return true
-            if (!item._original.attributions) return false
-            return (
-              item._original.attributions.findIndex(a =>
-                a.value
-                  .toString()
-                  .toLowerCase()
-                  .includes(filterValue)
-              ) > -1
-            )
-          })
-        },
-        filterAll: true
+        )
       }
-    ])
-  }
-
-  shouldComponentUpdate() {
-    return true
-  }
-
-  render() {
-    const { files, isFiltering, expanded } = this.state
+    ]
     return (
-      <TreeTable
-        showPagination={false}
-        sortable={false}
-        defaultPageSize={15}
-        filterable
-        expanded={expanded}
-        manual={false}
-        onExpandedChange={newExpanded => this.setState({ expanded: newExpanded })}
-        onFilteredChange={() => this.setState({ isFiltering: true })}
-        noDataText={
-          isFiltering ? "Current filters didn't match any data" : 'There are currently no files for this definition'
-        }
-        data={files}
-        pivotBy={pathColums}
-        columns={this.generateColumns(columns)} // Merge columns array with other columns to show after the folders
-        FilterComponent={props => {
-          return (
-            !String(props.column.id)
-              .toLowerCase()
-              .includes('folder_') && <FilterCustomComponent {...props} />
-          )
-        }}
+      <Table
+        columns={columns}
+        dataSource={FileListSpec.pathToTreeFolders(files)}
+        onChange={this.handleChange}
+        pagination={false}
       />
     )
   }
-}
-
-const pathColums = []
-const columns = []
-
-/**
- * Parse each file's path to retrieve the complete folder structure
- * @param  {} files The files object coming from the definition
- * @return {Object} Return a new object containing the files object modified
- */
-export const parsePaths = (files, component, preview) => {
-  return transform(files, (result, file, key) => {
-    file.id = key
-    const folders = file.path.split('/')
-    file.facets = FileListSpec.getFileFacets(file.facets, component, preview, key)
-    file.attributions = FileListSpec.getFileAttributions(file.attributions, component, preview, key)
-
-    // If files are in the root folder, then they will grouped into a "/" folder
-    if (folders.length === 1) {
-      file['folder_0'] = '/'
-    } else {
-      folders.unshift('/')
-    }
-
-    // Add file[`folder_${index}`] to file object
-    // If index is the last file, then is the name of the file
-    folders.forEach((p, index) => {
-      if (index + 1 === folders.length) file.name = p
-      else file[`folder_${index}`] = p
-    })
-
-    folders.forEach((p, index) => {
-      if (index + 1 < folders.length && pathColums.indexOf(`folder_${index}`) === -1) {
-        // Add folders_${index} to patchColumns array
-        pathColums.push(`folder_${index}`)
-
-        // Add folders_${index} to columns array
-        columns.push({
-          accessor: `folder_${index}`,
-          show: false,
-          aggregated: true,
-          resizable: false
-        })
-      }
-    })
-    result[key] = file
-  })
 }
