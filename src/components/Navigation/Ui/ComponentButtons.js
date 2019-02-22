@@ -11,6 +11,7 @@ import { ROUTE_DEFINITIONS } from '../../../utils/routingConstants'
 import ButtonWithTooltip from './ButtonWithTooltip'
 import ScoreRenderer from './ScoreRenderer'
 
+const isMobile = window.innerWidth < 991
 export default class ComponentButtons extends Component {
   static propTypes = {
     definitions: PropTypes.object,
@@ -58,14 +59,14 @@ export default class ComponentButtons extends Component {
     this.props.showVersionSelectorPopup(component, multiple)
   }
 
-  renderButtonGroup(className = '') {
+  renderButtonGroup() {
     const { definition, currentComponent, readOnly, hasChange, hideVersionSelector } = this.props
     const component = EntitySpec.fromCoordinates(currentComponent)
     const isSourceComponent = this.isSourceComponent(component)
     const isSourceEmpty = Definition.isSourceEmpty(definition)
     const isDefinitionEmpty = Definition.isDefinitionEmpty(definition)
     return (
-      <ButtonGroup className={`collapse navbar-collapse ${className}`} id="buttonbar-collapse">
+      <ButtonGroup>
         {!isSourceComponent && !readOnly && !isSourceEmpty && (
           <ButtonWithTooltip tip="Add the definition for source that matches this package">
             <Button className="list-fa-button" onClick={this.addSourceForComponent.bind(this, component)}>
@@ -141,18 +142,22 @@ export default class ComponentButtons extends Component {
         {scores && <ScoreRenderer scores={scores} definition={definition} />}
         {isCurated && <Tag color="green">Curated</Tag>}
         {hasPendingCurations && <Tag color="gold">Pending Curations</Tag>}
-        <ButtonToolbar className="hidden-md hidden-lg hidden-sm">
-          <BSDropdown id="split-button-pull-right">
-            <BSDropdown.Toggle>
-              <span className="sr-only">Toggle navigation</span>
-              <span className="icon-bar" />
-              <span className="icon-bar" />
-              <span className="icon-bar" />
-            </BSDropdown.Toggle>
-            <BSDropdown.Menu className="dropdown-menu-right">{this.renderButtonGroup()}</BSDropdown.Menu>
-          </BSDropdown>
-        </ButtonToolbar>
-        {this.renderButtonGroup('visible-md-block visible-lg-block visible-sm-block')}
+        {isMobile ? (
+          <ButtonToolbar>
+            <BSDropdown id="split-button-pull-right" onClick={event => event.stopPropagation()}>
+              <BSDropdown.Toggle>
+                <span className="sr-only">Toggle navigation</span>
+                <span className="icon-bar" />
+                <span className="icon-bar" />
+                <span className="icon-bar" />
+              </BSDropdown.Toggle>
+              <BSDropdown.Menu className="dropdown-menu-right">{this.renderButtonGroup()}</BSDropdown.Menu>
+            </BSDropdown>
+          </ButtonToolbar>
+        ) : (
+          this.renderButtonGroup()
+        )}
+
         {!readOnly && (
           <Button bsStyle="link" onClick={this.removeComponent.bind(this, component)}>
             <i className="fas fa-times list-remove" />
