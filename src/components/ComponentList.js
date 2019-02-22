@@ -6,11 +6,8 @@ import PropTypes from 'prop-types'
 import isEqual from 'lodash/isEqual'
 import { RowEntityList, DefinitionEntry } from './'
 import EntitySpec from '../utils/entitySpec'
-import { isMobile } from '../utils/utils'
+import { isMobileMultiplier } from '../utils/utils'
 import ComponentButtons from './Navigation/Ui/ComponentButtons'
-
-// 1.4x if mobile
-const isMobileMultiplier = isMobile ? 1 : 1.4
 
 export default class ComponentList extends React.Component {
   static propTypes = {

@@ -67,6 +67,8 @@ const releaseDates = [{ value: 'presence', label: 'Presence Of' }, { value: 'abs
 const curateFilters = [{ value: 'licensed', label: 'Licensed' }, { value: 'described', label: 'Described' }]
 
 const isMobile = window.innerWidth < 991
+// isMobile ? 1 : 1.4
+const isMobileMultiplier = isMobile ? 1 : 1.4
 
 export {
   setIfValue,
@@ -78,5 +80,6 @@ export {
   sources,
   releaseDates,
   curateFilters,
-  isMobile
+  isMobile,
+  isMobileMultiplier
 }
