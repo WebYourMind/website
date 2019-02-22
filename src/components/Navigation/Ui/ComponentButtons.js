@@ -7,11 +7,11 @@ import { Menu, Dropdown, Icon } from 'antd'
 import { CopyUrlButton } from '../../'
 import EntitySpec from '../../../utils/entitySpec'
 import Definition from '../../../utils/definition'
+import { isMobile } from '../../../utils/utils'
 import { ROUTE_DEFINITIONS } from '../../../utils/routingConstants'
 import ButtonWithTooltip from './ButtonWithTooltip'
 import ScoreRenderer from './ScoreRenderer'
 
-const isMobile = window.innerWidth < 991
 export default class ComponentButtons extends Component {
   static propTypes = {
     definitions: PropTypes.object,
