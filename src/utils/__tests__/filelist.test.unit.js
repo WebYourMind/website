@@ -14,49 +14,24 @@ const testFiles = [
   { path: '.signature.p7s' }
 ]
 const expectedFolders = [
+  { key: 1, license: 'MIT', name: 'LICENSE.md' },
+  { key: 2, license: null, name: 'Newtonsoft.Json.nuspec' },
   {
-    key: 1,
-    name: 'LICENSE.md',
-    license: 'MIT'
-  },
-  {
-    key: 2,
-    name: 'Newtonsoft.Json.nuspec'
-  },
-  {
-    key: 1,
-    name: '.signature.p7s'
-  },
-  {
-    key: 2,
-    name: 'lib',
     children: [
       {
-        key: 3,
-        name: 'net20',
         children: [
-          {
-            key: 4,
-            name: 'Newtonsoft.Json.dll'
-          },
-          {
-            key: 5,
-            name: 'Newtonsoft.Json.xml'
-          }
-        ]
+          { key: 5, license: null, name: 'Newtonsoft.Json.dll' },
+          { key: 6, license: null, name: 'Newtonsoft.Json.xml' }
+        ],
+        key: 4,
+        name: 'net20'
       }
-    ]
+    ],
+    key: 3,
+    name: 'lib'
   },
-  {
-    key: 1,
-    name: 'tools',
-    children: [
-      {
-        key: 2,
-        name: 'install.ps1'
-      }
-    ]
-  }
+  { children: [{ key: 8, license: null, name: 'install.ps1' }], key: 7, name: 'tools' },
+  { key: 9, license: null, name: '.signature.p7s' }
 ]
 
 describe('FileListSpec', () => {

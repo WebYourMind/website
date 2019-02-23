@@ -1,52 +1,48 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
+import orderBy from 'lodash/orderBy'
 import Contribution from './contribution'
 
 // Abstract methods for FileList
+let key = 0
 export default class FileListSpec {
   static pathToTreeFolders(files, component, preview) {
-    const treeFolders = files.reduce((result, file, key) => {
+    const orderedFiles = orderBy(files, [file => file.path.split('/').length, 'path'], ['desc', 'asc'])
+    const treeFolders = orderedFiles.reduce((result, file) => {
       const folders = file.path.split('/')
-      let index = null
-      console.log(folders.length, folders)
-      const generatedFolders = this.getFolders({ ...file, folders }, component, preview, key)
-      console.log(
-        result.findIndex(folder => {
-          console.log(folder, generatedFolders)
-          return folder.name === generatedFolders.name
-        })
-      )
-      /*if ((index = result.findIndex(folder => folder.name === generatedFolders.name)))
-        result[index].children
-          ? result[index].children.push(generatedFolders)
-          : (result[index].children = [generatedFolders])
-      else*/ result.push(
-        generatedFolders
-      )
+      result = this.getFolders({ ...file, folders }, result, component, preview, key)
       return result
     }, [])
-    console.log(treeFolders)
     return treeFolders
   }
 
-  static getFolders(file, component, preview, key) {
-    console.log(file.folders)
+  static getFolders(file, result, component, preview) {
     if (file.folders.length === 1) {
-      return {
-        name: file.path,
+      key++
+      result.push({
+        key,
+        name: file.folders[file.folders.length - 1],
         license: file.license || null
         //facets: FileListSpec.getFileFacets(file.facets, component, preview, key),
         //attributions: FileListSpec.getFileAttributions(file.attributions, component, preview, key)
-      }
+      })
     } else {
       const folderName = file.folders[0]
       file.folders.splice(0, 1)
 
-      return {
-        name: folderName,
-        children: [this.getFolders({ ...file }, component, preview, key)]
+      const index = result.findIndex(folder => folder.name === folderName)
+      if (index !== -1) {
+        result[index].children = this.getFolders({ ...file }, result[index].children, component, preview)
+      } else {
+        key++
+        result.push({
+          key,
+          name: folderName,
+          children: this.getFolders({ ...file }, [], component, preview)
+        })
       }
     }
+    return result
   }
 
   static getFileFacets(facets, component, preview, key) {
