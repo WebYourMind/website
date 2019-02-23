@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Table, Input, Button, Icon } from 'antd'
+import get from 'lodash/get'
 import CopyrightsRenderer from '../../components/CopyrightsRenderer'
 import LicensesRenderer from '../../components/LicensesRenderer'
 import FacetsRenderer from '../../components/FacetsRenderer'
@@ -8,7 +9,8 @@ import FileListSpec from '../../utils/filelist'
 export default class FileList extends Component {
   state = {
     filteredInfo: null,
-    sortedInfo: null
+    sortedInfo: null,
+    expandedRows: []
   }
 
   getColumnSearchProps = dataIndex => ({
@@ -90,7 +92,7 @@ export default class FileList extends Component {
 
   render() {
     const { readOnly, component, previewDefinition, files } = this.props
-    let { sortedInfo, filteredInfo } = this.state
+    let { sortedInfo, filteredInfo, expandedRows } = this.state
     sortedInfo = sortedInfo || {}
     filteredInfo = filteredInfo || {}
     const columns = [
@@ -101,16 +103,16 @@ export default class FileList extends Component {
         sorter: (a, b) => a.name.length - b.name.length,
         sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
         ...this.getColumnSearchProps('name'),
-        render: (text, record, index) => <span>{text}</span>
+        render: text => <span>{text}</span>
       },
       {
         title: 'Facets',
         dataIndex: 'facets',
-        key: 'facets',
+        key: 'a',
         sorter: (a, b) => a.facets.length - b.facets.length,
         sortOrder: sortedInfo.columnKey === 'facets' && sortedInfo.order,
         ...this.getColumnSearchProps('facets'),
-        render: (value, record) => <FacetsRenderer values={value || []} />
+        render: (value, record) => !record.children && <FacetsRenderer key={record.id} values={value || []} />
       },
       {
         title: 'Licenses',
@@ -119,28 +121,29 @@ export default class FileList extends Component {
         sorter: (a, b) => a.license.length - b.license.length,
         sortOrder: sortedInfo.columnKey === 'license' && sortedInfo.order,
         ...this.getColumnSearchProps('license'),
-        render: (value, record) => (
-          <LicensesRenderer
-            field={`files[${record.id}].license`}
-            readOnly={readOnly}
-            initialValue={'MIT'}
-            value={'MIT'}
-            onChange={license => {
-              this.props.onChange(`files[${record.id}]`, license, null, license => {
-                const attributions = Contribution.getValue(
-                  component.item,
-                  previewDefinition,
-                  `files[${record.id}].attributions`
-                )
-                return {
-                  path: record.path,
-                  license,
-                  ...(attributions ? { attributions } : {})
-                }
-              })
-            }}
-          />
-        )
+        render: (value, record) =>
+          !record.children && (
+            <LicensesRenderer
+              field={`files[${record.id}].license`}
+              readOnly={readOnly}
+              initialValue={get(component.item, `files[${record.id}].license`)}
+              value={Contribution.getValue(component.item, previewDefinition, `files[${record.id}].license`)}
+              onChange={license => {
+                this.props.onChange(`files[${record.id}]`, license, null, license => {
+                  const attributions = Contribution.getValue(
+                    component.item,
+                    previewDefinition,
+                    `files[${record.id}].attributions`
+                  )
+                  return {
+                    path: record.path,
+                    license,
+                    ...(attributions ? { attributions } : {})
+                  }
+                })
+              }}
+            />
+          )
       },
       {
         title: 'Copyrights',
@@ -149,31 +152,34 @@ export default class FileList extends Component {
         sorter: (a, b) => a.facets.length - b.facets.length,
         sortOrder: sortedInfo.columnKey === 'facets' && sortedInfo.order,
         ...this.getColumnSearchProps('facets'),
-        render: (value, record) => (
-          <CopyrightsRenderer
-            field={record && `files[${record.id}].attributions`}
-            container={document.getElementsByClassName('ReactTable')[0]}
-            item={value}
-            readOnly={readOnly}
-            selections={false}
-            onSave={value => {
-              this.props.onChange(`files[${record.id}]`, value, null, value => {
-                return {
-                  path: record.path,
-                  license: Contribution.getValue(component.item, previewDefinition, `files[${record.id}].license`),
-                  attributions: value
-                }
-              })
-            }}
-          />
-        )
+        render: (value, record) =>
+          !record.children && (
+            <CopyrightsRenderer
+              field={record && `files[${record.id}].attributions`}
+              container={document.getElementsByClassName('ReactTable')[0]}
+              item={value}
+              readOnly={readOnly}
+              selections={false}
+              onSave={value => {
+                this.props.onChange(`files[${record.id}]`, value, null, value => {
+                  return {
+                    path: record.path,
+                    license: Contribution.getValue(component.item, previewDefinition, `files[${record.id}].license`),
+                    attributions: value
+                  }
+                })
+              }}
+            />
+          )
       }
     ]
     return (
       <Table
         columns={columns}
-        dataSource={FileListSpec.pathToTreeFolders(files)}
+        dataSource={FileListSpec.pathToTreeFolders(files, component.item, previewDefinition)}
         onChange={this.handleChange}
+        expandedRowKeys={expandedRows}
+        onExpandedRowsChange={expandedRows => this.setState({ expandedRows })}
         pagination={false}
       />
     )
