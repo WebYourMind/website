@@ -8,8 +8,8 @@ import Contribution from '../../utils/contribution'
 import FileListSpec from '../../utils/filelist'
 export default class FileList extends Component {
   state = {
-    filteredInfo: null,
-    sortedInfo: null,
+    filteredInfo: {},
+    sortedInfo: {},
     expandedRows: []
   }
 
@@ -40,12 +40,16 @@ export default class FileList extends Component {
         </Button>
       </div>
     ),
+    sorter: false,
     filterIcon: filtered => <Icon type="search" style={{ color: filtered ? '#1890ff' : undefined }} />,
-    onFilter: (value, record) =>
-      record[dataIndex]
-        .toString()
-        .toLowerCase()
-        .includes(value.toLowerCase()),
+    onFilter: (value, record) => {
+      return record[dataIndex]
+        ? record[dataIndex]
+            .toString()
+            .toLowerCase()
+            .includes(value.toLowerCase())
+        : false
+    },
     onFilterDropdownVisibleChange: visible => {
       if (visible) {
         setTimeout(() => this.searchInput.select())
@@ -74,52 +78,30 @@ export default class FileList extends Component {
     this.setState({ filteredInfo: null })
   }
 
-  clearAll = () => {
-    this.setState({
-      filteredInfo: null,
-      sortedInfo: null
-    })
-  }
-
-  setAgeSort = () => {
-    this.setState({
-      sortedInfo: {
-        order: 'descend',
-        columnKey: 'age'
-      }
-    })
-  }
-
   render() {
     const { readOnly, component, previewDefinition, files } = this.props
-    let { sortedInfo, filteredInfo, expandedRows } = this.state
-    sortedInfo = sortedInfo || {}
-    filteredInfo = filteredInfo || {}
+    let { expandedRows } = this.state
     const columns = [
       {
         title: 'Name',
         dataIndex: 'name',
         key: 'name',
-        sorter: (a, b) => a.name.length - b.name.length,
-        sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
         ...this.getColumnSearchProps('name'),
-        render: text => <span>{text}</span>
+        render: text => <span>{text}</span>,
+        width: '30%'
       },
       {
         title: 'Facets',
         dataIndex: 'facets',
-        key: 'a',
-        sorter: (a, b) => a.facets.length - b.facets.length,
-        sortOrder: sortedInfo.columnKey === 'facets' && sortedInfo.order,
+        key: 'facets',
         ...this.getColumnSearchProps('facets'),
-        render: (value, record) => !record.children && <FacetsRenderer key={record.id} values={value || []} />
+        render: (value, record) => !record.children && <FacetsRenderer key={record.id} values={value || []} />,
+        width: '20%'
       },
       {
         title: 'Licenses',
         dataIndex: 'license',
         key: 'license',
-        sorter: (a, b) => a.license.length - b.license.length,
-        sortOrder: sortedInfo.columnKey === 'license' && sortedInfo.order,
         ...this.getColumnSearchProps('license'),
         render: (value, record) =>
           !record.children && (
@@ -143,20 +125,18 @@ export default class FileList extends Component {
                 })
               }}
             />
-          )
+          ),
+        width: '25%'
       },
       {
         title: 'Copyrights',
         dataIndex: 'attributions',
-        key: 'facets',
-        sorter: (a, b) => a.facets.length - b.facets.length,
-        sortOrder: sortedInfo.columnKey === 'facets' && sortedInfo.order,
-        ...this.getColumnSearchProps('facets'),
+        key: 'attributions',
+        ...this.getColumnSearchProps('attributions'),
         render: (value, record) =>
           !record.children && (
             <CopyrightsRenderer
               field={record && `files[${record.id}].attributions`}
-              container={document.getElementsByClassName('ReactTable')[0]}
               item={value}
               readOnly={readOnly}
               selections={false}
@@ -170,7 +150,8 @@ export default class FileList extends Component {
                 })
               }}
             />
-          )
+          ),
+        width: '25%'
       }
     ]
     return (
