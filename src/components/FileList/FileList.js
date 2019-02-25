@@ -107,6 +107,7 @@ export default class FileList extends Component {
         render: (value, record) =>
           !record.children && (
             <LicensesRenderer
+              revertable={false}
               field={`files[${record.id}].license`}
               readOnly={readOnly}
               initialValue={get(component.item, `files[${record.id}].license`)}
