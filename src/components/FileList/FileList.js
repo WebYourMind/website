@@ -81,6 +81,7 @@ export default class FileList extends Component {
   render() {
     const { readOnly, component, previewDefinition, files } = this.props
     let { expandedRows } = this.state
+
     const columns = [
       {
         title: 'Name',
@@ -133,24 +134,29 @@ export default class FileList extends Component {
         dataIndex: 'attributions',
         key: 'attributions',
         ...this.getColumnSearchProps('attributions'),
-        render: (value, record) =>
-          !record.children && (
-            <CopyrightsRenderer
-              field={record && `files[${record.id}].attributions`}
-              item={value}
-              readOnly={readOnly}
-              selections={false}
-              onSave={value => {
-                this.props.onChange(`files[${record.id}]`, value, null, value => {
-                  return {
-                    path: record.path,
-                    license: Contribution.getValue(component.item, previewDefinition, `files[${record.id}].license`),
-                    attributions: value
-                  }
-                })
-              }}
-            />
-          ),
+        render: (value, record) => {
+          return (
+            !record.children && (
+              <CopyrightsRenderer
+                field={record && `files[${record.id}].attributions`}
+                item={
+                  Contribution.getValue(component.item, previewDefinition, `files[${record.id}].attributions`) || []
+                }
+                readOnly={readOnly}
+                selections={false}
+                onSave={value => {
+                  this.props.onChange(`files[${record.id}]`, value, null, value => {
+                    return {
+                      path: record.path,
+                      license: Contribution.getValue(component.item, previewDefinition, `files[${record.id}].license`),
+                      attributions: value
+                    }
+                  })
+                }}
+              />
+            )
+          )
+        },
         width: '25%'
       }
     ]
