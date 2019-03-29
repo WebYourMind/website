@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
+// SPDX-License-Identifier: MIT
+
 import React, { Component, Fragment } from 'react'
 import PropTypes from 'prop-types'
 import get from 'lodash/get'
@@ -97,7 +100,7 @@ class ScoreRenderer extends Component {
     const { domain, scores } = this.props
     if (!domain && !scores) return null
     return (
-      <Tooltip title={this.renderTooltipContent} key={this.renderTooltipContent} overlayStyle={{ width: '800px' }}>
+      <Tooltip title={this.renderTooltipContent} overlayStyle={{ width: '800px' }}>
         {domain ? (
           <Tag className="cd-badge" color={this.getColor(get(domain, 'score.total'))}>
             {get(domain, 'score.total')}
