@@ -38,7 +38,7 @@ class ScoreRenderer extends Component {
   )
 
   getColor(score, topScore = 100) {
-    const colors = ['#cb2431', '#d6af22', '#2cbe4e']
+    const colors = ['#d6af22', '#2cbe4e']
     const percentScore = score / topScore
     const bucket = Math.floor(percentScore * colors.length)
     return colors[Math.min(colors.length - 1, bucket)]
