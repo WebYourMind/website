@@ -319,7 +319,6 @@ module.exports = function(webpackEnv) {
                 plugins: [
                   [
                     require.resolve('babel-plugin-named-asset-import'),
-                    require.resolve('@babel/plugin-proposal-class-properties'),
                     {
                       loaderMap: {
                         svg: {
