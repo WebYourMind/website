@@ -3,7 +3,7 @@
 
 import React from 'react'
 import ReactDOM from 'react-dom'
-import './styles/index.css'
+import './styles/index.scss'
 import { unregister } from './registerServiceWorker'
 import { RehydrationProvider } from './components'
 import ReactGA from 'react-ga'
