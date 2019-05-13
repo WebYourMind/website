@@ -120,7 +120,7 @@
     "start:local-api": "env-cmd --fallback ./.env.localhost npm run build-scripts",
     "start:prod-api": "env-cmd --fallback ./.env.production npm run build-scripts",
     "build": "env-cmd --fallback ./.env.production npm run build-css && npm run copy-monaco && node scripts/build.js",
-    "test": "jest",
+    "test": "jest --coverage",
     "test:unit": "jest -c jest.config.unit.js",
     "test:integration": "jest -c jest.config.integration.js",
     "e2e:test": "jest -c e2e/jest.config.js --detectOpenHandles"
