@@ -2,6 +2,18 @@ import Contribution from '../contribution'
 
 describe('Contribution', () => {
   it('returns a definition without a license', () => {
+    var t0 = performance.now()
+    for (let i = 0; i < 50000; i++) {
+      Contribution.foldFacets(definitionWithoutLicense)
+    }
+    var t1 = performance.now()
+    console.log("Call to foldFacets memoize'd took " + (t1 - t0) + ' milliseconds.')
+    var t00 = performance.now()
+    for (let i = 0; i < 50000; i++) {
+      Contribution.foldFacetsRaw(definitionWithoutLicense)
+    }
+    var t11 = performance.now()
+    console.log('Call to foldFacets raw took ' + (t11 - t00) + ' milliseconds.')
     const resultDefinition = Contribution.foldFacets(definitionWithoutLicense)
     expect(resultDefinition.licensed.declared).toBe(definitionWithoutLicense.licensed.declared)
   })
