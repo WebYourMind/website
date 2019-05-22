@@ -3,6 +3,7 @@
 
 import set from 'lodash/set'
 import find from 'lodash/find'
+import memoize from 'lodash/memoize'
 import isEqual from 'lodash/isEqual'
 import isArray from 'lodash/isArray'
 import isEmpty from 'lodash/isEmpty'
@@ -261,36 +262,11 @@ export default class Contribution {
   static nonCoreFacets = ['data', 'dev', 'doc', 'examples', 'tests']
 
   // Function that retrieve informations about facets from the definition
-  static foldFacets(definition, facets = null) {
-    facets = facets || this.defaultFacets
-    let files = 0
-    let attributionUnknown = 0
-    let discoveredUnknown = 0
-    let parties = []
-    let expressions = []
-    let declared = get(definition, `licensed.declared`)
+  static foldFacets = memoize(foldFacetsRaw)
 
-    facets.forEach(name => {
-      const facet = get(definition, `licensed.facets.${name}`)
-      if (!facet) return
-      files += facet.files || 0
-      attributionUnknown += get(facet, 'attribution.unknown', 0)
-      parties = union(parties, get(facet, 'attribution.parties', []))
-      discoveredUnknown += get(facet, 'discovered.unknown', 0)
-      expressions = union(expressions, get(facet, 'discovered.expressions', []))
-      declared = get(definition, `licensed.declared`)
-    })
-
-    return {
-      coordinates: definition.coordinates,
-      described: definition.described,
-      licensed: {
-        files,
-        declared,
-        discovered: { expressions, unknown: discoveredUnknown },
-        attribution: { parties, unknown: attributionUnknown }
-      }
-    }
+  // Function that retrieve informations about facets from the definition
+  static foldFacetsRaw(definition, facets = null) {
+    return foldFacetsRaw(definition, facets)
   }
 
   /**
@@ -316,4 +292,36 @@ export default class Contribution {
   }
 
   static mergeFacets = value => union(['core'], Object.keys(value))
+}
+
+function foldFacetsRaw(definition, facets = null) {
+  facets = facets || this.defaultFacets
+  let files = 0
+  let attributionUnknown = 0
+  let discoveredUnknown = 0
+  let parties = []
+  let expressions = []
+  let declared = get(definition, `licensed.declared`)
+
+  facets.forEach(name => {
+    const facet = get(definition, `licensed.facets.${name}`)
+    if (!facet) return
+    files += facet.files || 0
+    attributionUnknown += get(facet, 'attribution.unknown', 0)
+    parties = union(parties, get(facet, 'attribution.parties', []))
+    discoveredUnknown += get(facet, 'discovered.unknown', 0)
+    expressions = union(expressions, get(facet, 'discovered.expressions', []))
+    declared = get(definition, `licensed.declared`)
+  })
+
+  return {
+    coordinates: definition.coordinates,
+    described: definition.described,
+    licensed: {
+      files,
+      declared,
+      discovered: { expressions, unknown: discoveredUnknown },
+      attribution: { parties, unknown: attributionUnknown }
+    }
+  }
 }
